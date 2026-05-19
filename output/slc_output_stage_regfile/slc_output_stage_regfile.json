@@ -1,0 +1,2246 @@
+{"block": {
+    "address": 0,
+    "address_dec": 0,
+    "addressing": "compact",
+    "config": {
+        "addressunit": 8,
+        "busdomains": {"busdomain": {
+            "address": 0,
+            "addressUnit": 8,
+            "bus": "CUSTOM",
+            "endaddress": 1023,
+            "name": "default_map",
+            "offset": 0,
+            "size": 1024
+        }},
+        "buswidth": 32,
+        "regwidth": 32,
+        "variants": {"variant": {
+            "doc": "'none' variant states including all templates which are not assigned any \n  variant property.",
+            "isselected": true,
+            "name": "none"
+        }}
+    },
+    "define_as_param": true,
+    "display_name": "slc_output_stage_regfile",
+    "doc": {
+        "content": "SLC Output Stage CSR Register File",
+        "list": {
+            "type": "param",
+            "value": [
+                {
+                    "content": 4,
+                    "localparam": true,
+                    "name": "OS_DAT_FIFO_DEPTH_WIDTH"
+                },
+                {
+                    "content": 4,
+                    "localparam": true,
+                    "name": "OS_CDT_FIFO_DEPTH_WIDTH"
+                },
+                {
+                    "content": 4,
+                    "localparam": true,
+                    "name": "OS_RSP_FIFO_DEPTH_WIDTH"
+                },
+                {
+                    "content": 4,
+                    "localparam": true,
+                    "name": "OS_REQ_FIFO_DEPTH_WIDTH"
+                },
+                {
+                    "content": 4,
+                    "localparam": true,
+                    "name": "OS_BMP_SNP_FIFO_DEPTH_WIDTH"
+                },
+                {
+                    "content": 8,
+                    "localparam": true,
+                    "name": "NUM_SAM_REGIONS"
+                },
+                {
+                    "content": 10,
+                    "localparam": true,
+                    "name": "EID_WIDTH"
+                },
+                {
+                    "content": 2,
+                    "localparam": true,
+                    "name": "NUM_RATE_LIMITER_VECTORS"
+                },
+                {
+                    "content": 6,
+                    "localparam": true,
+                    "name": "E2E_CREDIT_WIDTH"
+                },
+                {
+                    "content": 1,
+                    "localparam": true,
+                    "name": "IS_SLC"
+                },
+                {
+                    "content": 0,
+                    "localparam": true,
+                    "name": "IS_MIC"
+                },
+                {
+                    "content": 0,
+                    "localparam": true,
+                    "name": "IS_MIF"
+                },
+                {
+                    "content": 0,
+                    "localparam": true,
+                    "name": "HAS_NP"
+                },
+                {
+                    "content": 1,
+                    "localparam": true,
+                    "name": "HAS_P0"
+                },
+                {
+                    "content": 1,
+                    "localparam": true,
+                    "name": "HAS_P1"
+                },
+                {
+                    "content": 0,
+                    "localparam": true,
+                    "name": "HAS_PW"
+                },
+                {
+                    "content": 1,
+                    "localparam": true,
+                    "name": "HAS_HR"
+                },
+                {
+                    "content": 1,
+                    "localparam": true,
+                    "name": "HAS_SN"
+                },
+                {
+                    "content": 0,
+                    "localparam": true,
+                    "name": "HAS_PCIE_LUT"
+                },
+                {
+                    "content": 0,
+                    "localparam": true,
+                    "name": "HAS_MIF_HASH"
+                }
+            ]
+        }
+    },
+    "endaddress": 1023,
+    "external_ack": true,
+    "global": true,
+    "header_hermetic": true,
+    "intr_out_flopped": true,
+    "ipxact_exclude_param": true,
+    "name": "slc_output_stage_regfile",
+    "offset": 0,
+    "reg": [
+        {
+            "address": 0,
+            "address_dec": 0,
+            "config": {
+                "busdomains": {"busdomain": {
+                    "address": 0,
+                    "addressUnit": 8,
+                    "bus": "CUSTOM",
+                    "endaddress": 3,
+                    "name": "default_map",
+                    "offset": 0,
+                    "size": 4
+                }},
+                "regwidth": 32
+            },
+            "doc": "withhold credits of os_data_gen fifo",
+            "endaddress": 3,
+            "field": {
+                "default": 0,
+                "doc": "Maximum number of credits to withhold from release",
+                "hw": "ro",
+                "localparam.offset": "(OS_DAT_FIFO_DEPTH_WIDTH - 1) : 0",
+                "name": "withhold_credit",
+                "offset": "0:3",
+                "param.offset": "(OS_DAT_FIFO_DEPTH_WIDTH - 1) : 0",
+                "sw": "rw"
+            },
+            "name": "os_data_gen",
+            "offset": 0,
+            "rtl.strict_ports": true,
+            "size": 4
+        },
+        {
+            "address": 4,
+            "address_dec": 4,
+            "config": {
+                "busdomains": {"busdomain": {
+                    "address": 4,
+                    "addressUnit": 8,
+                    "bus": "CUSTOM",
+                    "endaddress": 7,
+                    "name": "default_map",
+                    "offset": 4,
+                    "size": 4
+                }},
+                "regwidth": 32
+            },
+            "doc": "withhold credits of os_credit_gen fifo",
+            "endaddress": 7,
+            "field": {
+                "default": 0,
+                "doc": "Maximum number of credits to withhold from release",
+                "hw": "ro",
+                "localparam.offset": "(OS_CDT_FIFO_DEPTH_WIDTH - 1) : 0",
+                "name": "withhold_credit",
+                "offset": "0:3",
+                "param.offset": "(OS_CDT_FIFO_DEPTH_WIDTH - 1) : 0",
+                "sw": "rw"
+            },
+            "name": "os_credit_gen",
+            "offset": 4,
+            "rtl.strict_ports": true,
+            "size": 4
+        },
+        {
+            "address": 8,
+            "address_dec": 8,
+            "config": {
+                "busdomains": {"busdomain": {
+                    "address": 8,
+                    "addressUnit": 8,
+                    "bus": "CUSTOM",
+                    "endaddress": 11,
+                    "name": "default_map",
+                    "offset": 8,
+                    "size": 4
+                }},
+                "regwidth": 32
+            },
+            "doc": "withhold credits of os_response_gen fifo",
+            "endaddress": 11,
+            "field": {
+                "default": 0,
+                "doc": "Maximum number of credits to withhold from release",
+                "hw": "ro",
+                "localparam.offset": "(OS_RSP_FIFO_DEPTH_WIDTH - 1) : 0",
+                "name": "withhold_credit",
+                "offset": "0:3",
+                "param.offset": "(OS_RSP_FIFO_DEPTH_WIDTH - 1) : 0",
+                "sw": "rw"
+            },
+            "name": "os_response_gen",
+            "offset": 8,
+            "rtl.strict_ports": true,
+            "size": 4
+        },
+        {
+            "address": 12,
+            "address_dec": 12,
+            "config": {
+                "busdomains": {"busdomain": {
+                    "address": 12,
+                    "addressUnit": 8,
+                    "bus": "CUSTOM",
+                    "endaddress": 15,
+                    "name": "default_map",
+                    "offset": 12,
+                    "size": 4
+                }},
+                "regwidth": 32
+            },
+            "doc": "withhold credits of os_request_gen fifo",
+            "endaddress": 15,
+            "field": {
+                "default": 0,
+                "doc": "Maximum number of credits to withhold from release",
+                "hw": "ro",
+                "localparam.offset": "(OS_REQ_FIFO_DEPTH_WIDTH - 1) : 0",
+                "name": "withhold_credit",
+                "offset": "0:3",
+                "param.offset": "(OS_REQ_FIFO_DEPTH_WIDTH - 1) : 0",
+                "sw": "rw"
+            },
+            "name": "os_request_gen",
+            "offset": 12,
+            "rtl.strict_ports": true,
+            "size": 4
+        },
+        {
+            "address": 16,
+            "address_dec": 16,
+            "config": {
+                "busdomains": {"busdomain": {
+                    "address": 16,
+                    "addressUnit": 8,
+                    "bus": "CUSTOM",
+                    "endaddress": 19,
+                    "name": "default_map",
+                    "offset": 16,
+                    "size": 4
+                }},
+                "regwidth": 32
+            },
+            "doc": "withhold credits of os_snoop_gen_bmp fifo",
+            "endaddress": 19,
+            "field": {
+                "default": 0,
+                "doc": "Maximum number of credits to withhold from release",
+                "hw": "ro",
+                "localparam.offset": "(OS_BMP_SNP_FIFO_DEPTH_WIDTH - 1) : 0",
+                "name": "withhold_credit",
+                "offset": "0:3",
+                "param.offset": "(OS_BMP_SNP_FIFO_DEPTH_WIDTH - 1) : 0",
+                "sw": "rw"
+            },
+            "name": "os_snoop_gen_bmp",
+            "offset": 16,
+            "rtl.strict_ports": true,
+            "size": 4
+        }
+    ],
+    "reset_type": "async",
+    "rtl.strict_ports": true,
+    "rtl_pack_array": true,
+    "section": {
+        "address": 20,
+        "address_dec": 20,
+        "config": {"busdomains": {"busdomain": {
+            "address": 20,
+            "addressUnit": 8,
+            "bus": "CUSTOM",
+            "endaddress": 1023,
+            "name": "default_map",
+            "offset": 20,
+            "size": 1004
+        }}},
+        "display_name": "gmesh_rqm_regfile",
+        "doc": "RQM CSR Register File",
+        "endaddress": 1023,
+        "global": true,
+        "name": "csr_slc_rqm",
+        "offset": 20,
+        "refparam": {"param": [
+            {
+                "name": 0,
+                "param.name": "IS_MIC",
+                "value": 0
+            },
+            {
+                "name": 1,
+                "param.name": "HAS_P0",
+                "value": 1
+            },
+            {
+                "name": 1,
+                "param.name": "HAS_P1",
+                "value": 1
+            },
+            {
+                "name": 0,
+                "param.name": "HAS_NP",
+                "value": 0
+            },
+            {
+                "name": 1,
+                "param.name": "HAS_SN",
+                "value": 1
+            },
+            {
+                "name": 2,
+                "param.name": "NUM_RATE_LIMITER_VECTORS",
+                "value": 2
+            },
+            {
+                "name": 8,
+                "param.name": "NUM_SAM_REGIONS",
+                "value": 8
+            },
+            {
+                "name": 1,
+                "param.name": "IS_SLC",
+                "value": 1
+            },
+            {
+                "name": 0,
+                "param.name": "HAS_PW",
+                "value": 0
+            },
+            {
+                "name": 1,
+                "param.name": "HAS_HR",
+                "value": 1
+            }
+        ]},
+        "reg": [
+            {
+                "address": 148,
+                "address2": 152,
+                "address_dec": 148,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 148,
+                        "address2": 152,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 163,
+                        "name": "default_map",
+                        "offset": 128,
+                        "size": 4
+                    }},
+                    "regwidth": 32,
+                    "repeats": {"repeat": {
+                        "count": 4,
+                        "name": "cfg_rqm_numa"
+                    }}
+                },
+                "count": 4,
+                "doc": "Numa cluster attributes, Relevant only in SLC System Address Mapping",
+                "endaddress": 163,
+                "field": [
+                    {
+                        "default": {
+                            "content": 0,
+                            "enum.unresolvedDef": "FULL"
+                        },
+                        "doc": {
+                            "content": "The NUMA cluster size",
+                            "list": {
+                                "name": "numa_size_enum",
+                                "type": "enum",
+                                "value": [
+                                    {
+                                        "content": 0,
+                                        "name": "FULL"
+                                    },
+                                    {
+                                        "content": 1,
+                                        "name": "HALF"
+                                    },
+                                    {
+                                        "content": 2,
+                                        "name": "NONE"
+                                    }
+                                ]
+                            }
+                        },
+                        "encode": "numa_size_enum",
+                        "hw": "ro",
+                        "name": "size",
+                        "offset": "1:0",
+                        "sw": "rw"
+                    },
+                    {
+                        "default": {
+                            "content": 0,
+                            "enum.unresolvedDef": "LOCAL"
+                        },
+                        "doc": {
+                            "content": "The location of the NUMA cluster with respect to the SLC",
+                            "list": {
+                                "name": "numa_location_enum",
+                                "type": "enum",
+                                "value": [
+                                    {
+                                        "content": 0,
+                                        "name": "LOCAL"
+                                    },
+                                    {
+                                        "content": 1,
+                                        "name": "PEER"
+                                    },
+                                    {
+                                        "content": 2,
+                                        "name": "REMOTE"
+                                    }
+                                ]
+                            }
+                        },
+                        "encode": "numa_location_enum",
+                        "hw": "ro",
+                        "name": "location",
+                        "offset": "5:4",
+                        "sw": "rw"
+                    }
+                ],
+                "ispresent": 1,
+                "localparam.ispresent": "(IS_SLC | IS_MIF)",
+                "name": "cfg_rqm_numa",
+                "offset": 128,
+                "param.ispresent": "(IS_SLC | IS_MIF)",
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 164,
+                "address2": 168,
+                "address_dec": 164,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 164,
+                        "address2": 168,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 179,
+                        "name": "default_map",
+                        "offset": 144,
+                        "size": 4
+                    }},
+                    "regwidth": 32,
+                    "repeats": {"repeat": {
+                        "count": 4,
+                        "name": "cfg_rqm_mid_index"
+                    }}
+                },
+                "count": 4,
+                "endaddress": 179,
+                "field": {
+                    "default": 0,
+                    "doc": "The MI-D hashing function outputs 2 bits index, this is the EID of\nthe MI-D that corresponds to the index.",
+                    "hw": "ro",
+                    "localparam.offset": "(EID_WIDTH - 1) : 0",
+                    "name": "to_eid",
+                    "offset": "0:9",
+                    "param.offset": "(EID_WIDTH - 1) : 0",
+                    "sw": "rw"
+                },
+                "ispresent": 1,
+                "name": "cfg_rqm_mid_index",
+                "offset": 144,
+                "param.ispresent": "IS_SLC",
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 180,
+                "address_dec": 180,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 180,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 183,
+                        "name": "default_map",
+                        "offset": 160,
+                        "size": 4
+                    }},
+                    "regwidth": 32
+                },
+                "doc": "the SLC hashing can be overridden by configuration.\nThe SAM of the source MI can be set to targets a single SLC",
+                "endaddress": 183,
+                "field": [
+                    {
+                        "default": 0,
+                        "doc": "If set, the RQM will override the SLC Hashing EID\nand will assign a new EID based on slc_hashing_override_value register",
+                        "hw": "ro",
+                        "name": "en",
+                        "offset": "0:0",
+                        "sw": "rw"
+                    },
+                    {
+                        "default": 0,
+                        "doc": "The value of the EID to use in case slc_hashing_override_en is set",
+                        "hw": "ro",
+                        "localparam.offset": "((4 + EID_WIDTH) - 1) : 4",
+                        "name": "value",
+                        "offset": "4:13",
+                        "param.offset": "((4 + EID_WIDTH) - 1) : 4",
+                        "sw": "rw"
+                    }
+                ],
+                "name": "cfg_rqm_slc_hashing_override",
+                "offset": 160,
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 184,
+                "address_dec": 184,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 184,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 187,
+                        "name": "default_map",
+                        "offset": 164,
+                        "size": 4
+                    }},
+                    "regwidth": 32
+                },
+                "doc": "the MI-D hashing can be overridden by configuration.\nThe SAM of the source MI can be set to targets a single MI-D",
+                "endaddress": 187,
+                "field": [
+                    {
+                        "default": 0,
+                        "doc": "If set, the RQM will override the MI-D Hashing EID\nand will assign a new EID based on mid_hashing_override_value register",
+                        "hw": "ro",
+                        "name": "en",
+                        "offset": "0:0",
+                        "sw": "rw"
+                    },
+                    {
+                        "default": 0,
+                        "doc": "The value of the EID to use in case mid_hashing_override_en is set",
+                        "hw": "ro",
+                        "localparam.offset": "((4 + EID_WIDTH) - 1) : 4",
+                        "name": "value",
+                        "offset": "4:13",
+                        "param.offset": "((4 + EID_WIDTH) - 1) : 4",
+                        "sw": "rw"
+                    }
+                ],
+                "ispresent": 1,
+                "name": "cfg_rqm_mid_hashing_override",
+                "offset": 164,
+                "param.ispresent": "IS_SLC",
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 188,
+                "address_dec": 188,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 188,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 191,
+                        "name": "default_map",
+                        "offset": 168,
+                        "size": 4
+                    }},
+                    "regwidth": 32
+                },
+                "doc": "End to End credit initialization register",
+                "endaddress": 191,
+                "field": [
+                    {
+                        "default": 0,
+                        "doc": "The E2E credits amount to load for EID = cfg_rqm_initial_e2e_credits_eid",
+                        "hw": "ro",
+                        "localparam.offset": "(E2E_CREDIT_WIDTH - 1) : 0",
+                        "name": "value",
+                        "offset": "0:5",
+                        "param.offset": "(E2E_CREDIT_WIDTH - 1) : 0",
+                        "sw": "rw"
+                    },
+                    {
+                        "default": 0,
+                        "doc": "The EID that will be loaded with the cfg_rqm_initial_e2e_credits_value.",
+                        "hw": "ro",
+                        "localparam.offset": "((6 + EID_WIDTH) - 1) : 6",
+                        "name": "eid",
+                        "offset": "6:15",
+                        "param.offset": "((6 + EID_WIDTH) - 1) : 6",
+                        "rtl.hw_wp": true,
+                        "sw": "rw"
+                    },
+                    {
+                        "default": 0,
+                        "doc": "Set if the RQM can send flits to this EID on this VC.\ne.g. If the RQM is in MI-C, en shall be 0 for all SLCs that are not\nin the same NUMA cluster as this MI-C",
+                        "hw": "ro",
+                        "name": "en",
+                        "offset": "31:31",
+                        "sw": "rw"
+                    }
+                ],
+                "ispresent": 0,
+                "name": "cfg_rqm_initial_e2e_credits_np",
+                "offset": 168,
+                "param.ispresent": "HAS_NP",
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 192,
+                "address_dec": 192,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 192,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 195,
+                        "name": "default_map",
+                        "offset": 172,
+                        "size": 4
+                    }},
+                    "regwidth": 32
+                },
+                "doc": "End to End credit initialization register",
+                "endaddress": 195,
+                "field": [
+                    {
+                        "default": 0,
+                        "doc": "The E2E credits amount to load for EID = cfg_rqm_initial_e2e_credits_eid",
+                        "hw": "ro",
+                        "localparam.offset": "(E2E_CREDIT_WIDTH - 1) : 0",
+                        "name": "value",
+                        "offset": "0:5",
+                        "param.offset": "(E2E_CREDIT_WIDTH - 1) : 0",
+                        "sw": "rw"
+                    },
+                    {
+                        "default": 0,
+                        "doc": "The EID that will be loaded with the cfg_rqm_initial_e2e_credits_value.",
+                        "hw": "ro",
+                        "localparam.offset": "((6 + EID_WIDTH) - 1) : 6",
+                        "name": "eid",
+                        "offset": "6:15",
+                        "param.offset": "((6 + EID_WIDTH) - 1) : 6",
+                        "rtl.hw_wp": true,
+                        "sw": "rw"
+                    },
+                    {
+                        "default": 0,
+                        "doc": "Set if the RQM can send flits to this EID on this VC.\ne.g. If the RQM is in MI-C, en shall be 0 for all SLCs that are not\nin the same NUMA cluster as this MI-C",
+                        "hw": "ro",
+                        "name": "en",
+                        "offset": "31:31",
+                        "sw": "rw"
+                    }
+                ],
+                "ispresent": 1,
+                "name": "cfg_rqm_initial_e2e_credits_p0",
+                "offset": 172,
+                "param.ispresent": "HAS_P0",
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 196,
+                "address_dec": 196,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 196,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 199,
+                        "name": "default_map",
+                        "offset": 176,
+                        "size": 4
+                    }},
+                    "regwidth": 32
+                },
+                "doc": "End to End credit initialization register",
+                "endaddress": 199,
+                "field": [
+                    {
+                        "default": 0,
+                        "doc": "The E2E credits amount to load for EID = cfg_rqm_initial_e2e_credits_eid",
+                        "hw": "ro",
+                        "localparam.offset": "(E2E_CREDIT_WIDTH - 1) : 0",
+                        "name": "value",
+                        "offset": "0:5",
+                        "param.offset": "(E2E_CREDIT_WIDTH - 1) : 0",
+                        "sw": "rw"
+                    },
+                    {
+                        "default": 0,
+                        "doc": "The EID that will be loaded with the cfg_rqm_initial_e2e_credits_value.",
+                        "hw": "ro",
+                        "localparam.offset": "((6 + EID_WIDTH) - 1) : 6",
+                        "name": "eid",
+                        "offset": "6:15",
+                        "param.offset": "((6 + EID_WIDTH) - 1) : 6",
+                        "rtl.hw_wp": true,
+                        "sw": "rw"
+                    },
+                    {
+                        "default": 0,
+                        "doc": "Set if the RQM can send flits to this EID on this VC.\ne.g. If the RQM is in MI-C, en shall be 0 for all SLCs that are not\nin the same NUMA cluster as this MI-C",
+                        "hw": "ro",
+                        "name": "en",
+                        "offset": "31:31",
+                        "sw": "rw"
+                    }
+                ],
+                "ispresent": 1,
+                "name": "cfg_rqm_initial_e2e_credits_p1",
+                "offset": 176,
+                "param.ispresent": "HAS_P1",
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 200,
+                "address_dec": 200,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 200,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 203,
+                        "name": "default_map",
+                        "offset": 180,
+                        "size": 4
+                    }},
+                    "regwidth": 32
+                },
+                "doc": "End to End credit initialization register",
+                "endaddress": 203,
+                "field": [
+                    {
+                        "default": 0,
+                        "doc": "The E2E credits amount to load for EID = cfg_rqm_initial_e2e_credits_eid",
+                        "hw": "ro",
+                        "localparam.offset": "(E2E_CREDIT_WIDTH - 1) : 0",
+                        "name": "value",
+                        "offset": "0:5",
+                        "param.offset": "(E2E_CREDIT_WIDTH - 1) : 0",
+                        "sw": "rw"
+                    },
+                    {
+                        "default": 0,
+                        "doc": "The EID that will be loaded with the cfg_rqm_initial_e2e_credits_value.",
+                        "hw": "ro",
+                        "localparam.offset": "((6 + EID_WIDTH) - 1) : 6",
+                        "name": "eid",
+                        "offset": "6:15",
+                        "param.offset": "((6 + EID_WIDTH) - 1) : 6",
+                        "rtl.hw_wp": true,
+                        "sw": "rw"
+                    },
+                    {
+                        "default": 0,
+                        "doc": "Set if the RQM can send flits to this EID on this VC.\ne.g. If the RQM is in MI-C, en shall be 0 for all SLCs that are not\nin the same NUMA cluster as this MI-C",
+                        "hw": "ro",
+                        "name": "en",
+                        "offset": "31:31",
+                        "sw": "rw"
+                    }
+                ],
+                "ispresent": 0,
+                "name": "cfg_rqm_initial_e2e_credits_pw",
+                "offset": 180,
+                "param.ispresent": "HAS_PW",
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 204,
+                "address_dec": 204,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 204,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 207,
+                        "name": "default_map",
+                        "offset": 184,
+                        "size": 4
+                    }},
+                    "regwidth": 32
+                },
+                "doc": "End to End credit initialization register",
+                "endaddress": 207,
+                "field": [
+                    {
+                        "default": 0,
+                        "doc": "The E2E credits amount to load for EID = cfg_rqm_initial_e2e_credits_eid",
+                        "hw": "ro",
+                        "localparam.offset": "(E2E_CREDIT_WIDTH - 1) : 0",
+                        "name": "value",
+                        "offset": "0:5",
+                        "param.offset": "(E2E_CREDIT_WIDTH - 1) : 0",
+                        "sw": "rw"
+                    },
+                    {
+                        "default": 0,
+                        "doc": "The EID that will be loaded with the cfg_rqm_initial_e2e_credits_value.",
+                        "hw": "ro",
+                        "localparam.offset": "((6 + EID_WIDTH) - 1) : 6",
+                        "name": "eid",
+                        "offset": "6:15",
+                        "param.offset": "((6 + EID_WIDTH) - 1) : 6",
+                        "rtl.hw_wp": true,
+                        "sw": "rw"
+                    },
+                    {
+                        "default": 0,
+                        "doc": "Set if the RQM can send flits to this EID on this VC.\ne.g. If the RQM is in MI-C, en shall be 0 for all SLCs that are not\nin the same NUMA cluster as this MI-C",
+                        "hw": "ro",
+                        "name": "en",
+                        "offset": "31:31",
+                        "sw": "rw"
+                    }
+                ],
+                "ispresent": 1,
+                "name": "cfg_rqm_initial_e2e_credits_hr",
+                "offset": 184,
+                "param.ispresent": "HAS_HR",
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 208,
+                "address_dec": 208,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 208,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 211,
+                        "name": "default_map",
+                        "offset": 188,
+                        "size": 4
+                    }},
+                    "regwidth": 32
+                },
+                "doc": "End to End credit initialization register",
+                "endaddress": 211,
+                "field": [
+                    {
+                        "default": 0,
+                        "doc": "The E2E credits amount to load for EID = cfg_rqm_initial_e2e_credits_eid",
+                        "hw": "ro",
+                        "localparam.offset": "(E2E_CREDIT_WIDTH - 1) : 0",
+                        "name": "value",
+                        "offset": "0:5",
+                        "param.offset": "(E2E_CREDIT_WIDTH - 1) : 0",
+                        "sw": "rw"
+                    },
+                    {
+                        "default": 0,
+                        "doc": "The EID that will be loaded with the cfg_rqm_initial_e2e_credits_value.",
+                        "hw": "ro",
+                        "localparam.offset": "((6 + EID_WIDTH) - 1) : 6",
+                        "name": "eid",
+                        "offset": "6:15",
+                        "param.offset": "((6 + EID_WIDTH) - 1) : 6",
+                        "rtl.hw_wp": true,
+                        "sw": "rw"
+                    },
+                    {
+                        "default": 0,
+                        "doc": "Set if the RQM can send flits to this EID on this VC.\ne.g. If the RQM is in MI-C, en shall be 0 for all SLCs that are not\nin the same NUMA cluster as this MI-C",
+                        "hw": "ro",
+                        "name": "en",
+                        "offset": "31:31",
+                        "sw": "rw"
+                    }
+                ],
+                "ispresent": 1,
+                "name": "cfg_rqm_initial_e2e_credits_sn",
+                "offset": 188,
+                "param.ispresent": "HAS_SN",
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 212,
+                "address_dec": 212,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 212,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 215,
+                        "name": "default_map",
+                        "offset": 192,
+                        "size": 4
+                    }},
+                    "regwidth": 32
+                },
+                "endaddress": 215,
+                "field": {
+                    "default": 10,
+                    "doc": "Maximum credits that P0+P1 VC can consume together",
+                    "hw": "ro",
+                    "name": "total_credits",
+                    "offset": "0:6",
+                    "param.offset": "E2E_CREDIT_WIDTH : 0",
+                    "sw": "rw"
+                },
+                "name": "cfg_rqm_max_p0_p1",
+                "offset": 192,
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 216,
+                "address_dec": 216,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 216,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 219,
+                        "name": "default_map",
+                        "offset": 196,
+                        "size": 4
+                    }},
+                    "regwidth": 32
+                },
+                "endaddress": 219,
+                "field": [
+                    {
+                        "default": 0,
+                        "doc": "If set, CBusy is based on the maximum CBusy in the sliding window.\nOtherwise CBusy is based on a factored average of the sliding window",
+                        "hw": "ro",
+                        "name": "max_out",
+                        "offset": "0:0",
+                        "sw": "rw"
+                    },
+                    {
+                        "default": 3,
+                        "doc": "Set to value between 3 and 7.\nWinSize sets the size of the sliding window to 2^WinSize entries.",
+                        "hw": "ro",
+                        "name": "window_size",
+                        "offset": "3:1",
+                        "sw": "rw"
+                    },
+                    {
+                        "default": 1,
+                        "doc": "Average factor for the CBusy. BusyFactor is set in U1.7 fixed point.",
+                        "hw": "ro",
+                        "name": "busy_factor",
+                        "offset": "11:4",
+                        "sw": "rw"
+                    },
+                    {
+                        "default": 0,
+                        "doc": "Aging interval of the sliding window. If set to 0, the aging mechanism is disabled",
+                        "hw": "ro",
+                        "name": "aging_period",
+                        "offset": "31:12",
+                        "sw": "rw"
+                    }
+                ],
+                "name": "cfg_rqm_cbusy_slc",
+                "offset": 196,
+                "param.ispresent": "~ IS_SLC",
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 220,
+                "address_dec": 220,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 220,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 223,
+                        "name": "default_map",
+                        "offset": 200,
+                        "size": 4
+                    }},
+                    "regwidth": 32
+                },
+                "endaddress": 223,
+                "field": [
+                    {
+                        "default": 0,
+                        "doc": "If set, CBusy is based on the maximum CBusy in the sliding window.\nOtherwise CBusy is based on a factored average of the sliding window",
+                        "hw": "ro",
+                        "name": "max_out",
+                        "offset": "0:0",
+                        "sw": "rw"
+                    },
+                    {
+                        "default": 3,
+                        "doc": "Set to value between 3 and 7.\nWinSize sets the size of the sliding window to 2^WinSize entries.",
+                        "hw": "ro",
+                        "name": "window_size",
+                        "offset": "3:1",
+                        "sw": "rw"
+                    },
+                    {
+                        "default": 1,
+                        "doc": "Average factor for the CBusy. BusyFactor is set in U1.7 fixed point.",
+                        "hw": "ro",
+                        "name": "busy_factor",
+                        "offset": "11:4",
+                        "sw": "rw"
+                    },
+                    {
+                        "default": 0,
+                        "doc": "Aging interval of the sliding window. If set to 0, the aging mechanism is disabled",
+                        "hw": "ro",
+                        "name": "aging_period",
+                        "offset": "31:12",
+                        "sw": "rw"
+                    }
+                ],
+                "name": "cfg_rqm_cbusy_mif",
+                "offset": 200,
+                "param.ispresent": "~ IS_SLC",
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 224,
+                "address_dec": 224,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 224,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 227,
+                        "name": "default_map",
+                        "offset": 204,
+                        "size": 4
+                    }},
+                    "regwidth": 32
+                },
+                "endaddress": 227,
+                "field": {
+                    "default": 0,
+                    "doc": "If set, the RQM uses indications from the MI-F for CBusy calculation.\nShould be disabled in MIs connected to a specific NUMA domain. (e.g. MI-C)",
+                    "hw": "ro",
+                    "name": "window",
+                    "offset": "0:0",
+                    "sw": "rw"
+                },
+                "name": "cfg_rqm_cbusy_use_mif",
+                "offset": 204,
+                "param.ispresent": "~ IS_SLC",
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 228,
+                "address2": 232,
+                "address_dec": 228,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 228,
+                        "address2": 232,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 803,
+                        "name": "default_map",
+                        "offset": 208,
+                        "size": 4
+                    }},
+                    "regwidth": 32,
+                    "repeats": {"repeat": {
+                        "count": 144,
+                        "name": "cfg_rqm_pcie_peer_to_peer"
+                    }}
+                },
+                "count": 144,
+                "endaddress": 803,
+                "field": {
+                    "default": 0,
+                    "doc": "To allow the reordering at the destination each PCIe peer-to-peer request is assigned with PCIe ID\nnoting the source of the request and a sequence number for each request.\nThe target MI-F of each flits is set by this lookup table, the input of the table is\n{SQN, TargetPCIe_id[3:0]} and the output is the EID of the target.\nIf the PCIe target is in a remote die, the LUT is used and the output of the\nLUT is the EID of the target MI-F",
+                    "hw": "ro",
+                    "localparam.offset": "(EID_WIDTH - 1) : 0",
+                    "name": "lut",
+                    "offset": "0:9",
+                    "param.offset": "(EID_WIDTH - 1) : 0",
+                    "sw": "rw"
+                },
+                "ispresent": 0,
+                "name": "cfg_rqm_pcie_peer_to_peer",
+                "offset": 208,
+                "param.ispresent": "HAS_PCIE_LUT",
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 804,
+                "address2": 808,
+                "address_dec": 804,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 804,
+                        "address2": 808,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 835,
+                        "name": "default_map",
+                        "offset": 784,
+                        "size": 4
+                    }},
+                    "regwidth": 32,
+                    "repeats": {"repeat": {
+                        "count": 8,
+                        "name": "cfg_rqm_target_mif_table_index"
+                    }}
+                },
+                "count": 8,
+                "endaddress": 835,
+                "exceptions": {"exception": [
+                    {
+                        "exception": {
+                            "default": 7,
+                            "name": "threshold",
+                            "type": "field"
+                        },
+                        "index": 0,
+                        "type": "reg"
+                    },
+                    {
+                        "exception": {
+                            "default": 14,
+                            "name": "threshold",
+                            "type": "field"
+                        },
+                        "index": 1,
+                        "type": "reg"
+                    },
+                    {
+                        "exception": {
+                            "default": 21,
+                            "name": "threshold",
+                            "type": "field"
+                        },
+                        "index": 2,
+                        "type": "reg"
+                    },
+                    {
+                        "exception": {
+                            "default": 28,
+                            "name": "threshold",
+                            "type": "field"
+                        },
+                        "index": 3,
+                        "type": "reg"
+                    },
+                    {
+                        "exception": {
+                            "default": 39,
+                            "name": "threshold",
+                            "type": "field"
+                        },
+                        "index": 4,
+                        "type": "reg"
+                    },
+                    {
+                        "exception": {
+                            "default": 46,
+                            "name": "threshold",
+                            "type": "field"
+                        },
+                        "index": 5,
+                        "type": "reg"
+                    },
+                    {
+                        "exception": {
+                            "default": 53,
+                            "name": "threshold",
+                            "type": "field"
+                        },
+                        "index": 6,
+                        "type": "reg"
+                    },
+                    {
+                        "exception": {
+                            "default": 60,
+                            "name": "threshold",
+                            "type": "field"
+                        },
+                        "index": 7,
+                        "type": "reg"
+                    }
+                ]},
+                "field": {
+                    "default": 0,
+                    "doc": "The threshold that determines the TableIndex which is used as an\nindex to a lookup table of the target MI-F EID.\nThe table index is calulated as follows (A = {SLC[0],SLC[6:2]}) :\nif A<TH0: TableIndex = 0\nelif A<TH1: TableIndex =1\nelif A<TH2: TableIndex = 2\nelif A<TH3: TableIndex = 3\nelif A<TH4: TableIndex = 4\nelif A<TH5: TableIndex = 5\nelif A<TH6: TableIndex = 6\nelif A<TH7: TableIndex = 7\nelse: TableIndex = 8\nThe thresholds TH0-TH7 shall be set according to the following table and the number of\nactive MI-Fs:\nTH Idx   Eight Active MI-Fs      Nine Active MI-Fs\n0                 7                    6\n1                 14                   12\n2                 21                   19\n3                 28                   25\n4                 39                   35\n5                 46                   41\n6                 53                   48\n7                 60                   54",
+                    "hw": "ro",
+                    "name": "threshold",
+                    "offset": "5:0",
+                    "sw": "rw"
+                },
+                "ispresent": 0,
+                "name": "cfg_rqm_target_mif_table_index",
+                "offset": 784,
+                "param.ispresent": "HAS_MIF_HASH",
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 836,
+                "address2": 840,
+                "address_dec": 836,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 836,
+                        "address2": 840,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 871,
+                        "name": "default_map",
+                        "offset": 816,
+                        "size": 4
+                    }},
+                    "regwidth": 32,
+                    "repeats": {"repeat": {
+                        "count": 9,
+                        "name": "cfg_rqm_table_index_to_mif"
+                    }}
+                },
+                "count": 9,
+                "endaddress": 871,
+                "field": {
+                    "default": 0,
+                    "doc": "A lookup table of the target MI-F EID, the index to the lookup table\nis the table index calculated based on cfg_rqm_target_mif_table_index_threshold.\nThe lookup table should be configured with the active MI-F EID in order from left\nto right. The EID of the leftmost active MI-F should be written to the first entry\nof the table (MI-F0 EID). If there are 9 active MI-Fs then the EID of the\nrightmost active MI-F is written to the last entry (MI-F8 EID) and if there are 8\nactive MI-F the EID of the rightmost active MI-F is written to the MI-F7 EID entry.",
+                    "hw": "ro",
+                    "localparam.offset": "(EID_WIDTH - 1) : 0",
+                    "name": "eid",
+                    "offset": "0:9",
+                    "param.offset": "(EID_WIDTH - 1) : 0",
+                    "sw": "rw"
+                },
+                "ispresent": 0,
+                "name": "cfg_rqm_table_index_to_mif",
+                "offset": 816,
+                "param.ispresent": "HAS_MIF_HASH",
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 872,
+                "address_dec": 872,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 872,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 875,
+                        "name": "default_map",
+                        "offset": 852,
+                        "size": 4
+                    }},
+                    "regwidth": 32
+                },
+                "endaddress": 875,
+                "field": {
+                    "default": 1,
+                    "doc": "If enabled, target EID of PCIe remote memory access is calculated by MI-F hashing.\nIf not enabled, the EID is taken from the Direct EID of the SAM region",
+                    "hw": "ro",
+                    "name": "en",
+                    "offset": "0:0",
+                    "sw": "rw"
+                },
+                "ispresent": 0,
+                "name": "cfg_rqm_mif_hashing",
+                "offset": 852,
+                "param.ispresent": "HAS_MIF_HASH",
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 876,
+                "address_dec": 876,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 876,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 879,
+                        "name": "default_map",
+                        "offset": 856,
+                        "size": 4
+                    }},
+                    "regwidth": 32
+                },
+                "doc": "The RQM can optionally drop PrefetchTgt requests according to the CBusy state.\nThe RQM holds a configurable CBusy threshold and if this option is enabled by\nsoftware PrefetchTgt requests are dropped by the RQM if the CBusy value is\nequal to or greater than the CBusy threshold",
+                "endaddress": 879,
+                "field": [
+                    {
+                        "default": 0,
+                        "doc": "If set, the RQM drops PrefetchTgt requests if the CBusy value is\nequal to or greater than cfg_rqm_cbusy_drop_prefetch_tgt.value",
+                        "hw": "ro",
+                        "name": "en",
+                        "offset": "0:0",
+                        "sw": "rw"
+                    },
+                    {
+                        "default": 0,
+                        "doc": "The CBusy threshold, if the CBusy value is equal to or greater than this threshold\nand cfg_rqm_cbusy_drop_prefetch_tgt_en, The RQM drops PrefetchTgt requests",
+                        "hw": "ro",
+                        "name": "value",
+                        "offset": "5:4",
+                        "sw": "rw"
+                    }
+                ],
+                "name": "cfg_rqm_cbusy_drop_prefetch_tgt",
+                "offset": 856,
+                "param.ispresent": "~ IS_SLC",
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 880,
+                "address_dec": 880,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 880,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 883,
+                        "name": "default_map",
+                        "offset": 860,
+                        "size": 4
+                    }},
+                    "regwidth": 32
+                },
+                "doc": "Option to override the request src_numa_id",
+                "endaddress": 883,
+                "field": [
+                    {
+                        "default": 0,
+                        "doc": "If set, the RQM will override the src_numa_id and will assign\nthe src_numa_id field based on cfg_rqm_src_numa_id_override.value register",
+                        "hw": "ro",
+                        "name": "en",
+                        "offset": "0:0",
+                        "sw": "rw"
+                    },
+                    {
+                        "default": 0,
+                        "doc": "The value of the src_numa_id to use in case\ncfg_rqm_src_numa_id_override.en is set",
+                        "hw": "ro",
+                        "name": "value",
+                        "offset": "5:4",
+                        "sw": "rw"
+                    }
+                ],
+                "name": "cfg_rqm_src_numa_id_override",
+                "offset": 860,
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 884,
+                "address_dec": 884,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 884,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 887,
+                        "name": "default_map",
+                        "offset": 864,
+                        "size": 4
+                    }},
+                    "regwidth": 32
+                },
+                "endaddress": 887,
+                "field": [
+                    {
+                        "default": 0,
+                        "doc": "The enumerate ID of the Default MI-A that serves as the completer for unmapped transactions",
+                        "hw": "ro",
+                        "localparam.offset": "(EID_WIDTH - 1) : 0",
+                        "name": "default_mia",
+                        "offset": "0:9",
+                        "param.offset": "(EID_WIDTH - 1) : 0",
+                        "sw": "rw"
+                    },
+                    {
+                        "default": 0,
+                        "doc": "The enumerate ID of the DVM hub",
+                        "hw": "ro",
+                        "localparam.offset": "((16 + EID_WIDTH) - 1) : 16",
+                        "name": "dvm_hub",
+                        "offset": "16:25",
+                        "param.offset": "((16 + EID_WIDTH) - 1) : 16",
+                        "sw": "rw"
+                    }
+                ],
+                "name": "cfg_rqm_eid",
+                "offset": 864,
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 888,
+                "address2": 892,
+                "address_dec": 888,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 888,
+                        "address2": 892,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 915,
+                        "name": "default_map",
+                        "offset": 868,
+                        "size": 4
+                    }},
+                    "regwidth": 32,
+                    "repeats": {"repeat": {
+                        "count": 7,
+                        "name": "cfg_rqm_arb_wrr"
+                    }}
+                },
+                "count": 7,
+                "endaddress": 915,
+                "field": {
+                    "default": 255,
+                    "doc": "Weight of each VC in the VC weighted round robin arbiter.",
+                    "hw": "ro",
+                    "name": "weight",
+                    "offset": "7:0",
+                    "sw": "rw"
+                },
+                "name": "cfg_rqm_arb_wrr",
+                "offset": 868,
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 948,
+                "address2": 952,
+                "address_dec": 948,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 948,
+                        "address2": 952,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 963,
+                        "name": "default_map",
+                        "offset": 928,
+                        "size": 4
+                    }},
+                    "regwidth": 32,
+                    "repeats": {"repeat": {
+                        "count": 4,
+                        "name": "cfg_rqm_core_p1_opcodes"
+                    }}
+                },
+                "count": 4,
+                "endaddress": 963,
+                "exceptions": {"exception": [
+                    {
+                        "exception": {
+                            "default": 8650764,
+                            "name": "bitmap",
+                            "type": "field"
+                        },
+                        "index": 0,
+                        "type": "reg"
+                    },
+                    {
+                        "exception": {
+                            "default": "",
+                            "name": "bitmap",
+                            "type": "field"
+                        },
+                        "index": 1,
+                        "type": "reg"
+                    },
+                    {
+                        "exception": {
+                            "default": "",
+                            "name": "bitmap",
+                            "type": "field"
+                        },
+                        "index": 2,
+                        "type": "reg"
+                    },
+                    {
+                        "exception": {
+                            "default": "",
+                            "name": "bitmap",
+                            "type": "field"
+                        },
+                        "index": 3,
+                        "type": "reg"
+                    }
+                ]},
+                "field": {
+                    "default": 0,
+                    "doc": "If a bit is set, a core request to SLC is transmitted with P1 VC.\nThe MSB of the opcode is not used by\nthe core so we need only NUM_REQ_OPCODES/2 (128) bits.\nBy default the opcodes that are p1 are :\nReadShared\nReadClean\nReadOnce\nReadNoSnp\nReadUnique\nReadNoSnpSep\nReadOnceCleanInvalid\nReadOnceMakeInvalid\nReadNotSharedDirty\nCleanUnique\nMakeUnique\nMakeReadUnique\nThe bitmap[reg_index][bitmap_j] corresponds to 32 * reg_index + bitmap_j",
+                    "hw": "ro",
+                    "name": "bitmap",
+                    "offset": "31:0",
+                    "sw": "rw"
+                },
+                "ispresent": 0,
+                "name": "cfg_rqm_core_p1_opcodes",
+                "offset": 928,
+                "param.ispresent": "IS_MIC",
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 964,
+                "address2": 968,
+                "address_dec": 964,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 964,
+                        "address2": 968,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 979,
+                        "name": "default_map",
+                        "offset": 944,
+                        "size": 4
+                    }},
+                    "regwidth": 32,
+                    "repeats": {"repeat": {
+                        "count": 4,
+                        "name": "cfg_rqm_core_p0_p1_expected_opcodes"
+                    }}
+                },
+                "count": 4,
+                "endaddress": 979,
+                "field": {
+                    "default": 0,
+                    "doc": "Bitmap of the opcodes that expected to be transmitted with p0 or p1 VC.\nIn case we get an expected p0/p1 opcode not to SLC, SAM error will be asserted",
+                    "hw": "ro",
+                    "name": "bitmap",
+                    "offset": "31:0",
+                    "sw": "rw"
+                },
+                "ispresent": 0,
+                "name": "cfg_rqm_core_p0_p1_expected_opcodes",
+                "offset": 944,
+                "param.ispresent": "IS_MIC",
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 980,
+                "address2": 984,
+                "address_dec": 980,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 980,
+                        "address2": 984,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 995,
+                        "name": "default_map",
+                        "offset": 960,
+                        "size": 4
+                    }},
+                    "regwidth": 32,
+                    "repeats": {"repeat": {
+                        "count": 4,
+                        "name": "cfg_rqm_miphb_read_opcodes"
+                    }}
+                },
+                "count": 4,
+                "endaddress": 995,
+                "exceptions": {"exception": [
+                    {
+                        "exception": {
+                            "default": 16,
+                            "name": "bitmap",
+                            "type": "field"
+                        },
+                        "index": 0,
+                        "type": "reg"
+                    },
+                    {
+                        "exception": {
+                            "default": "",
+                            "name": "bitmap",
+                            "type": "field"
+                        },
+                        "index": 1,
+                        "type": "reg"
+                    },
+                    {
+                        "exception": {
+                            "default": "",
+                            "name": "bitmap",
+                            "type": "field"
+                        },
+                        "index": 2,
+                        "type": "reg"
+                    },
+                    {
+                        "exception": {
+                            "default": "",
+                            "name": "bitmap",
+                            "type": "field"
+                        },
+                        "index": 3,
+                        "type": "reg"
+                    }
+                ]},
+                "field": {
+                    "default": 0,
+                    "doc": "Each bit corresponds to the request opcode enum.\nIf a bit is set, request to High Bandwidth MI-P will be directed to\nEID = direct_eid (as configured in the relevant sam region).\nIf a bit is 0, request to High Bandwidth MI-P will be directed\nto EID = (direct_eid + 1)\nThe bitmap[reg_index][bitmap_j] corresponds to 32 * reg_index + bitmap_j",
+                    "hw": "ro",
+                    "name": "bitmap",
+                    "offset": "31:0",
+                    "sw": "rw"
+                },
+                "name": "cfg_rqm_miphb_read_opcodes",
+                "offset": 960,
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 996,
+                "address_dec": 996,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 996,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 999,
+                        "name": "default_map",
+                        "offset": 976,
+                        "size": 4
+                    }},
+                    "regwidth": 32
+                },
+                "endaddress": 999,
+                "field": [
+                    {
+                        "default": 0,
+                        "doc": "If set, the RQM will override the input flit's color\nand will assign a new color based on override_color_value register",
+                        "hw": "ro",
+                        "name": "en",
+                        "offset": "0:0",
+                        "sw": "rw"
+                    },
+                    {
+                        "default": {
+                            "content": 0,
+                            "enum.unresolvedDef": "GREEN"
+                        },
+                        "doc": {
+                            "content": "The value of the color to use in case override_color_en is set",
+                            "list": {
+                                "name": "color_enum",
+                                "type": "enum",
+                                "value": [
+                                    {
+                                        "content": 0,
+                                        "name": "GREEN"
+                                    },
+                                    {
+                                        "content": 1,
+                                        "name": "YELLOW"
+                                    },
+                                    {
+                                        "content": 2,
+                                        "name": "RED"
+                                    }
+                                ]
+                            }
+                        },
+                        "encode": "color_enum",
+                        "hw": "ro",
+                        "name": "value",
+                        "offset": "5:4",
+                        "sw": "rw"
+                    }
+                ],
+                "name": "cfg_rqm_color_override",
+                "offset": 976,
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 1000,
+                "address_dec": 1000,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 1000,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 1003,
+                        "name": "default_map",
+                        "offset": 980,
+                        "size": 4
+                    }},
+                    "regwidth": 32
+                },
+                "endaddress": 1003,
+                "field": {
+                    "default": 0,
+                    "doc": "The base address of the fabric config space. 1MB granule (bits [47:20])\nShall match the SAM configurtion - base address for config region",
+                    "hw": "ro",
+                    "name": "base_address",
+                    "offset": "27:0",
+                    "sw": "rw"
+                },
+                "name": "cfg_rqm_fabric_config_space",
+                "offset": 980,
+                "param.ispresent": "~ IS_SLC",
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 1004,
+                "address2": 1008,
+                "address_dec": 1004,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 1004,
+                        "address2": 1008,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 1015,
+                        "name": "default_map",
+                        "offset": 984,
+                        "size": 4
+                    }},
+                    "regwidth": 32,
+                    "repeats": {"repeat": {
+                        "count": 3,
+                        "name": "cfg_rqm_ccr"
+                    }}
+                },
+                "count": 3,
+                "endaddress": 1015,
+                "field": {
+                    "default": 0,
+                    "doc": "The CCR is set with base EID pointing to the EID of the first agent in the CCR and is incremented with the\naddress offset. 1MB granule (bits [47:20]).\nBase address of a CCR region must be aligned with the size of the CCR region.\nShall match the SAM configurtion - start address for the corresponding CCR region.\nCCR0 supports up to 128 agents of 1MiB each. CCR0 address range is 128MiB.\nCCR1 supports up to 16 agents of 1MiB each. CCR1 address range is 16MiB.\nCCR2 supports up to 32 agents of 16MiB each. CCR2 address range is 512MiB.",
+                    "hw": "ro",
+                    "name": "base_address",
+                    "offset": "27:0",
+                    "sw": "rw"
+                },
+                "name": "cfg_rqm_ccr",
+                "offset": 984,
+                "param.ispresent": "~ IS_SLC",
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 1016,
+                "address_dec": 1016,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 1016,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 1019,
+                        "name": "default_map",
+                        "offset": 996,
+                        "size": 4
+                    }},
+                    "regwidth": 32
+                },
+                "endaddress": 1019,
+                "field": {
+                    "default": 0,
+                    "doc": "The base address of the core config space. 1MB granule (bits [47:20])\nShall be aligned to 128MiB.\nShall match the SAM configurtion - base address for CCR region",
+                    "hw": "ro",
+                    "name": "base_address",
+                    "offset": "27:0",
+                    "sw": "rw"
+                },
+                "name": "cfg_rqm_core_config_space",
+                "offset": 996,
+                "rtl.strict_ports": true,
+                "size": 4
+            },
+            {
+                "address": 1020,
+                "address_dec": 1020,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 1020,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 1023,
+                        "name": "default_map",
+                        "offset": 1000,
+                        "size": 4
+                    }},
+                    "regwidth": 32
+                },
+                "endaddress": 1023,
+                "field": [
+                    {
+                        "default": {
+                            "content": 0,
+                            "enum.unresolvedDef": "FULL_CLUSTER"
+                        },
+                        "doc": {
+                            "content": "The Numa domain topology of the chiplet the RQM reside in",
+                            "list": {
+                                "name": "numa_domain_enum",
+                                "type": "enum",
+                                "value": [
+                                    {
+                                        "content": 0,
+                                        "name": "FULL_CLUSTER"
+                                    },
+                                    {
+                                        "content": 1,
+                                        "name": "HALF_CLUSTER"
+                                    }
+                                ]
+                            }
+                        },
+                        "encode": "numa_domain_enum",
+                        "hw": "ro",
+                        "name": "is_half_numa",
+                        "offset": "0:0",
+                        "sw": "rw"
+                    },
+                    {
+                        "default": {
+                            "content": 0,
+                            "enum.unresolvedDef": "NOT_ROTATED"
+                        },
+                        "doc": {
+                            "content": "The indication regarding the die rotation",
+                            "list": {
+                                "name": "chiplet_rotation_enum",
+                                "type": "enum",
+                                "value": [
+                                    {
+                                        "content": 0,
+                                        "name": "NOT_ROTATED"
+                                    },
+                                    {
+                                        "content": 1,
+                                        "name": "ROTATED"
+                                    }
+                                ]
+                            }
+                        },
+                        "encode": "chiplet_rotation_enum",
+                        "hw": "ro",
+                        "name": "is_rotated",
+                        "offset": "4:4",
+                        "sw": "rw"
+                    },
+                    {
+                        "default": 0,
+                        "doc": "The chiplet ID the RQM reside in. chiplet 0 contains\nNumas 0 & 1 (if exist) and chiplet 1 contains Numas 2 & 3 (if exist)",
+                        "hw": "ro",
+                        "ispresent": 0,
+                        "name": "id",
+                        "offset": "8:8",
+                        "param.ispresent": "HAS_PCIE_LUT",
+                        "sw": "rw"
+                    }
+                ],
+                "name": "cfg_rqm_chiplet",
+                "offset": 1000,
+                "rtl.strict_ports": true,
+                "size": 4
+            }
+        ],
+        "rtl.strict_ports": true,
+        "section": [
+            {
+                "address": 20,
+                "address2": 36,
+                "address_dec": 20,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 20,
+                        "address2": 36,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 147,
+                        "name": "default_map",
+                        "offset": 0,
+                        "size": 16
+                    }},
+                    "repeats": {"repeat": {
+                        "count": 8,
+                        "name": "rqm_sam_region_regfile",
+                        "param.count": "NUM_SAM_REGIONS"
+                    }}
+                },
+                "count": 8,
+                "doc": "The RQM SAM region configuration.\nFor the RQM to be functional, the SAM must be configured.\nThe SAM can be configured even during ACTIVE state, after config_done has been asserted.\nTo configure the SAM after config_done has been asserted, SW needs to:\n1.Ensure there are no more transactions to this region.\n2.Disable the region.\n3.Config the region\n4.Enable the region",
+                "endaddress": 147,
+                "name": "rqm_sam_region_regfile",
+                "offset": 0,
+                "param.count": "NUM_SAM_REGIONS",
+                "reg": [
+                    {
+                        "address": 20,
+                        "address_dec": 20,
+                        "config": {
+                            "busdomains": {"busdomain": {
+                                "address": 20,
+                                "addressUnit": 8,
+                                "bus": "CUSTOM",
+                                "endaddress": 23,
+                                "name": "default_map",
+                                "offset": 0,
+                                "size": 4
+                            }},
+                            "regwidth": 32
+                        },
+                        "endaddress": 23,
+                        "field": {
+                            "default": 0,
+                            "doc": "SAM Region Start Address, 1MB granule (bits [47:20])\nIn the design, the 20 LSBs of the request address are asssumed to be 0x7FFFF.\nSAM region is defined by cfg_sam_region_start[27:0] <= chi_req.addr[47:20] <= cfg_sam_region_end[27:0]",
+                            "hw": "ro",
+                            "name": "address",
+                            "offset": "27:0",
+                            "sw": "rw"
+                        },
+                        "name": "cfg_rqm_region_start",
+                        "offset": 0,
+                        "rtl.strict_ports": true,
+                        "size": 4
+                    },
+                    {
+                        "address": 24,
+                        "address_dec": 24,
+                        "config": {
+                            "busdomains": {"busdomain": {
+                                "address": 24,
+                                "addressUnit": 8,
+                                "bus": "CUSTOM",
+                                "endaddress": 27,
+                                "name": "default_map",
+                                "offset": 4,
+                                "size": 4
+                            }},
+                            "regwidth": 32
+                        },
+                        "endaddress": 27,
+                        "field": {
+                            "default": 0,
+                            "doc": "SAM Region End Address, 1MB granule (bits [47:20])\nIn the design, the 20 LSBs of the request address are asssumed to be 0x7FFFF.\nSAM region is defined by cfg_sam_region_start[27:0] <= chi_req.addr[47:20] <= cfg_sam_region_end[27:0]",
+                            "hw": "ro",
+                            "name": "address",
+                            "offset": "27:0",
+                            "sw": "rw"
+                        },
+                        "name": "cfg_rqm_region_end",
+                        "offset": 4,
+                        "rtl.strict_ports": true,
+                        "size": 4
+                    },
+                    {
+                        "address": 28,
+                        "address_dec": 28,
+                        "config": {
+                            "busdomains": {"busdomain": {
+                                "address": 28,
+                                "addressUnit": 8,
+                                "bus": "CUSTOM",
+                                "endaddress": 31,
+                                "name": "default_map",
+                                "offset": 8,
+                                "size": 4
+                            }},
+                            "regwidth": 32
+                        },
+                        "endaddress": 31,
+                        "field": [
+                            {
+                                "default": {
+                                    "content": 0,
+                                    "enum.unresolvedDef": "MI"
+                                },
+                                "doc": {
+                                    "content": "SAM Region Memory Type.",
+                                    "list": {
+                                        "name": "sam_memory_type_enum",
+                                        "type": "enum",
+                                        "value": [
+                                            {
+                                                "content": 0,
+                                                "name": "MI"
+                                            },
+                                            {
+                                                "content": 1,
+                                                "name": "SLC"
+                                            },
+                                            {
+                                                "content": 2,
+                                                "name": "RMEM"
+                                            },
+                                            {
+                                                "content": 3,
+                                                "name": "PCONFIG"
+                                            },
+                                            {
+                                                "content": 4,
+                                                "name": "PMEM"
+                                            },
+                                            {
+                                                "content": 5,
+                                                "name": "CONFIG"
+                                            },
+                                            {
+                                                "content": 6,
+                                                "name": "CCR0"
+                                            },
+                                            {
+                                                "content": 7,
+                                                "name": "CCR1"
+                                            },
+                                            {
+                                                "content": 8,
+                                                "name": "CCR2"
+                                            }
+                                        ]
+                                    }
+                                },
+                                "encode": "sam_memory_type_enum",
+                                "hw": "ro",
+                                "name": "memory_type",
+                                "offset": "3:0",
+                                "param.ispresent": "~ IS_SLC",
+                                "sw": "rw"
+                            },
+                            {
+                                "default": 0,
+                                "doc": "The NUMA ID of a region",
+                                "hw": "ro",
+                                "name": "numa_id",
+                                "offset": "5:4",
+                                "sw": "rw"
+                            },
+                            {
+                                "default": 0,
+                                "doc": "The target is High Bandwidth MI-P",
+                                "hw": "ro",
+                                "name": "is_miphb",
+                                "offset": "8:8",
+                                "sw": "rw"
+                            },
+                            {
+                                "default": 0,
+                                "doc": "SAM Region Enumerate ID. Applicable only if target type is set to MI, RMem, PConfig or PMem.\nOtherwise the target EID will be calculated by the hashing function or\nconfiguration logic.",
+                                "hw": "ro",
+                                "localparam.offset": "((16 + EID_WIDTH) - 1) : 16",
+                                "name": "direct_eid",
+                                "offset": "16:25",
+                                "param.offset": "((16 + EID_WIDTH) - 1) : 16",
+                                "sw": "rw"
+                            },
+                            {
+                                "default": 0,
+                                "doc": "The target is CXL.mem device (no need to hash over MI-Ds).\nRelevant only in SLC System Address Mapping",
+                                "hw": "ro",
+                                "ispresent": 1,
+                                "name": "cxl",
+                                "offset": "28:28",
+                                "param.ispresent": "IS_SLC",
+                                "sw": "rw"
+                            },
+                            {
+                                "default": 0,
+                                "doc": "SAM Region Valid",
+                                "hw": "ro",
+                                "name": "en",
+                                "offset": "31:31",
+                                "sw": "rw"
+                            }
+                        ],
+                        "name": "cfg_rqm_region",
+                        "offset": 8,
+                        "rtl.strict_ports": true,
+                        "size": 4
+                    },
+                    {
+                        "address": 32,
+                        "address_dec": 32,
+                        "config": {
+                            "busdomains": {"busdomain": {
+                                "address": 32,
+                                "addressUnit": 8,
+                                "bus": "CUSTOM",
+                                "endaddress": 35,
+                                "name": "default_map",
+                                "offset": 12,
+                                "size": 4
+                            }},
+                            "regwidth": 32
+                        },
+                        "endaddress": 35,
+                        "field": {
+                            "default": 0,
+                            "doc": "The target PCIe id.\nTo allow the reordering at the destination each PCIe\npeer-to-peer request is assigned with PCIe ID.\nFor PCIe located in chiplet 0, pcie_id MSB shall be 0.\nFor PCIe located in chiplet 1, pcie_id MSB shall be 1",
+                            "hw": "ro",
+                            "name": "id",
+                            "offset": "4:0",
+                            "sw": "rw"
+                        },
+                        "ispresent": 0,
+                        "name": "cfg_rqm_region_pcie",
+                        "offset": 12,
+                        "param.ispresent": "HAS_PCIE_LUT",
+                        "rtl.strict_ports": true,
+                        "size": 4
+                    }
+                ],
+                "rtl.strict_ports": true,
+                "size": 16,
+                "strict_sw": "rw"
+            },
+            {
+                "address": 916,
+                "address2": 932,
+                "address_dec": 916,
+                "config": {
+                    "busdomains": {"busdomain": {
+                        "address": 916,
+                        "address2": 932,
+                        "addressUnit": 8,
+                        "bus": "CUSTOM",
+                        "endaddress": 947,
+                        "name": "default_map",
+                        "offset": 896,
+                        "size": 16
+                    }},
+                    "repeats": {"repeat": {
+                        "count": 2,
+                        "name": "cfg_rate_limiter_regfile",
+                        "param.count": "NUM_RATE_LIMITER_VECTORS"
+                    }}
+                },
+                "count": 2,
+                "doc": "For SLC :\nWe have 2 vectors, cfg_rate_limiter_regfile[0] is used when throttling_bit = 0,\ncfg_rate_limiter_regfile[1] is used when throttling_bit = 1.\nFor Non SLC :\nWe have 12 vectors, and the vector we use is based on the CBusy and the req color.\nVectors mapping :\n4'd0 - CBusy 00, Green Rate limiter vector.\n4'd1 - CBusy 00, Yellow Rate limiter vector.\n4'd2 - CBusy 00, Red Rate limiter vector.\n4'd3 - CBusy 01, Green Rate limiter vector.\n4'd4 - CBusy 01, Yellow Rate limiter vector.\n4'd5 - CBusy 01, Red Rate limiter vector.\n4'd6 - CBusy 10, Green Rate limiter vector.\n4'd7 - CBusy 10, Yellow Rate limiter vector.\n4'd8 - CBusy 10, Red Rate limiter vector.\n4'd9 - CBusy 11, Green Rate limiter vector.\n4'd10 - CBusy 11, Yellow Rate limiter vector.\n4'd11 - CBusy 11, Red Rate limiter vector.",
+                "endaddress": 947,
+                "name": "cfg_rate_limiter_regfile",
+                "offset": 896,
+                "param.count": "NUM_RATE_LIMITER_VECTORS",
+                "reg": {
+                    "address": 916,
+                    "address2": 920,
+                    "address_dec": 916,
+                    "config": {
+                        "busdomains": {"busdomain": {
+                            "address": 916,
+                            "address2": 920,
+                            "addressUnit": 8,
+                            "bus": "CUSTOM",
+                            "endaddress": 931,
+                            "name": "default_map",
+                            "offset": 0,
+                            "size": 4
+                        }},
+                        "regwidth": 32,
+                        "repeats": {"repeat": {
+                            "count": 4,
+                            "name": "cfg_rqm_rate_limiter"
+                        }}
+                    },
+                    "count": 4,
+                    "endaddress": 931,
+                    "field": {
+                        "default": 4294967295,
+                        "doc": "Rate limiter bit map.\nthe limiter runs over these bits in a cycle,\nenabling a request only when a bit is set (e.g. if we want a 50% rate limiter,\nwe will set only the even bits).\nThe bitmap[reg_index][bitmap_j] corresponds to 32 * reg_index + bitmap_j",
+                        "hw": "ro",
+                        "name": "vector",
+                        "offset": "31:0",
+                        "sw": "rw"
+                    },
+                    "name": "cfg_rqm_rate_limiter",
+                    "offset": 0,
+                    "rtl.strict_ports": true,
+                    "size": 4
+                },
+                "rtl.strict_ports": true,
+                "size": 16,
+                "strict_sw": "rw"
+            }
+        ],
+        "size": 1004,
+        "strict_sw": "rw"
+    },
+    "singleline_comment": true,
+    "size": 1024,
+    "sv_localparam": true
+}}

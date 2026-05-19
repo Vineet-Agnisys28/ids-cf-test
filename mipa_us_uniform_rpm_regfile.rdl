@@ -1,0 +1,175 @@
+
+`ifndef _MIPA_US_UNIFORM_RPM_REGFILE_
+`define _MIPA_US_UNIFORM_RPM_REGFILE_
+
+regfile mipa_us_uniform_rpm_regfile #(
+  bit HAS_ACELITEDVM                            = 1,
+  // Up to 32
+  longint unsigned NUM_ACELITE                      = 3,
+  longint unsigned NUM_ACELITE_FIXED                = (NUM_ACELITE == 0) ? 1 : NUM_ACELITE,
+  // BANK_RPM_USAGE_COUNTER_WIDTH Must be strictly smaller than 16
+  longint unsigned BANK_RPM_USAGE_COUNTER_WIDTH = 9,
+  // Must be at most (2**BANK_RPM_USAGE_COUNTER_WIDTH)-1
+  longint unsigned MAX_ENTRIES_PER_BANK = 256,
+  longint unsigned DEFAULT_RESERVED_PER_CTX = 1
+)
+  {
+  name = "mipa_us_uniform_rpm_regfile";
+  desc = "MI-A/P AXI Uniform 2 Bank Resource Pool Manager (URPM) Register File.
+          Is in charge of distributing the system resources (RAMS, queues etc) for reads/writes/atomic
+          Threee instances in the design:
+          1. URPM for non-atomic/dvm reads. i.e. all reads that are not a side effect of DVM sync/ atomic writes
+          2. URPM for all writes that do not generate side effect read (not atomic load, swap, compare)
+          3. URPM (small) for all atomic operations which also generates reads (atomic load,swap, compare)
+          ";
+
+
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "#Reserved enteries for AceLiteDVM Port";
+    } value[BANK_RPM_USAGE_COUNTER_WIDTH-1:0]      = DEFAULT_RESERVED_PER_CTX;
+  } cfg_reserved_limit_per_bank_acelitedvm;
+  cfg_reserved_limit_per_bank_acelitedvm->ispresent  = HAS_ACELITEDVM;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+    desc = "#Reserved enteries for AceLite <%=$i%> Port";
+    } value[BANK_RPM_USAGE_COUNTER_WIDTH-1:0]  = DEFAULT_RESERVED_PER_CTX;
+  } cfg_reserved_limit_per_bank_acelite[NUM_ACELITE_FIXED];
+  cfg_reserved_limit_per_bank_acelite->ispresent = (NUM_ACELITE > 0);
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "#Shared enteries for all context (AXI ports - AceliteDVM and AceLite-s) per bank.
+              Default is entire shared area left, need to fit reserved.";
+    } value[BANK_RPM_USAGE_COUNTER_WIDTH-1:0] = MAX_ENTRIES_PER_BANK - ((NUM_ACELITE + HAS_ACELITEDVM)*DEFAULT_RESERVED_PER_CTX);
+  } cfg_shared_limit_per_bank;
+
+  <% for( $bank_idx = 0; $bank_idx < 2; $bank_idx += 1 ) { %>
+    reg {
+      default sw = r;
+      default hw = w;
+      field {
+        desc = "Shared usage area bank <%=$bank_idx%> AceLiteDVM";
+      } shared_pool[BANK_RPM_USAGE_COUNTER_WIDTH-1:0];
+      field {
+        desc = "Reserved usage area bank <%=$bank_idx%> AceLiteDVM";
+      } reserved_pool[16+BANK_RPM_USAGE_COUNTER_WIDTH-1:16];
+    } sts_usage_counters_bank_<%=$bank_idx%>_acelitedvm;
+    sts_usage_counters_bank_<%=$bank_idx%>_acelitedvm->ispresent = HAS_ACELITEDVM;
+
+    reg {
+      default sw = r;
+      default hw = w;
+      field {
+        desc = "Shared usage area bank <%=$bank_idx%> AceLite";
+      } shared_pool[BANK_RPM_USAGE_COUNTER_WIDTH-1:0];
+      field {
+        desc = "Reserved usage area bank <%=$bank_idx%> AceLite";
+      } reserved_pool[16+BANK_RPM_USAGE_COUNTER_WIDTH-1:16];
+    } sts_usage_counters_bank_<%=$bank_idx%>_acelite[NUM_ACELITE_FIXED];
+    sts_usage_counters_bank_<%=$bank_idx%>_acelite->ispresent = (NUM_ACELITE>0);
+  <% } %>
+
+
+  reg sts_usage_counters_watermark{
+    default sw = r;
+    default hw = w;
+    field {
+      desc = "Watermark of usage counter. Maximum value of the usage (both banks, shared and reserved)";
+    } value[BANK_RPM_USAGE_COUNTER_WIDTH:0];
+  };
+  sts_usage_counters_watermark sts_usage_counters_watermark_acelitedvm;
+  sts_usage_counters_watermark sts_usage_counters_watermark_acelite[NUM_ACELITE_FIXED];
+
+  sts_usage_counters_watermark_acelitedvm->ispresent  = HAS_ACELITEDVM;
+  sts_usage_counters_watermark_acelite->ispresent     = (NUM_ACELITE > 0);
+
+  reg {
+    default sw = r;
+    default hw = w;
+    field {
+      desc = "Watermark of Summation of all usage counter. Maximum value of the usage (both banks, shared and reserved, and all ports)";
+    } value[BANK_RPM_USAGE_COUNTER_WIDTH:0];
+  } sts_usage_counters_watermark_total;
+  sts_usage_counters_watermark_total->ispresent = ((NUM_ACELITE > 0) || HAS_ACELITEDVM);
+
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "Watermark of AceLite usage counter clear. Allows clearing the current watermark value.";
+      singlepulse = true;
+    } clr_pulse = 0;
+  } cfg_usage_counters_watermark_acelite[NUM_ACELITE_FIXED];
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "Watermark of AceLiteDVM usage counter clear. Allows clearing the current watermark value.";
+      singlepulse = true;
+    } acelitedvm_clr_pulse[0:0] = 0;
+    field {
+      desc = "Watermark of Summation of all usage counter clear. Allows clearing the current watermark value.";
+      singlepulse = true;
+    } total_clr_pulse[8:8] = 0;
+  } cfg_usage_counters_watermark;
+
+  cfg_usage_counters_watermark_acelite->ispresent = (NUM_ACELITE>0);
+  cfg_usage_counters_watermark.acelitedvm_clr_pulse->ispresent  = (HAS_ACELITEDVM);
+
+  reg {
+    default sw = r;
+    default hw = w;
+    field {
+      desc = "Is context available Bank 0 AceLiteDVM";
+    } bank_0_acelitedvm[0:0];
+    field {
+      desc = "Is context available Bank 0 AceLite (bit per acelite port)";
+    } bank_0_acelite[8+NUM_ACELITE_FIXED-1:8];
+    field {
+      desc = "Is context available Bank 1 AceLiteDVM";
+    } bank_1_acelitedvm[16:16];
+    field {
+      desc = "Is context available Bank 1 AceLite (bit per acelite port)";
+    } bank_1_acelite[24+NUM_ACELITE_FIXED-1:24];
+  } sts_ctx_available;
+  sts_ctx_available.bank_0_acelitedvm->ispresent = HAS_ACELITEDVM;
+  sts_ctx_available.bank_1_acelitedvm->ispresent = HAS_ACELITEDVM;
+  sts_ctx_available.bank_0_acelite->ispresent = (NUM_ACELITE > 0);
+  sts_ctx_available.bank_1_acelite->ispresent = (NUM_ACELITE > 0);
+
+  reg {
+    default sw = r;
+    default hw = w;
+    field {
+      desc = "Bank 0 URPM empty";
+    } bank_0[0:0];
+    field {
+      desc = "Bank 1 URPM empty";
+    } bank_1[8:8];
+  } sts_empty;
+
+
+  reg {
+    default sw = r;
+    default hw = w;
+    field {
+      desc = "Indicates RPM wasn't configured properly.
+              The summation of shared + reserved overflow maximum resources available";
+    } overflow[0:0];
+    field {
+      desc = "reservation for one of the ports is zero which may lead to deadlock";
+    } no_reserved[8:8];
+  } sts_cfg_err;
+};
+`endif

@@ -1,0 +1,342 @@
+`include "idsProperty2a.rdl"
+
+`ifndef _RAS_LOGGER_REGFILE_
+`define _RAS_LOGGER_REGFILE_
+
+regfile ras_logger_regfile #(
+  longint unsigned NUM_PRODUCERS = 64
+){
+
+  name = "ras_logger_regfile";
+  desc = "RAS Logger CSR Register File.";
+
+  // Base on Arm Architecture Reference Manual for A-profile architecture - RAS register description
+
+  //**********************
+  //*  Feature Register  *
+  //**********************
+
+  enum ed_support_enum {
+    Disabled             = 2'b00 {desc = "Error record is not implemented or is not the first error record owned by the node";};
+    Enabled              = 2'b01 {desc = "Error reporting and logging is always enabled";};
+    EnabledControlled    = 2'b10 {desc = "Error reporting and loggign is supported and can be enabled/disabled using err_ctrl.de";};
+  };
+
+  enum de_support_enum {
+    Disabled          = 2'b00 {desc = "Does not record Deferred errors";};
+    Enabled           = 2'b01 {desc = "Records Defferred errors";};
+  };
+
+  enum ui_support_enum {
+    Disabled              = 2'b00 {desc = "Does not support error handling interrupt. err_ctrl.ui is RES0";};
+    Enabled               = 2'b01 {desc = "Error handling interrupt is supported and always enabled. err_ctrl.ui is RES0";};
+    Controllable          = 2'b10 {desc = "Error handling interrupt is supported and controllable using err_ctrl.ui";};
+    RWControllable        = 2'b11 {desc = "Error handling interrupt is supported, and controllable using err_ctrl.wui for writes and err_ctrl.rui for reads ";};
+  };
+
+  enum fi_support_enum {
+    Disabled              = 2'b00 {desc = "Does not support fault handling interrupt. err_ctrl.fi is RES0";};
+    Enabled               = 2'b01 {desc = "Fault handling interrupt is supported and always enabled. err_ctrl.fi is RES0";};
+    Controllable          = 2'b10 {desc = "Fault handling interrupt is supported and controllable using using err_ctrl.fi";};
+    RWControllable        = 2'b11 {desc = "Fault handling interrupt is supported, and controllable using err_ctrl.wfi for writes and err_ctrl.rfi for reads ";};
+  };
+
+  enum cfi_support_enum {
+    Disabled              = 2'b00 {desc = "Does not support the enabling and disabling of fault handling interrupts on corrected errors. err_ctrl.cfi is RES0";};
+    Controllable          = 2'b10 {desc = "Enabling and disabling of fault handling interrupts on corrected errors is supported and controllable using err_ctrl.cfi";};
+    RWControllable        = 2'b11 {desc = "Enabling and disabling of fault handling interrupts on corrected errors is supported and controllable using err_ctrl.wcfi for writes and err_ctrl.rcfi for reads";};
+  };
+
+  enum cec_enum {
+    None              = 3'b000 {desc = "Node does not have a correctable errors counter";};
+    ByteWidthCounter  = 3'b010 {desc = "Node supports 8-bit counter of correctable errors (found in misc_0_1.cec[7:0])";};
+    WordWidthCounter  = 3'b100 {desc = "Node supports 16-bit counter of correctable errors (found in misc_0_1.cec and misc_0_1.cecof)";};
+  };
+
+  reg {
+    default sw = r;
+    default hw = w;
+    field {
+      desc = "Error detection support";
+      encode = ed_support_enum;
+    } ed [1:0];
+    field {
+      desc = "Deferred error support";
+      encode = de_support_enum;
+    } de [3:2];
+    field {
+      desc = "Uncorrectable error interrupt support";
+      encode = ui_support_enum;
+    } ui [5:4];
+    field {
+      desc = "Fault interrupt support";
+      encode = fi_support_enum;
+    } fi [7:6];
+    field {
+      desc = "Correctable error interrupt support";
+      encode = cfi_support_enum;
+    } cfi [11:10];
+    field {
+      desc = "Correctable error couinter support";
+      encode = cec_enum;
+    } cec [14:12];
+  } sts_ras_logger_err_fr_0;
+
+  reg {
+    default sw = r;
+    default hw = na;
+    field {
+      desc = "Reserved";
+    } reserved_63_32 [31:0] = 0;
+  } sts_ras_logger_err_fr_1;
+
+  //**********************
+  //*  Control Register  *
+  //**********************
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "Enable error detection";
+    } ed [0:0] = 1;
+    field {
+      desc = "Enable uncorrectable error interrupt";
+    } ui [2:2] = 1;
+    field {
+      desc = "Enable fault interrupt";
+    } fi [3:3] = 1;
+    field {
+      desc = "Enable correctable error interrupt";
+    } cfi [8:8] = 1;
+  } cfg_ras_logger_err_ctrl_0;
+
+  reg {
+    default sw = r;
+    default hw = na;
+    field {
+      desc = "Reserved";
+    } reserved_63_32 [31:0] = 0;
+  } cfg_ras_logger_err_ctrl_1;
+
+  //*********************
+  //*  Status Register  *
+  //*********************
+
+  enum serr_enum {
+    None                            = 8'h00 { desc = "No error.";};
+    Reserved1                       = 8'h01 { desc = "IMPLEMENTATION DEFINED error.";};
+    EccSRAM                         = 8'h02 { desc = "Data value from (non-associative) internal memory. For example, ECC from on-chip SRAM or buffer.";};
+    Reserved2                       = 8'h03 { desc = "IMPLEMENTATION DEFINED pin. For example, nSEI pin.";};
+    Assertion                       = 8'h04 { desc = "Assertion failure. For example, consistency failure.";};
+    DataParityInternal              = 8'h05 { desc = "Error detected on internal data path. For example, parity on ALU result.";};
+    EccCacheData                    = 8'h06 { desc = "Data value from associative memory. For example, ECC error on cache data.";};
+    EccCacheTag                     = 8'h07 { desc = "Address/control value from associative memory. For example, ECC error on cache tag.";};
+    EccTLBData                      = 8'h08 { desc = "Data value from a TLB. For example, ECC error on TLB data.";};
+    EccTLBTag                       = 8'h09 { desc = "Address/control value from a TLB. For example, ECC error on TLB tag.";};
+    ProducerDataCheck               = 8'h0A { desc = "Data value from producer. For example, parity error on write data bus.";};
+    ProducerNonDataParity           = 8'h0B { desc = "Address/control value from producer. For example, parity error on address bus.";};
+    EccSDRAM                        = 8'h0C { desc = "Data value from (non-associative) external memory. For example, ECC error in SDRAM.";};
+    IllegalSWAddress                = 8'h0D { desc = "Illegal address (software fault). For example, access to unpopulated memory.";};
+    IllegalSWAccess                 = 8'h0E { desc = "Illegal access (software fault). For example, byte write to word register.";};
+    IllegalSWFlow                   = 8'h0F { desc = "Illegal state (software fault). For example, device not ready.";};
+    RegisterDataParity              = 8'h10 { desc = "Internal data register. For example, parity on a SIMD&FP register. For a PE, all general-purpose, stack pointer, SIMD&FP, and SVE registers are data registers.";};
+    RegisterControlParity           = 8'h11 { desc = "Internal control register. For example, Parity on a System register. For a PE, all registers other than general-purpose, stack pointer, SIMD&FP, and SVE registers are control registers.";};
+    CompleterRespError              = 8'h12 { desc = "Error response from Completer of access. For example, error response from cache write-back.";};
+    ExternalTimeout                 = 8'h13 { desc = "External timeout. For example, timeout on interaction with another component.";};
+    InternalTimeout                 = 8'h14 { desc = "Internal timeout. For example, timeout on interface within the component.";};
+    CompleterDefferredNotSupported  = 8'h15 { desc = "Deferred error from Completer not supported at Requester. For example, poisoned data received from the Completer of an access by a Requester that cannot defer the error further.";};
+    RequesterDefferredNotSupported  = 8'h16 { desc = "Deferred error from Requester not supported at Completer. For example, poisoned data received from the Requester of an access by a Completer that cannot defer the error further.";};
+    CompleterDefferred              = 8'h17 { desc = "Deferred error from Completer passed through. For example, poisoned data received from the Completer of an access and returned to the Requester.";};
+    RequesterDefferred              = 8'h18 { desc = "Deferred error from Requester passed through. For example, poisoned data received from the Requester of an access and deferred to the Completer.";};
+    PCIeLogger                      = 8'h19 { desc = "Error recorded by PCIe error logs. Indicates that the component has recorded an error in a PCIe error log. This might be the PCIe device status register, AER, DVSEC, or other mechanisms defined by PCIe.";};
+    OtherInternal                   = 8'h1A { desc = "Other internal error. For example, parity error on internal state of the component that is not covered by another primary error code.";};
+  };
+
+  enum ierr_enum {
+    Default               = 8'h00 {desc = "Default ierr field value. It is expected to be used when error type is fully described within primary error code.";};
+    UnsupportedCHIOpcode  = 8'h01 {desc = "Unsupported CHI Opcode received";};
+    UnsupportedAXISnoop   = 8'h03 {desc = "Unsupported AXI snoop value received";};
+    Overflow              = 8'h06 {desc = "Overflow (for instance in FIFO/credits/counter) occured";};
+    Underflow             = 8'h07 {desc = "Underflow (for instance in FIFO/credits/counter) occured";};
+  };
+
+  reg {
+    desc = "Status registers of ras logger. Assuming all write access are clear ('1)";
+    field {
+      sw = r;
+      hw = w;
+      desc = "Architecturally-defined primary error code";
+      encode = serr_enum;
+    } serr [7:0] = 0;
+    field {
+      sw = r;
+      hw = w;
+      desc = "Implementation defined secondary error code";
+      encode = ierr_enum;
+    } ierr [15:8] = 0;
+    field {
+      hw = rw;
+      sw = rw;
+      precedence = hw;
+      woclr;
+      desc = "Deferred error indication";
+    } de [23:23] = 0;
+    field {
+      desc = "Correctable error indication";
+    } ce [24:24] = 0;
+    field {
+      hw = rw;
+      sw = rw;
+      precedence = hw;
+      woclr;
+      desc = "Misc register valid";
+    } mv [26:26] = 0;
+    field {
+      hw = rw;
+      sw = rw;
+      precedence = hw;
+      woclr;
+      desc = "Error overflow (i.e. more than one error has been detected)";
+    } of [27:27] = 0;
+    field {
+      hw = rw;
+      sw = rw;
+      precedence = hw;
+      woclr;
+      desc = "Uncorrectable error indication";
+    } ue [29:29] = 0;
+    field {
+      hw = rw;
+      sw = rw;
+      precedence = hw;
+      woclr;
+      desc = "Status register valid";
+    } v [30:30] = 0;
+    field {
+      hw = rw;
+      sw = rw;
+      precedence = hw;
+      woclr;
+      desc = "Address register valid";
+    } av [31:31] = 0;
+  } sts_ras_logger_err_status_0;
+
+  reg {
+    default hw = na;
+    default sw = r;
+    field {
+      desc = "Reserved";
+    } reserved   [31:0] = 0;
+  } sts_ras_logger_err_status_1;
+
+  //**********************
+  //*  Address Register  *
+  //**********************
+
+  reg {
+    default hw = w;
+    default sw = r;
+    field {
+      desc = "Address [31:0]";
+    } addr_31_0 [31:0];
+  } sts_ras_logger_err_s_addr_0;
+
+  reg {
+    default hw = w;
+    default sw = r;
+    field {
+      desc = "Address [47:32]";
+    } addr_47_32 [15:0];
+    field {
+      desc = "NSE bit of transaction that generated an error";
+    } nse [27:27];
+    field {
+      desc = "NS bit of transaction that generated an error";
+    } ns [31:31];
+  } sts_ras_logger_err_s_addr_1;
+
+  //*******************
+  //*  Misc Register  *
+  //*******************
+
+  // Default encoding for block id misc value.
+  enum example_block_id_enum {
+    DSAxiM0     = 8'h0 {desc = "MI-Downstream Block axi m 0";};
+    USAcelite0  = 8'h1 {desc = "MI-Upstream Block ace lite 0";};
+  };
+
+  reg sts_ras_logger_err_misc {
+    default hw = w;
+    default sw = r;
+    desc = "Please override this description.";
+    // Integration guidelines: Modify its description.
+    field {
+      desc = "Data. See register description for more information";
+    } value [31:0];
+  };
+
+  sts_ras_logger_err_misc sts_ras_logger_err_misc_0_0;
+
+  reg {
+    name = "ras_logger_misc_reg";
+    desc = "RAS Logger Misc 0 upper bits register.";
+    // Integration guidelines: Modify its block id enum.
+    default hw = w;
+    default sw = r;
+    field {
+        desc = "Correctable error counter (only if implemented)";
+    } cec [14:0];
+    field {
+      desc = "Correctable error counter overflow";
+    } cecof [15:15];
+    field {
+      hw = r;
+      sw = rw;
+      singlepulse;
+      desc = "W1C - when cleared, clears cecof and cec";
+    } cec_clr [16:16] = 0;
+    field {
+      desc = "ID of the failing block/channel/check. The index of the source of the error";
+      encode = example_block_id_enum;
+    } block_id [27:20];
+  } sts_ras_logger_err_misc_0_1;
+
+  sts_ras_logger_err_misc sts_ras_logger_err_misc_1_0;
+  sts_ras_logger_err_misc sts_ras_logger_err_misc_1_1;
+
+  //***************************
+  //*  Error Severity vector  *
+  //***************************
+
+  enum severity_enum {
+    NoError               = 2'b00 {desc = "Indicates no error.";};
+    Correctable           = 2'b01 {desc = "Indicates correctable error.";};
+    Defferred             = 2'b10 {desc = "Indicates defferred error.";};
+    Uncorrectable         = 2'b11 {desc = "Indicates uncorrectable error.";};
+  };
+
+reg {
+    default hw = r;
+    default sw = rw;
+    field {
+      desc = "Override value of severity for block [i] - see enum for block name";
+      encode = severity_enum;
+    } override_value[1:0] = 0;
+    field {
+      desc = "Override enable of severity for block [i] - see enum for block name";
+    } override_en[4:4] = 0;
+  } cfg_ras_logger_error_severity[NUM_PRODUCERS];
+
+  reg {
+    default hw = w;
+    default sw = r;
+    field {
+      desc = "Severity of block [i] - see enum for block name. Resets when clearing status register.";
+      encode = severity_enum;
+    } value[1:0];
+  } sts_ras_logger_error_severity[NUM_PRODUCERS];
+
+
+};
+`endif

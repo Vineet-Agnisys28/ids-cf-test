@@ -1,0 +1,76 @@
+//--------------------------
+// JINJA2 GENERATED FILE: DO NOT MANUALLY EDIT
+// This file has been automatically generated from a jinja2 template.
+// Please refer to the BUILD file for details.
+//--------------------------
+
+`include "idsProperty2a.rdl"
+
+`include "slc_exec_regfile.rdl"
+`include "slc_input_stage_regfile.rdl"
+`include "slc_output_stage_regfile.rdl"
+`include "gmesh_dvm_b_regfile.rdl"
+`include "gmesh_slc_ras_logger_regfile.rdl"
+
+`ifndef _GMESH_CEDAR_COMPUTE_SLC_CSR_
+`define _GMESH_CEDAR_COMPUTE_SLC_CSR_
+
+addrmap gmesh_cedar_compute_slc_csr {
+  name = "gmesh_cedar_compute_slc_csr";
+  desc = "SLC Top Level CSR Address Map";
+
+`ifdef AGNISYS
+  module_name = "gmesh_cedar_compute_slc_csr";
+  auto_hdl_path=true;
+`endif
+
+  slc_input_stage_regfile csr_input_stage @0x0;
+
+  slc_exec_regfile #(
+      .NUM_CAID_BITMAPS(4)
+  ) csr_slc_exec @0x1000;
+
+  slc_output_stage_regfile csr_slc_output_stage @0x3000;
+
+  gmesh_dvm_b_regfile #(
+      .NUM_CORES(112)
+  ) csr_slc_dvm_b @0x4000;
+
+  gmesh_slc_ras_logger_regfile slc_ras_logger_regfile;
+
+  reg {
+   desc = "slc configuration register";
+   field {
+     sw      = rw;
+     hw      = r;
+     desc    = "The slc configuration is done";
+   } done = 0;
+   field {
+     sw      = rw;
+     hw      = r;
+     desc    = "The SLC is in a chiplet that has two NUMA domains and not a single NUMA domain";
+   } half_numa = 0;
+   field {
+     sw      = rw;
+     hw      = r;
+     desc    = "For debug, bypass the system coherency bitmap from the DVM to enable all cores";
+   } system_coherency_bypass_debug = 0;
+  } slc_config;
+
+  reg {
+   desc = "TS sync configuration";
+   field {
+     sw      = rw;
+     hw      = r;
+     desc    = "time stamp sync compensation vlue";
+   } cfg_ts_compensation[15:0] = 0;
+   field {
+     sw      = rw;
+     hw      = r;
+     desc    = "time stamp sync enable";
+   } cfg_ts_sync_en[16:16] = 0;
+  } ts_compensation;
+
+};
+
+`endif

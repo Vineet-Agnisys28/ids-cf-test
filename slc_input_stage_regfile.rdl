@@ -1,0 +1,475 @@
+`include "idsProperty2a.rdl"
+`include "gmesh_resource_pool_manager_regfile.rdl"
+
+`ifndef _SLC_INPUT_STAGE_REGFILE_
+`define _SLC_INPUT_STAGE_REGFILE_
+
+ regfile slc_input_stage_regfile #(
+   longint unsigned REQ_COLOR_WEIGHT_WIDTH   = 8,
+   longint unsigned REQ_VC_WEIGHT_WIDTH      = 8,
+   longint unsigned RSP_WEIGHT_WIDTH         = 8,
+   longint unsigned H2H_RSVD_WIDTH           = 6,
+   longint unsigned PRQ_HR_RSVD_WIDTH        = 3,
+   longint unsigned REQ_Q_MAX_ADDR_WIDTH     = 11,
+   longint unsigned REQ_Q_NUM_QUEUES         = 8,
+   longint unsigned PRQ_NUM_QUEUES           = 8,
+   longint unsigned PRQ_MAX_ADDR_WIDTH       = 7,
+   longint unsigned BW_THRESHOLD_SIZE        = 12,
+   longint unsigned BW_COUNTER_SIZE          = 24,
+   longint unsigned MPAM_SIZE                = 12,
+   longint unsigned BTW_DELAY_EXPIRE_SIZE    = 16,
+   longint unsigned SLC_CBUSY_THRESHOLD_SIZE = 7,
+   longint unsigned SLC_BTW_EPOCH_SIZE       = 5,
+   longint unsigned SLC_BTW_TIME_PERIOD_SIZE = 32,
+   longint unsigned SLC_CBUSY_FACTOR_SIZE    = 8,
+   longint unsigned SLC_CBUSY_WINDOW_SIZE    = 3,
+   longint unsigned SLC_CBUSY_AGING_SIZE     = 20,
+   longint unsigned SLC_BW_CREDIT_GRANULARITY = 4,
+   longint unsigned TRACKED_MPAM_NUM          = 16,
+   longint unsigned TRACKED_MPAM_NUM_SIZE     = 4
+
+
+
+
+ ){
+   name = "slc_input_stage_regfile";
+   desc = "SLC Input Stage CSR Register Filet st";
+
+   default sw = rw;
+   default hw = r;
+
+
+  // ==============================
+  //   Atomic Operation masking
+  // ===============================
+
+  reg {
+   desc = "Atomic Operation masking for Atomic Buffer reservation handling";
+   field {
+     sw      = rw;
+     hw      = r;
+     desc    = "masking for atomic request trancation buffer allocation.
+                If it is asserted, atomic requests cant arrive on P0 VC";
+   } p0 = 1'b1;
+   field {
+     sw      = rw;
+     hw      = r;
+     desc    = "masking for atomic request trancation bufer allocation.
+                If it is asserted, atomic requests cant arrive on P1 VC";
+   } p1 = 0;
+
+  } atomic_masking;
+
+  // =====================
+  //   H2H reservation
+  // ======================
+
+  reg {
+   desc = "input stage reservations for H2H transactions";
+   field {
+     sw      = rw;
+     hw      = r;
+     desc    = "amount of Workbench entries reserved for H2H requests";
+   } wbn[H2H_RSVD_WIDTH-1:0] = 6'd4;
+   field {
+     sw      = rw;
+     hw      = r;
+     desc    = "Amount of PRQ queues reserved for H2H requests";
+   } prq[8+PRQ_HR_RSVD_WIDTH-1:8] = 3'd1;
+  } h2h_reservation;
+
+  //=========================
+  //  Arbitration Weights
+  //==========================
+  reg req_admit_color{
+    desc = "Weights for Req Admit color Arbiter";
+    field {
+       sw    = rw;
+       hw    = r;
+       desc  = "Request Admit Color WRR weight for P0 requests";
+     } weight_p0[REQ_COLOR_WEIGHT_WIDTH-1:0] = 8'd200;
+
+    field {
+       sw    = rw;
+       hw    = r;
+       desc  = "Request Admit Color WRR weight for P1 requests";
+     } weight_p1[2*REQ_COLOR_WEIGHT_WIDTH-1:REQ_COLOR_WEIGHT_WIDTH] = 8'd48;
+  } ;
+  req_admit_color req_admit_color_r; // TODO(elironc): add implementation
+  req_admit_color req_admit_color_y;
+  req_admit_color req_admit_color_g;
+
+  reg {
+    desc = "Weights for Req Admit VC Arbiter";
+     field {
+       sw    = rw;
+       hw    = r;
+       desc  = "Request Admit VC WRR weight for P0/1 Green requests";
+     } weight_r[REQ_VC_WEIGHT_WIDTH-1:0] = 8'd1;
+
+     field {
+       sw    = rw;
+       hw    = r;
+       desc  = "Request Admit VC WRR weight for P0/1 Yellow requests";
+     } weight_y[2*REQ_VC_WEIGHT_WIDTH-1:REQ_VC_WEIGHT_WIDTH] = 8'd3;
+
+     field {
+       sw    = rw;
+       hw    = r;
+       desc  = "Request Admit VC WRR weight for P0/1 Red requests";
+     } weight_g[3*REQ_VC_WEIGHT_WIDTH-1:2*REQ_VC_WEIGHT_WIDTH] = 8'd16;
+  } req_admit_vc_p;
+
+  reg {
+   desc = "Weights for Req Admit VC Arbiter";
+   field {
+      sw     = rw;
+      hw     = r;
+      desc   = "Request Admit VC WRR weight for HR requests";
+    } weight_hr[REQ_VC_WEIGHT_WIDTH-1:0] = 8'd54;
+
+    field {
+      sw     = rw;
+      hw     = r;
+      desc   = "Request Admit VC WRR weight for SN requests";
+    } weight_sn[2*REQ_VC_WEIGHT_WIDTH-1:REQ_VC_WEIGHT_WIDTH] = 8'd54;
+  } req_admit_vc;
+
+  reg {
+   desc = "Weights for Rsponse Arbiter";
+   field {
+     sw      = rw;
+     hw      = r;
+     desc    = "Response Arb weight for RSP transactions";
+   } rsp_weight[RSP_WEIGHT_WIDTH-1:0] = 8'd255;
+
+   field {
+     sw      = rw;
+     hw      = r;
+     desc    = "Response Arb weight for DAT transactions";
+   } dat_weight[2*RSP_WEIGHT_WIDTH-1:RSP_WEIGHT_WIDTH] =  8'd255;
+  } rsp_arb;
+
+
+
+
+//======================
+//  QoS color update
+//=======================
+
+  reg {
+   desc = "QoS BW mesurment credit granularity, the value is valid for all tracked MPAMs.";
+   field {
+     sw      = rw;
+     hw      = r;
+     desc    = "credit granularity, the thresholds,max credit and quota will be multiplied by the granularity value";
+   } granularity[SLC_BW_CREDIT_GRANULARITY-1:0] = 0;
+  } cfg_qos_credit;
+
+  regfile qos_per_mpam_cfg_regfile {
+    reg {
+     desc = "Low BW limit for DRAM access counter.
+             It's value must be lower or equal to the high limit.
+             If it is set to 0 the BW is unlimited.";
+     field {
+       sw      = rw;
+       hw      = r;
+     } limit[BW_THRESHOLD_SIZE-1 :0] = 0;
+    } dram_low;
+
+    reg {
+     desc = "High BW limit for DRAM access counter.
+             It's value must be higher or equal to the low limit.
+             If it is set to 0 the BW is unlimited.";
+     field {
+       sw      = rw;
+       hw      = r;
+     } limit[BW_THRESHOLD_SIZE-1 :0] = 0;
+    } dram_high;
+
+    reg {
+     desc = "Maximum accumulated credits for DRAM access counter";
+     field {
+       sw      = rw;
+       hw      = r;
+     } limit[BW_THRESHOLD_SIZE-1 :0] = 0;
+    } dram_max_credit;
+
+    reg {
+     desc = "Credit addition at each time window for DRAM access counter";
+     field {
+       sw      = rw;
+       hw      = r;
+     } quota[BW_THRESHOLD_SIZE-1 :0] = 0;
+    } dram_credit_addition;
+
+    reg {
+     desc = "Low BW limit for FMEM access counter.
+             It's value must be lower or equal to the high limit.
+             If it is set to 0 the BW is unlimited.";
+     field {
+       sw      = rw;
+       hw      = r;
+     } limit[BW_THRESHOLD_SIZE-1 :0] = 0;
+    } fmem_low;
+
+    reg {
+     desc = "High BW limit for FMEM access counter.
+             It's value must be higher or equal to the low limit.
+             If it is set to 0 the BW is unlimited.";
+     field {
+       sw      = rw;
+       hw      = r;
+     } limit[BW_THRESHOLD_SIZE-1 :0] = 0;
+    } fmem_high;
+
+    reg {
+     desc = "Maximum accumulated credits for FMEM access counter";
+     field {
+       sw      = rw;
+       hw      = r;
+     } limit[BW_THRESHOLD_SIZE-1 :0] = 0;
+    } fmem_max_credit;
+
+    reg {
+     desc = "Credit addition at each time window for FMEM access counter";
+     field {
+       sw      = rw;
+       hw      = r;
+     } quota[BW_THRESHOLD_SIZE-1 :0] = 0;
+    } fmem_credit_addition;
+
+    reg {
+     desc = "Low BW limit for X-NUMA access counter.
+             It's value must be lower or equal to the high limit.
+             If it is set to 0 the BW is unlimited.";
+     field {
+       sw      = rw;
+       hw      = r;
+     } limit[BW_THRESHOLD_SIZE-1 :0] = 0;
+    } x_numa_low;
+
+    reg {
+     desc = "High BW limit for X-NUMA access counter.
+             It's value must be higher or equal to the low limit.
+             If it is set to 0 the BW is unlimited.";
+     field {
+       sw      = rw;
+       hw      = r;
+     } limit[BW_THRESHOLD_SIZE-1 :0] = 0;
+    } x_numa_high;
+
+    reg {
+     desc = "Maximum accumulated credits for X-NUMA access counter";
+     field {
+       sw      = rw;
+       hw      = r;
+     } limit[BW_THRESHOLD_SIZE-1 :0] = 0;
+    } x_numa_max_credit;
+
+    reg {
+     desc = "Credit addition at each time window for X-NUMA access counter";
+     field {
+       sw      = rw;
+       hw      = r;
+     } quota[BW_THRESHOLD_SIZE-1 :0] = 0;
+    } x_numa_credit_addition;
+
+    reg {
+     desc = "Low BW limit for SLC access counter.
+             It's value must be lower or equal to the high limit.
+             If it is set to 0 the BW is unlimited.";
+     field {
+       sw      = rw;
+       hw      = r;
+     } limit[BW_THRESHOLD_SIZE-1 :0] = 0;
+    } slc_low;
+
+    reg {
+     desc = "High BW limit for SLC access counter.
+             It's value must be higher or equal to the low limit.
+             If it is set to 0 the BW is unlimited.";
+     field {
+       sw      = rw;
+       hw      = r;
+     } limit[BW_THRESHOLD_SIZE-1 :0] = 0;
+    } slc_high;
+
+    reg {
+     desc = "Maximum accumulated credits for SLC access counter";
+     field {
+       sw      = rw;
+       hw      = r;
+     } limit[BW_THRESHOLD_SIZE-1 :0] = 0;
+    } slc_max_credit;
+
+    reg {
+     desc = "Credit addition at each time window for SLC access counter";
+     field {
+       sw      = rw;
+       hw      = r;
+     } quota[BW_THRESHOLD_SIZE-1 :0] = 0;
+    } slc_credit_addition;
+
+    reg {
+     desc = "Delay counter for BTW expire indication aggregation.
+             The granularity of this register is 8 bits";
+     field {
+       sw      = rw;
+       hw      = r;
+     } delay[BTW_DELAY_EXPIRE_SIZE-1 :0] = 0;
+    } mpam_btw_expire;
+
+    reg {
+     desc = "QoS DRAM access counter value";
+     field {
+       sw      = r;
+       hw      = w;
+     } value[BW_COUNTER_SIZE-1 :0];
+    } cfg_qos_dram_counter;
+
+    reg {
+     desc = "QoS DRAM access counter value";
+     field {
+       sw      = r;
+       hw      = w;
+     } value[BW_COUNTER_SIZE-1 :0];
+    } cfg_qos_fmem_counter;
+
+    reg {
+     desc = "QoS DRAM access counter value";
+     field {
+       sw      = r;
+       hw      = w;
+     } value[BW_COUNTER_SIZE-1 :0];
+    } cfg_qos_x_numa_counter;
+
+    reg {
+     desc = "QoS DRAM access counter value";
+     field {
+       sw      = r;
+       hw      = w;
+     } value[BW_COUNTER_SIZE-1 :0];
+    } cfg_qos_slc_counter;
+  };
+
+  qos_per_mpam_cfg_regfile cfg_qos[TRACKED_MPAM_NUM];
+
+  reg {
+   desc = "Time window configuration, to measure and control bandwidth, transaction credits are assigned over fixed time windows.
+           These credits are then used to calculate bandwidth allocation (BW = Credits/TimeWindow) for the PARTID.";
+   field {
+     desc = "Valid qualifier for the epoch and time period configuration.
+     The btw expire indications will be sent to the QoS credit counters for quota addition when the epoch and time period configuration is valid.";
+     sw      = rw;
+     hw      = r;
+   } valid[0:0] = 0;
+   field {
+     desc = "Epoch - A mask set over the system timer that defines an epoch cycle of the timer.
+             Epoch is defined as a time period of 2E ns starting at time 0. Epoch = 2Exp-1";
+     sw      = rw;
+     hw      = r;
+   } epoch_cycle[8+SLC_BTW_EPOCH_SIZE-1 :8] = 0;
+  } cfg_qos_btw;
+
+  reg {
+   desc = "Time Period - Epoch can be divided to one or more Time Periods, the Time Period defines the length of the BTW.
+           The Time Period is not allowed to be larger than Epoch.";
+   field {
+     sw      = rw;
+     hw      = r;
+   } cycle[SLC_BTW_TIME_PERIOD_SIZE-1 :0] = 0;
+  } cfg_qos_btw_time_period;
+
+  reg {
+   desc = "Threshold setup for SLC Cbusy calculation";
+   field {
+     desc = "Low BW limit for SLC WBN counter, used to determain the SLC CBusy.
+             It's value must be lower or equal to the med and high limit.
+             If it is set to 0 CBusy will always be light load.";
+     sw      = rw;
+     hw      = r;
+   } low_threshold[SLC_CBUSY_THRESHOLD_SIZE-1 :0] = 0;
+
+   field {
+       desc = "Med BW limit for SLC WBN counter, used to determain the SLC CBusy.
+               It's value must be lower or equal to the high limit.
+               It's value must be higher or equal to the low limit.
+               If it is set to 0 CBusy will always be light load.";
+     sw      = rw;
+     hw      = r;
+   } med_threshold[8+SLC_CBUSY_THRESHOLD_SIZE-1 :8] = 0;
+
+   field {
+    desc = "High BW limit for SLC WBN counter, used to determain the SLC CBusy.
+            It's value must be higher or equal to the low and med limit.
+            If it is set to 0 CBusy will always be light load.";
+     sw      = rw;
+     hw      = r;
+   } high_threshold[16+SLC_CBUSY_THRESHOLD_SIZE-1 :16] = 0;
+  } cfg_qos_slc_cbusy_th;
+
+
+  reg {
+    desc = "Cbusy calculation parameters";
+    field {
+      desc = "WinSize sets the size of the sliding window to 2^WinSize entries,
+              used to determain the CBusy. value should be set between 3 and 7
+              The sliding window size can be programmable to 8, 16, 32, 64, or 128";
+      sw      = rw;
+      hw      = r;
+    } window_size[SLC_CBUSY_WINDOW_SIZE-1 :0] = 3'd3;
+
+    field {
+      desc = "selector of cbusy calculation method. If set,
+             CBusy is based on the maximum CBusy in the sliding window.
+             Otherwise CBusy is based on a factored average of the sliding window.";
+      sw      = rw;
+      hw      = r;
+    } max_out[4 :4] = 0;
+
+    field {
+     desc = "Average factor for the SlcCBusy.
+             BusyFactor is set in U1.7 fixed point.";
+      sw      = rw;
+      hw      = r;
+    } busy_factor[8+SLC_CBUSY_FACTOR_SIZE-1 :8] = 0;
+  } cfg_qos_cbusy;
+
+  reg {
+    field {
+     desc = "Aging interval of the SLC quadrant sliding windows.
+             Used for cbusy calculation";
+      sw      = rw;
+      hw      = r;
+    } period[SLC_CBUSY_AGING_SIZE-1 :0] = 0;
+  } cfg_qos_cbusy_aging;
+
+  reg {
+    desc = "Tracked MPAM Table.
+        Maps Tracked MPAM PARTID to QoS Counter, used for QoS metering.
+        Each SLC trackes up to 16 different PARTIDs
+    ";
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "Valid Per Tracked PARTID";
+    } mpam_valid[0:0] = 0;
+    field {
+      desc = "QoS Counter index (0..15) per PARTID";
+    } qos_counter_index[TRACKED_MPAM_NUM_SIZE:1] = 0;
+  } tracked_mpam_table[512];
+
+  gmesh_resource_pool_manager_regfile #(.RESOURCE_WIDTH(REQ_Q_MAX_ADDR_WIDTH), .NUM_CTX(REQ_Q_NUM_QUEUES)) request_queues;
+  request_queues.cfg_rpm_shared_total.limit->reset = 11'd1024;
+  request_queues.cfg_rpm_reserved.limit->reset = 11'd3;
+  request_queues.cfg_rpm_shared.limit->reset = 11'd1000;
+  request_queues->desc = "Debug register, hw internal use only. Do not touch";
+
+  gmesh_resource_pool_manager_regfile #(.RESOURCE_WIDTH(PRQ_MAX_ADDR_WIDTH), .NUM_CTX(PRQ_NUM_QUEUES)) prq;
+  prq.cfg_rpm_shared_total.limit->reset = 7'd64;
+  prq.cfg_rpm_reserved.limit->reset = 7'd3;
+  prq.cfg_rpm_shared.limit->reset = 7'd40;
+  prq->desc = "Debug register, hw internal use only. Do not touch";
+};
+`endif

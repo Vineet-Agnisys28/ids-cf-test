@@ -1,0 +1,50 @@
+`include "idsProperty2a.rdl"
+`include "ras_logger_regfile.rdl"
+
+
+`ifndef _gmesh_ras_logger_REGFILE_
+`define _gmesh_ras_logger_REGFILE_
+
+regfile gmesh_ras_logger_regfile #(
+    longint unsigned NUM_PRODUCERS = 64
+) {
+
+  name = "gmesh_ras_logger_regfile";
+  desc = "gMesh RAS logger regfile";
+
+  ras_logger_regfile #(
+    .NUM_PRODUCERS(NUM_PRODUCERS)
+  ) logger;
+
+  logger.sts_ras_logger_err_misc_0_0->desc = "Misc 0 register lower bits.
+                               if (Ierr == CHI):
+                                 data[7:0]   == poison_errs
+                                 data[15:8]  == data_check_errs
+                                 data[31:16] == reserved
+                               Else if (ierr == AxiAxChan):
+                                 data[15:0] == axid
+                                 data[31:16] == unused
+                               Else if (ierr == AxiRespChan):
+                                 data[15:0]  == id
+                                 data[21:16] == data_check_lsb_err_idx
+                                 data[23:22] == resp
+                                 data[31:24] == reserved
+                               Else: unused";
+
+  logger.sts_ras_logger_err_misc_1_1->desc = "Misc 1 register upper bits.
+                               If (serr == ECC SRAM):
+                                 data == error address
+                               Else:
+                                 data[11:0]  == tgt_id";
+
+  logger.sts_ras_logger_err_misc_1_0->desc = "Misc 1 register lower bits.
+                               If serr == ECC SRAM data == error syndrome
+                               Else data[3:0]   == error index (for parity/poison errors)
+                                    data[7:4]   == qos
+                                    data[15:8]  == opcode
+                                    data[16]    == channel direction (0-tx, 1-rx)
+                                    data[19:17] == channekl_type (3'b000-dat, 3'b001-snp, 3'b010-req, 3'b011-rsp, 3'b100-crd)
+                                    data[31:20] == src_id";
+
+};
+`endif

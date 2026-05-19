@@ -1,0 +1,40 @@
+`ifndef _MIPA_US_REQUESTS_ACCEPTER_REGFILE_
+`define _MIPA_US_REQUESTS_ACCEPTER_REGFILE_
+
+regfile mipa_us_requests_accepter_regfile
+{
+  name = "mipa_us_requests_accepter_regfile";
+  desc = "MI-A/P Requests Accepter Register File.";
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "Indicates if when ro=0 we wait for all requests to non-SLC region target to be completed
+              before issuing requests towards normal memory or different region.
+              Only relevant for PCIe port write channel.
+              NOTE: a side effect is that we wait for all transactions towards SLC
+              and ro=0 to end before switching to non SLC ro=0 transactions.";
+    } wait_non_reorder[0:0] = 1;
+    field {
+      desc = "Indicates if when ro=0 we wait for all requests to device target to be completed
+              before issuing requests towards normal memory or different device endpoint.
+              Only relevant for PCIe port write channel.
+              NOTE: a side effect is that we wait for all transactions towards normal memory
+              and ro=0 to end before switching to device ro=0 transactions.";
+    } wait_device_non_reorder[8:8] = 1;
+    field {
+      desc = "Indicates if always wait for all device requests to be completed before issuing requests towards normal memory
+              or different device endpoint.
+              NOTE: a side effect is that we wait for all transactions towards normal memory ends before switching to device transactions";
+    } always_wait_on_device[16:16] = 0;
+    field {
+      desc = "Indicates we support a single outstanding request towards device.
+      if cfg_always_wait_device_non_reorder==1 applicabale to all transactions.
+      else if cfg_wait_device_non_reorder  applicable to ro=0 PCIe transactions.
+      else: not applicable";
+    } single_outstanding_towards_device[24:24] = 0;
+  } cfg_requests_accepter;
+
+};
+`endif

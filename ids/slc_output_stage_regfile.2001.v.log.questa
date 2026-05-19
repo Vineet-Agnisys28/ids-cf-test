@@ -1,0 +1,110 @@
+QuestaSim-64 vlog 10.7 Compiler 2017.12 Dec  6 2017
+Start time: 23:53:58 on Jan 15,2025
+vlog /home/cae/NetbeansProjects/docs/idsdocs/rtl/amba3ahblite_widget.v /home/cae/NetbeansProjects/docs/idsdocs/rtl/amba_widget.v /home/cae/NetbeansProjects/docs/idsdocs/rtl/apb_widget_ff_old.v /home/cae/NetbeansProjects/docs/idsdocs/rtl/apb_widget_ff.v /home/cae/NetbeansProjects/docs/idsdocs/rtl/apb_widget_pulse_pready.v /home/cae/NetbeansProjects/docs/idsdocs/rtl/apb_widget.v /home/cae/NetbeansProjects/docs/idsdocs/rtl/async_fifo.v /home/cae/NetbeansProjects/docs/idsdocs/rtl/avalon_widget_no_burst.v /home/cae/NetbeansProjects/docs/idsdocs/rtl/avalon_widget.v /home/cae/NetbeansProjects/docs/idsdocs/rtl/axi4full_widget.v /home/cae/NetbeansProjects/docs/idsdocs/rtl/axi5lite_widget.v /home/cae/NetbeansProjects/docs/idsdocs/rtl/axi_widget.v /home/cae/NetbeansProjects/docs/idsdocs/rtl/external_ack.v /home/cae/NetbeansProjects/docs/idsdocs/rtl/external_logic.v /home/cae/NetbeansProjects/docs/idsdocs/rtl/i2c_widget_9June_2020_old.v /home/cae/NetbeansProjects/docs/idsdocs/rtl/i2c_widget.v /home/cae/NetbeansProjects/docs/idsdocs/rtl/ocp_widget.v /home/cae/NetbeansProjects/docs/idsdocs/rtl/param_reduction_or_logic.v /home/cae/NetbeansProjects/docs/idsdocs/rtl/spi_widget.v /home/cae/NetbeansProjects/docs/idsdocs/rtl/sp_ram_wrapper.v /home/cae/NetbeansProjects/docs/idsdocs/rtl/stalled_logic.v /home/cae/NetbeansProjects/docs/idsdocs/rtl/tilelink_widget_1_7.v /home/cae/NetbeansProjects/docs/idsdocs/rtl/tilelink_widget_28apr.v /home/cae/NetbeansProjects/docs/idsdocs/rtl/tilelink_widget.v /home/cae/NetbeansProjects/docs/idsdocs/rtl/wishbone_widget_9June_2020_old.v /home/cae/NetbeansProjects/docs/idsdocs/rtl/wishbone_widget_async.v /home/cae/NetbeansProjects/docs/idsdocs/rtl/wishbone_widget.v /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v 
+-- Compiling module AMBA3AHBlite_widget
+-- Compiling module amba_widget
+-- Compiling module apb_widget
+** Warning: /home/cae/NetbeansProjects/docs/idsdocs/rtl/apb_widget_ff.v(32): (vlog-2275) 'apb_widget' already exists and will be overwritten.
+-- Compiling module apb_widget
+** Warning: /home/cae/NetbeansProjects/docs/idsdocs/rtl/apb_widget_pulse_pready.v(26): (vlog-2275) 'apb_widget' already exists and will be overwritten.
+-- Compiling module apb_widget
+** Warning: /home/cae/NetbeansProjects/docs/idsdocs/rtl/apb_widget.v(29): (vlog-2275) 'apb_widget' already exists and will be overwritten.
+-- Compiling module apb_widget
+-- Compiling module async_fifo
+-- Compiling module avalon_widget
+** Warning: /home/cae/NetbeansProjects/docs/idsdocs/rtl/avalon_widget.v(55): (vlog-2275) 'avalon_widget' already exists and will be overwritten.
+-- Compiling module avalon_widget
+-- Compiling module axi4full_widget
+-- Compiling module axi5lite_widget
+-- Compiling module axi_widget
+-- Compiling module external_ack
+-- Compiling module external_logic
+-- Compiling module I2C_Slave
+** Warning: /home/cae/NetbeansProjects/docs/idsdocs/rtl/i2c_widget.v(28): (vlog-2275) 'I2C_Slave' already exists and will be overwritten.
+-- Compiling module I2C_Slave
+-- Compiling module ocpip_widget
+-- Compiling module param_reduction_or
+-- Compiling module SPI_Slave
+-- Compiling module sp_ram_wrapper
+-- Compiling module stalled_logic
+-- Compiling module tilelink_widget
+** Warning: /home/cae/NetbeansProjects/docs/idsdocs/rtl/tilelink_widget_28apr.v(46): (vlog-2275) 'tilelink_widget' already exists and will be overwritten.
+-- Compiling module tilelink_widget
+** Warning: /home/cae/NetbeansProjects/docs/idsdocs/rtl/tilelink_widget.v(32): (vlog-2275) 'tilelink_widget' already exists and will be overwritten.
+-- Compiling module tilelink_widget
+-- Compiling module wishbone_widget
+** Warning: /home/cae/NetbeansProjects/docs/idsdocs/rtl/wishbone_widget_async.v(21): (vlog-2275) 'wishbone_widget' already exists and will be overwritten.
+-- Compiling module wishbone_widget
+** Warning: /home/cae/NetbeansProjects/docs/idsdocs/rtl/wishbone_widget.v(24): (vlog-2275) 'wishbone_widget' already exists and will be overwritten.
+-- Compiling module wishbone_widget
+-- Compiling module slc_output_stage_regfile_ids
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(51): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(55): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(59): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(60): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(62): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(68): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(71): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(72): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(76): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(77): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(81): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(159): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(163): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(167): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(190): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(194): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(198): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(202): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(215): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(388): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(394): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(400): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(401): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(403): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(412): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(415): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(420): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(421): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(424): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(429): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(544): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(549): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(552): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(553): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(558): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(561): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(566): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(603): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(605): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(607): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(609): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(610): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(611): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(616): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(619): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(624): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(627): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(633): (vlog-2417) Multiple packed dimensions are not allowed.
+** Warning: /localdata/Regression/16Jan_google1/slc_output_stage_regfile_define_as_param/ids/slc_output_stage_regfile.2001.v(652): (vlog-2417) Multiple packed dimensions are not allowed.
+
+Top level modules:
+	AMBA3AHBlite_widget
+	amba_widget
+	async_fifo
+	avalon_widget
+	axi4full_widget
+	axi5lite_widget
+	axi_widget
+	external_ack
+	external_logic
+	I2C_Slave
+	ocpip_widget
+	param_reduction_or
+	SPI_Slave
+	sp_ram_wrapper
+	tilelink_widget
+	wishbone_widget
+	slc_output_stage_regfile_ids
+End time: 23:53:59 on Jan 15,2025, Elapsed time: 0:00:01
+Errors: 0, Warnings: 58

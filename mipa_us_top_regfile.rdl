@@ -1,0 +1,512 @@
+`include "mipa_us_hash_regfile.rdl"
+`include "mipa_us_axi_to_req_regfile.rdl"
+`include "mipa_us_axi_ports_to_rpm_regfile.rdl"
+`include "mipa_us_uniform_rpm_regfile.rdl"
+`include "mipa_us_requests_accepter_regfile.rdl"
+`include "gmesh_rqm_regfile.rdl"
+`include "mipa_us_owo_regfile.rdl"
+`include "mipa_us_sam_vc_regfile.rdl"
+`include "mipa_us_pcie_mapper_regfile.rdl"
+`include "mipa_us_axi_stream_regfile.rdl"
+
+`ifndef _MIPA_US_TOP_REGFILE_
+`define _MIPA_US_TOP_REGFILE_
+
+regfile mipa_us_top_regfile #(
+  bit HAS_ACELITEDVM                                = 1,
+  bit HAS_AXIS                                      = 0,
+  bit HAS_SYSCO                                     = 0,
+  bit HAS_EVENTOREQ                                 = 0,
+  // Up to 3
+  longint unsigned NUM_ACELITE                      = 2,
+  bit HAS_PCIE                                      = 1, // Indicates we have PCIe logic
+  longint unsigned CLOG2_NUM_PCIE_PORTS             = 1, // Zero for NUM_PORTS=0/1
+  longint unsigned NUM_PCIE_PORTS                   = 2,
+  longint unsigned IS_PCIE_BITMAP                   = 6,
+
+  longint unsigned AXIS_S_NUM_TDESTS                = 150,
+  longint unsigned AXIS_S_TDEST_WIDTH               = 14, // Must match flit pkg, DO NOT CHANGE
+  longint unsigned AXIS_S_TGT_ID_WIDTH              = 12, // Must match flit pkg, DO NOT CHANGE
+
+  bit HAS_TELEMETRY                                 = 1,
+  longint unsigned NUM_ACELITE_FIXED                = (NUM_ACELITE > 0)? NUM_ACELITE : 1, // DO NOT OVERRIDE
+
+  longint unsigned LOG2_NUM_READ_QUEUES             = 6,
+  longint unsigned LOG2_NUM_WRITE_QUEUES            = 6,
+  longint unsigned NUM_OWO_QUEUES                   = 3,
+  longint unsigned HASH_RD_MASK_REDUCED_WIDTH       = 11,
+  longint unsigned HASH_WR_MASK_REDUCED_WIDTH       = 11,
+  longint unsigned NUM_PORTS                        = NUM_ACELITE + HAS_ACELITEDVM,
+  longint unsigned NUM_PORTS_FIXED                  = (NUM_PORTS > 0) ? NUM_PORTS : 1, // DO NOT OVERRIDE
+
+  longint unsigned ID_W_WIDTH                       = 11,
+  longint unsigned ID_R_WIDTH                       = 11,
+  // At most 8
+  longint unsigned REQ_WRR_WEIGHT_WIDTH             = 8,
+  longint unsigned TXDAT_WRR_WEIGHT_WIDTH           = 8,
+  // At most 8
+  longint unsigned RPM_READ_PORT_WEIGHT_WIDTH       = 8,
+  longint unsigned RPM_WRITE_PORT_WEIGHT_WIDTH      = 8,
+  longint unsigned RD_MAX_ENTRIES_PER_BANK          = 250, // Not including atomics
+  longint unsigned RD_BANK_RPM_USAGE_COUNTER_WIDTH  = 8,
+  longint unsigned RD_RPM_DEFAULT_RESERVED_PER_PORT = 1,
+  longint unsigned WR_MAX_ENTRIES_PER_BANK          = 250, // Not including atomics
+  longint unsigned WR_BANK_RPM_USAGE_COUNTER_WIDTH  = 8,
+  longint unsigned WR_RPM_DEFAULT_RESERVED_PER_PORT = 1,
+  longint unsigned ATOMIC_MAX_ENTRIES_PER_BANK          = 6,
+  longint unsigned ATOMIC_BANK_RPM_USAGE_COUNTER_WIDTH  = 3,
+  longint unsigned ATOMIC_RPM_DEFAULT_RESERVED_PER_PORT = 2,
+
+  longint unsigned WRITE_DB_WRR_WEIGHT_WIDTH            = 8,
+  longint unsigned EID_WIDTH                            = 10,
+  longint unsigned NUM_SAM_REGIONS                      = 128,
+
+  longint unsigned NUM_REMOTE_PCIE_ID                   = 16,
+  longint unsigned PCIE_PEER_TO_PEER_SQN_WIDTH          = 4
+)
+{
+  name = "mipa_us_top_regfile";
+  desc = "MI-A/P Upstream Top Register File.
+          Acelite and AceliteDVM ports are aggregated together when AceLiteDVM is the first port (if exists)";
+
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "MI-A/P Upstream Configuration done.
+              Indicates that all required configuration is done. When 0:
+              1. Port1 (AceLite without DVM) is routed towards configuration space.
+                 This allows the configuring Agent (if directly connected to this MI-P/A Upstream)
+                 to configure this block directly. if not, then no traffic is expected.
+              2. All ports transactions are not propagated towards CHI Fabric (blocked)
+              When 1 it means that MI-P/A configuration is done (either directly from configuring agent
+              or via Adjacent MI-P/A Downstream CSU unit). Once configured, all traffic is
+              routed towards the gMesh fabric. This bit can only be asserted once and cannot
+              be de-asserted later.";
+    } done = 0;
+  } cfg_mipa_us;
+
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "Indicates if acelite ports PCIe logic should be applied.
+      Can be used for the case we synthesized PCIe logic but we are not connected to PCIe.
+      Can only be configured once.
+      ";
+    } is_pcie [NUM_ACELITE_FIXED-1:0] = (IS_PCIE_BITMAP >> HAS_ACELITEDVM); // If has ace_lite_dvm, need to ignore lsb
+  } cfg_general_acelite;
+
+  cfg_general_acelite->ispresent = (NUM_ACELITE > 0) && HAS_PCIE;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "Weight of Ace write ports towards TX DAT";
+    } ace   [8*0+TXDAT_WRR_WEIGHT_WIDTH-1:8*0] = {(TXDAT_WRR_WEIGHT_WIDTH){1'b1}};
+    field {
+      desc = "Weight of AXIS write ports towards TX DAT";
+    } axis  [8*1+TXDAT_WRR_WEIGHT_WIDTH-1:8*1] = {(TXDAT_WRR_WEIGHT_WIDTH){1'b1}};
+    field {
+      desc = "Weight of Data Cancel (OWO) towards TX DAT";
+    } cancel[8*2+TXDAT_WRR_WEIGHT_WIDTH-1:8*2] = {(TXDAT_WRR_WEIGHT_WIDTH){1'b1}};
+    field {
+      desc = "Weight of Telemetry towards TX DAT";
+    } telemetry[8*3+TXDAT_WRR_WEIGHT_WIDTH-1:8*3] = {(TXDAT_WRR_WEIGHT_WIDTH){1'b1}};
+  } cfg_tx_dat_arb_wrr_weights;
+
+  cfg_tx_dat_arb_wrr_weights.ace->ispresent = HAS_ACELITEDVM || (NUM_ACELITE > 0);
+  cfg_tx_dat_arb_wrr_weights.axis->ispresent = HAS_AXIS;
+  cfg_tx_dat_arb_wrr_weights.cancel->ispresent = (NUM_ACELITE > 0) && HAS_PCIE;
+  cfg_tx_dat_arb_wrr_weights.telemetry->ispresent = HAS_TELEMETRY;
+  cfg_tx_dat_arb_wrr_weights->ispresent  = HAS_TELEMETRY || HAS_AXIS || HAS_ACELITEDVM || (NUM_ACELITE > 0);
+
+  reg {
+    default hw=r;
+    default sw=w;
+    field {
+      desc = "Override value of coherence state (SYSCOREQ).";
+    } value[0:0] = 0;
+    field {
+      desc = "Override enable of coherence state (SYSCOREQ).";
+    } en[8:8] = 0;
+  } cfg_coherent_state_override;
+  cfg_coherent_state_override->ispresent = HAS_SYSCO;
+
+  reg {
+    default hw=r;
+    default sw=w;
+    field {
+      desc = "Override value of eventoreq (EVENTOREQ).";
+    } value[0:0] = 0;
+    field {
+      desc = "Override enable of eventoreq (EVENTOREQ).";
+    } en[8:8] = 0;
+  } cfg_eventoreq_override;
+  cfg_eventoreq_override->ispresent = HAS_EVENTOREQ;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "Weight of AceLiteDVM Read Port towards RQM";
+    } read  [8*0+REQ_WRR_WEIGHT_WIDTH-1:8*0] = {(REQ_WRR_WEIGHT_WIDTH){1'b1}};
+    field {
+      desc = "Weight of AceLiteDVM Write Port towards RQM";
+    } write [8*1+REQ_WRR_WEIGHT_WIDTH-1:8*1] = {(REQ_WRR_WEIGHT_WIDTH){1'b1}};
+  } cfg_req_arb_wrr_weights_acelitedvm;
+  cfg_req_arb_wrr_weights_acelitedvm->ispresent  = HAS_ACELITEDVM;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "Weight of AceLite Read Port towards RQM";
+    } read   [8*0+REQ_WRR_WEIGHT_WIDTH-1:8*0] = {(REQ_WRR_WEIGHT_WIDTH){1'b1}};
+    field {
+      desc = "Weight of AceLite Write Port towards RQM";
+    } write  [8*1+REQ_WRR_WEIGHT_WIDTH-1:8*1] = {(REQ_WRR_WEIGHT_WIDTH){1'b1}};
+  } cfg_req_arb_wrr_weights_acelite [NUM_ACELITE_FIXED];
+  cfg_req_arb_wrr_weights_acelite->ispresent = (NUM_ACELITE > 0);
+
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "Weight of System Coherency State Manager towards RQM";
+    } sysco_manager [0*8+REQ_WRR_WEIGHT_WIDTH-1:0*8]    = {(REQ_WRR_WEIGHT_WIDTH){1'b1}};
+    field {
+      desc = "Weight of Event Requester towards RQM";
+    } eventoreq     [1*8+REQ_WRR_WEIGHT_WIDTH-1:1*8]    = {(REQ_WRR_WEIGHT_WIDTH){1'b1}};
+    field {
+      desc = "Weight of OWO Replay Requests Requester towards RQM";
+    } owo_replay    [2*8+REQ_WRR_WEIGHT_WIDTH-1:2*8]    = {(REQ_WRR_WEIGHT_WIDTH){1'b1}};
+    field {
+      desc = "Weight of Telemetry Requests Requester towards RQM";
+    } telemetry    [3*8+REQ_WRR_WEIGHT_WIDTH-1:3*8]    = {(REQ_WRR_WEIGHT_WIDTH){1'b1}};
+  } cfg_req_arb_wrr_weights;
+
+  cfg_req_arb_wrr_weights.sysco_manager->ispresent  = HAS_SYSCO;
+  cfg_req_arb_wrr_weights.eventoreq->ispresent      = HAS_EVENTOREQ;
+  cfg_req_arb_wrr_weights.owo_replay->ispresent     = (NUM_ACELITE > 0) && HAS_PCIE;
+  cfg_req_arb_wrr_weights.telemetry->ispresent      = HAS_TELEMETRY;
+  cfg_req_arb_wrr_weights->ispresent                = (HAS_TELEMETRY || HAS_SYSCO || HAS_EVENTOREQ) || ((NUM_ACELITE > 0) && HAS_PCIE);
+
+  reg {
+    default hw=r;
+    default sw=w;
+    field {
+      desc = "AceliteDVM read block. Will not forward new AXI read requests (ARREADY=0)";
+    } read[0:0] = 0;
+    field {
+      desc = "AceliteDVM write block. Will not forward new AXI write requests (WREADY=0, AWREADY=0)";
+    } write[8:8] = 0;
+  } cfg_acelitedvm_block;
+  cfg_acelitedvm_block->ispresent = (HAS_ACELITEDVM);
+
+  reg {
+    default hw=r;
+    default sw=w;
+    field {
+      desc = "Acelite read block request. Will not forward new AXI read requests (ARREADY=0)";
+    } read[0:0] = 0;
+    field {
+      desc = "Acelite write block request. Will not forward new AXI write requests (WREADY=0, AWREADY=0)";
+    } write[8:8] = 0;
+  } cfg_acelite_block [NUM_ACELITE_FIXED];
+  cfg_acelite_block->ispresent = (NUM_ACELITE > 0);
+
+  reg {
+    default hw=w;
+    default sw=rw;
+    field {
+      desc = "AceliteDVM read block acknowledged. Indication block will not forward new AXI read requests (ARREADY=0)";
+    } read[0:0] = 0;
+    field {
+      desc = "AceliteDVM read block acknowledged. Indication block will not forward new AXI write requests (WREADY=0, AWREADY=0)";
+    } write[8:8] = 0;
+  } sts_acelitedvm_block_ack;
+  sts_acelitedvm_block_ack->ispresent = (HAS_ACELITEDVM);
+
+  reg {
+    default hw=w;
+    default sw=rw;
+    field {
+      desc = "Acelite read block acknowledged. Indication block will not forward new AXI read requests (ARREADY=0)";
+    } read[0:0] = 0;
+    field {
+      desc = "Acelite read block acknowledged. Indication block will not forward new AXI write requests (WREADY=0, AWREADY=0)";
+    } write[8:8] = 0;
+  } sts_acelite_block_ack[NUM_ACELITE_FIXED];
+  sts_acelite_block_ack->ispresent = (NUM_ACELITE > 0);
+
+  reg {
+    default hw=w;
+    default sw=r;
+    field {
+      desc = "AceliteDVM read busy. not all queues are empty and rpm is empty.";
+    } read[0:0];
+    field {
+      desc = "AceliteDVM write busy. not all queues are empty and rpm is empty.";
+    } write[8:8];
+    field {
+      desc = "AceliteDVM DVM (AC/CR) busy. not all queues are empty.";
+    } dvm[16:16];
+  } sts_acelitedvm_busy;
+  sts_acelitedvm_busy->ispresent = (HAS_ACELITEDVM);
+
+  reg {
+    default hw=w;
+    default sw=r;
+    field {
+      desc = "Acelite read busy. not all queues are empty and rpm is empty.";
+    } read[0:0];
+    field {
+      desc = "Acelite write busy. not all queues are empty and rpm is empty.";
+    } write[8:8];
+  } sts_acelite_busy[NUM_ACELITE_FIXED];
+  sts_acelite_busy->ispresent = (NUM_ACELITE > 0);
+
+  reg {
+    default hw=w;
+    default sw=r;
+    field {
+      desc = "Indicates Read Channel initialization is done and we can start sending AXI Read requests via AXI Channels.";
+    } read_init_done[0:0];
+    field {
+      desc = "Indicates Write Channel initialization is done and we can start sending AXI Write requests via AXI Channels.
+              NOTE: sending atomic with side effect read requires both read and write channels to be initialized.";
+    } write_init_done[8:8];
+    field {
+      desc = "Indicates OWO logic initialization is done and we can start sending AXI Write requests via AXI Channels.
+              NOTE: sending atomic with side effect read requires both read and write channels to be initialized.";
+    } owo_init_done[16:16];
+  } sts_ace_ports;
+
+  sts_ace_ports->ispresent = (NUM_ACELITE > 0) || (HAS_ACELITEDVM);
+  sts_ace_ports.owo_init_done->ispresent = HAS_PCIE;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "Indicates we support read channel poison.";
+    } rpoison     [0*8 + NUM_ACELITE_FIXED-1 : 0*8] = 1;
+    field {
+      desc = "Indicates we support read channel DataCheck.
+      Currently ignored as w ealways generate correct datacheck.";
+    } rdata_check [1*8 + NUM_ACELITE_FIXED-1 : 1*8] = 0;
+    field {
+      desc = "Indicates we support write channel poison.";
+    } wpoison     [2*8 + NUM_ACELITE_FIXED-1 : 2*8] = 1;
+    field {
+      desc = "Indicates we support write channel DataCheck.";
+    } wdata_check [3*8 + NUM_ACELITE_FIXED-1 : 3*8] = 0;
+  } cfg_acelite_support;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "Indicates we support read channel poison.";
+    } rpoison = 1;
+    field {
+      desc = "Indicates we support read channel DataCheck.
+      Currently ignored as w ealways generate correct datacheck.";
+    } rdata_check[8:8] = 0;
+    field {
+      desc = "Indicates we support write channel poison.";
+    } wpoison[16:16] = 1;
+    field {
+      desc = "Indicates we support write channel DataCheck.";
+    } wdata_check[24:24] = 0;
+  } cfg_acelitedvm_support;
+
+  cfg_acelite_support->ispresent     = (NUM_ACELITE > 0);
+  cfg_acelitedvm_support->ispresent  = HAS_ACELITEDVM;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "The weight of OWO Completion in the arbitrator towards a read from WriteDB";
+    } weight[WRITE_DB_WRR_WEIGHT_WIDTH-1:0] = {(WRITE_DB_WRR_WEIGHT_WIDTH){1'b1}};
+  } cfg_write_db_owo_comp_arb_wrr;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "The weight of DBID regular (not owo) response in the arbitrator towards a read from WriteDB";
+    } weight[WRITE_DB_WRR_WEIGHT_WIDTH-1:0] = {(WRITE_DB_WRR_WEIGHT_WIDTH){1'b1}};
+  } cfg_write_db_regular_dbid_arb_wrr;
+
+  cfg_write_db_regular_dbid_arb_wrr->ispresent = (HAS_PCIE);
+  cfg_write_db_owo_comp_arb_wrr->ispresent     = (HAS_PCIE);
+
+  reg {
+    default sw = r;
+    default hw = w;
+    field {
+      desc = "Amount of AceLiteDVM outstanding AXI read requests";
+    } read[16-1:0];
+    field {
+      desc = "Amount of AceLiteDVM outstanding AXI write requests";
+    } write[32-1:16];
+  } sts_acelitedvm_monitor_num_outstanding;
+  reg {
+    default sw = r;
+    default hw = w;
+    field {
+      desc = "Amount of AceLite outstanding AXI read requests";
+    } read[16-1:0];
+    field {
+      desc = "Amount of AceLite outstanding AXI write requests";
+    } write[32-1:16];
+  } sts_acelite_monitor_num_outstanding[NUM_ACELITE_FIXED];
+
+  sts_acelitedvm_monitor_num_outstanding->ispresent = (HAS_ACELITEDVM);
+  sts_acelite_monitor_num_outstanding->ispresent = (NUM_ACELITE > 0);
+
+  mipa_us_hash_regfile #(
+    .HAS_ACELITEDVM           (HAS_ACELITEDVM),
+    .NUM_ACELITE              (NUM_ACELITE),
+    .LOG2_NUM_QUEUES          (LOG2_NUM_READ_QUEUES),
+    .HASH_MASK_REDUCED_WIDTH  (HASH_RD_MASK_REDUCED_WIDTH),
+    .AXID_WIDTH               (ID_R_WIDTH))
+  us_rd_hash;
+
+  us_rd_hash->ispresent = (NUM_PORTS > 0);
+
+  mipa_us_hash_regfile #(
+    .HAS_ACELITEDVM           (HAS_ACELITEDVM),
+    .NUM_ACELITE              (NUM_ACELITE),
+    .LOG2_NUM_QUEUES          (LOG2_NUM_WRITE_QUEUES),
+    .HASH_MASK_REDUCED_WIDTH  (HASH_RD_MASK_REDUCED_WIDTH),
+    .AXID_WIDTH               (ID_W_WIDTH))
+  us_wr_hash;
+
+  us_wr_hash->ispresent = (NUM_PORTS > 0);
+
+
+  mipa_us_pcie_mapper_regfile #(
+    .ID_W_WIDTH               (ID_W_WIDTH),
+    .CLOG2_NUM_PCIE_PORTS     (CLOG2_NUM_PCIE_PORTS),
+    .NUM_QUEUES               (NUM_OWO_QUEUES))
+  us_owo_mapper;
+  us_owo_mapper->ispresent = (NUM_ACELITE>0) && HAS_PCIE;
+
+  mipa_us_owo_regfile #(
+    .HAS_PCIE (HAS_PCIE),
+    .NUM_QUEUES (NUM_OWO_QUEUES)
+  ) us_owo;
+  us_owo->ispresent = (NUM_ACELITE>0) && HAS_PCIE;
+
+  mipa_us_axi_to_req_regfile #(
+    .MIPA_US_ID_R_WIDTH(ID_R_WIDTH),
+    .MIPA_US_ID_W_WIDTH(ID_W_WIDTH)) us_axi_to_req_acelitedvm;
+  us_axi_to_req_acelitedvm->ispresent = HAS_ACELITEDVM;
+
+  mipa_us_axi_to_req_regfile #(
+    .MIPA_US_ID_R_WIDTH(ID_R_WIDTH),
+    .MIPA_US_ID_W_WIDTH(ID_W_WIDTH)) us_axi_to_req_acelite[NUM_ACELITE_FIXED];
+  us_axi_to_req_acelite->ispresent = (NUM_ACELITE>0);
+
+  //TODO(nirmahlab): try to remove on next version
+  // used to make sure regfile name sticks.
+  mipa_us_axi_to_req_regfile #(
+    .MIPA_US_ID_R_WIDTH(ID_R_WIDTH),
+    .MIPA_US_ID_W_WIDTH(ID_W_WIDTH)) us_axi_to_req_UNCONNECTED;
+
+  us_axi_to_req_UNCONNECTED->ispresent = (NUM_ACELITE > 0) || HAS_ACELITEDVM;
+
+
+  mipa_us_axi_ports_to_rpm_regfile #(
+    .HAS_ACELITEDVM               (HAS_ACELITEDVM),
+    .NUM_ACELITE                  (NUM_ACELITE),
+    .WEIGHT_WIDTH                 (RPM_READ_PORT_WEIGHT_WIDTH)
+  ) us_rd_axi_ports_to_rpm;
+
+  mipa_us_axi_ports_to_rpm_regfile #(
+    .HAS_ACELITEDVM               (HAS_ACELITEDVM),
+    .NUM_ACELITE                  (NUM_ACELITE),
+    .WEIGHT_WIDTH                 (RPM_WRITE_PORT_WEIGHT_WIDTH)
+  ) us_wr_axi_ports_to_rpm;
+
+  mipa_us_uniform_rpm_regfile #(
+    .HAS_ACELITEDVM               (HAS_ACELITEDVM),
+    .NUM_ACELITE                  (NUM_ACELITE),
+    .BANK_RPM_USAGE_COUNTER_WIDTH (WR_BANK_RPM_USAGE_COUNTER_WIDTH),
+    .MAX_ENTRIES_PER_BANK         (WR_MAX_ENTRIES_PER_BANK),
+    .DEFAULT_RESERVED_PER_CTX     (WR_RPM_DEFAULT_RESERVED_PER_PORT)
+  ) us_wr_urpm;
+
+  mipa_us_uniform_rpm_regfile #(
+    .HAS_ACELITEDVM               (HAS_ACELITEDVM),
+    .NUM_ACELITE                  (NUM_ACELITE),
+    .BANK_RPM_USAGE_COUNTER_WIDTH (RD_BANK_RPM_USAGE_COUNTER_WIDTH),
+    .MAX_ENTRIES_PER_BANK         (RD_MAX_ENTRIES_PER_BANK),
+    .DEFAULT_RESERVED_PER_CTX     (RD_RPM_DEFAULT_RESERVED_PER_PORT)
+  ) us_rd_urpm;
+
+  mipa_us_uniform_rpm_regfile #(
+    .HAS_ACELITEDVM               (HAS_ACELITEDVM),
+    .NUM_ACELITE                  (NUM_ACELITE),
+    .BANK_RPM_USAGE_COUNTER_WIDTH (ATOMIC_BANK_RPM_USAGE_COUNTER_WIDTH),
+    .MAX_ENTRIES_PER_BANK         (ATOMIC_MAX_ENTRIES_PER_BANK),
+    .DEFAULT_RESERVED_PER_CTX     (ATOMIC_RPM_DEFAULT_RESERVED_PER_PORT)
+  ) us_atomic_urpm;
+
+  mipa_us_requests_accepter_regfile us_requests_accepter_acelitedvm;
+  mipa_us_requests_accepter_regfile us_requests_accepter_acelite[NUM_ACELITE_FIXED];
+
+
+
+  gmesh_rqm_regfile #(
+  .HAS_NP       (1'b1),
+  .HAS_P0       (1'b1),
+  .HAS_P1       (1'b1),
+  .HAS_PW       (HAS_PCIE),
+  .HAS_HR       (1'b0),
+  .HAS_SN       (1'b0),
+  .EID_WIDTH    (EID_WIDTH),
+  .HAS_PCIE_LUT (HAS_PCIE),
+  .HAS_MIF_HASH (1'b1),
+  .NUM_SAM_REGIONS(NUM_SAM_REGIONS),
+  .IS_MIC       (1'b0)
+  ) us_rqm;
+
+  mipa_us_sam_vc_regfile#(
+    .HAS_ACELITEDVM(HAS_ACELITEDVM),
+    .NUM_ACELITE(NUM_ACELITE),
+    .HAS_PCIE(HAS_PCIE),
+    .NUM_PCIE_PORTS(NUM_PCIE_PORTS),
+    .NUM_REMOTE_PCIE_ID(NUM_REMOTE_PCIE_ID),
+    .PCIE_PEER_TO_PEER_SQN_WIDTH(PCIE_PEER_TO_PEER_SQN_WIDTH)
+  ) us_sam_vc;
+
+  us_rd_axi_ports_to_rpm->ispresent = (NUM_PORTS>0);
+  us_wr_axi_ports_to_rpm->ispresent = (NUM_PORTS>0);
+  us_rd_urpm->ispresent             = (NUM_PORTS>0);
+  us_wr_urpm->ispresent             = (NUM_PORTS>0);
+  us_atomic_urpm->ispresent         = (NUM_PORTS>0);
+  us_sam_vc->ispresent              = (NUM_PORTS>0);
+
+  us_requests_accepter_acelite->ispresent     = (NUM_ACELITE>0);
+  us_requests_accepter_acelitedvm->ispresent  = (HAS_ACELITEDVM);
+
+
+  mipa_us_axi_stream_regfile #(
+    .AXIS_S_NUM_TDESTS   (AXIS_S_NUM_TDESTS),
+    .AXIS_S_TDEST_WIDTH  (AXIS_S_TDEST_WIDTH),
+    .AXIS_S_TGT_ID_WIDTH (AXIS_S_TGT_ID_WIDTH)
+  ) us_axi_stream;
+
+  us_axi_stream->ispresent = HAS_AXIS;
+
+};
+`endif

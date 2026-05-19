@@ -1,0 +1,35 @@
+`ifndef _MIPA_US_PCIE_MAPPER_REGFILE_
+`define _MIPA_US_PCIE_MAPPER_REGFILE_
+
+
+regfile mipa_us_pcie_mapper_regfile #(
+  longint unsigned NUM_QUEUES           = 8,
+  longint unsigned ID_W_WIDTH           = 9,
+  longint unsigned CLOG2_NUM_PCIE_PORTS = 1 // Zero for NUM_PORTS=0/1
+)
+{
+  name = "mipa_us_pcie_mapper_regfile";
+  desc = "MI-A/P PCIe mapper regfile. Used to map awid, pcie port index to linked list queues.
+          If we have a single PCIe port we only map awid to queue id";
+
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "The compare value. if {pcie_port_idx, awid}&mask[i] == compare[i] -> queue=i.
+      Each valid input should be mapped to a single queue.";
+    } value [ID_W_WIDTH+CLOG2_NUM_PCIE_PORTS-1:0] = 0;
+  } cfg_compare[NUM_QUEUES];
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "The mask value. if {pcie_port_idx, awid}&mask[i] == compare[i] -> queue=i.
+      Each valid input should be mapped to a single queue.";
+    } value [ID_W_WIDTH+CLOG2_NUM_PCIE_PORTS-1:0] = 0;
+  } cfg_mask[NUM_QUEUES];
+
+};
+`endif

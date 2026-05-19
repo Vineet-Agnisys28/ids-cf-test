@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<block name="slc_output_stage_regfile" refNameID="slc_output_stage_regfile" global="true" display_name="slc_output_stage_regfile" uid="2026-05-1511:36:28T28826242-44c1-4372-925e-cae656cedb5f" keypath="slc_output_stage_regfile" offset="0" caddress="0" hwmapaddr="1" max_reg_size="32" csize="1024" address="0x000" endaddress="0x3FF" size="1024" address_dec="0" heading="1" child_no="1">
+    <config>
+        
+        
+    <variants><variant name="none" isselected="true"><doc>'none' variant states including all templates which are not assigned any 
+  variant property.</doc></variant></variants><regwidth>32</regwidth><buswidth>32</buswidth><addressunit>8</addressunit><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="0" address="0x000" endaddress="0x3FF" size="1024"/></busdomains></config><doc>SLC Output Stage CSR Register File</doc><reg name="os_data_gen" refNameID="os_data_gen" uid="2026-05-1511:36:28T1a7f5bf2-3ff3-46f0-a9f3-f7064e5e65fb" keypath="slc_output_stage_regfile.os_data_gen,os_data_gen" hwmapaddr="2" csize="4" offset="0" caddress="0" address="0x000" endaddress="0x3" size="4" address_dec="0" heading="1.1" child_no="1" default="0x00000000" sw="rw" hw="ro">
+        <config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="0" address="0x000" endaddress="0x3" size="4"/></busdomains><regwidth>32</regwidth></config><doc>withhold credits of os_data_gen fifo</doc><field name="withhold_credit" offset="3:0" uid="2026-05-1511:36:28T3be9f63d-e333-4073-a4b0-559657965bcd" keypath="slc_output_stage_regfile.os_data_gen.withhold_credit,os_data_gen.withhold_credit,withhold_credit">
+            <doc>Maximum number of credits to withhold from release</doc>
+            <sw>rw</sw>
+            <hw>ro</hw>
+            <default unresolvedDef="0">0000</default>
+        </field>
+        
+    </reg>
+    <reg name="os_credit_gen" refNameID="os_credit_gen" uid="2026-05-1511:36:28T40d9c712-8888-4813-a7f0-28a252517b48" keypath="slc_output_stage_regfile.os_credit_gen,os_credit_gen" hwmapaddr="3" csize="4" offset="4" caddress="4" address="0x004" endaddress="0x7" size="4" address_dec="4" heading="1.2" child_no="2" default="0x00000000" sw="rw" hw="ro">
+        <config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="4" address="0x004" endaddress="0x7" size="4"/></busdomains><regwidth>32</regwidth></config><doc>withhold credits of os_credit_gen fifo</doc><field name="withhold_credit" offset="3:0" uid="2026-05-1511:36:28Tdc6ba911-ed98-4e29-aed1-0dfbe5971ad6" keypath="slc_output_stage_regfile.os_credit_gen.withhold_credit,os_credit_gen.withhold_credit,withhold_credit">
+            <doc>Maximum number of credits to withhold from release</doc>
+            <sw>rw</sw>
+            <hw>ro</hw>
+            <default unresolvedDef="0">0000</default>
+        </field>
+        
+    </reg>
+    <reg name="os_response_gen" refNameID="os_response_gen" uid="2026-05-1511:36:28T76c7ad6f-2518-43c2-a1fc-bf5d4aad2b8c" keypath="slc_output_stage_regfile.os_response_gen,os_response_gen" hwmapaddr="4" csize="4" offset="8" caddress="8" address="0x008" endaddress="0xB" size="4" address_dec="8" heading="1.3" child_no="3" default="0x00000000" sw="rw" hw="ro">
+        <config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="8" address="0x008" endaddress="0xB" size="4"/></busdomains><regwidth>32</regwidth></config><doc>withhold credits of os_response_gen fifo</doc><field name="withhold_credit" offset="3:0" uid="2026-05-1511:36:28Tbe378d40-b359-4809-9506-d529366c7965" keypath="slc_output_stage_regfile.os_response_gen.withhold_credit,os_response_gen.withhold_credit,withhold_credit">
+            <doc>Maximum number of credits to withhold from release</doc>
+            <sw>rw</sw>
+            <hw>ro</hw>
+            <default unresolvedDef="0">0000</default>
+        </field>
+        
+    </reg>
+    <reg name="os_request_gen" refNameID="os_request_gen" uid="2026-05-1511:36:28T27c6d4b0-c4d2-48d3-b273-abf0df3ef1ae" keypath="slc_output_stage_regfile.os_request_gen,os_request_gen" hwmapaddr="5" csize="4" offset="12" caddress="12" address="0x00C" endaddress="0xF" size="4" address_dec="12" heading="1.4" child_no="4" default="0x00000000" sw="rw" hw="ro">
+        <config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="12" address="0x00C" endaddress="0xF" size="4"/></busdomains><regwidth>32</regwidth></config><doc>withhold credits of os_request_gen fifo</doc><field name="withhold_credit" offset="3:0" uid="2026-05-1511:36:28T40e20f3b-1640-4223-a52f-570475661ef1" keypath="slc_output_stage_regfile.os_request_gen.withhold_credit,os_request_gen.withhold_credit,withhold_credit">
+            <doc>Maximum number of credits to withhold from release</doc>
+            <sw>rw</sw>
+            <hw>ro</hw>
+            <default unresolvedDef="0">0000</default>
+        </field>
+        
+    </reg>
+    <reg name="os_snoop_gen_bmp" refNameID="os_snoop_gen_bmp" uid="2026-05-1511:36:28Tbf5913b3-fdd2-471c-9c0c-ee26ec96f299" keypath="slc_output_stage_regfile.os_snoop_gen_bmp,os_snoop_gen_bmp" hwmapaddr="6" csize="4" offset="16" caddress="16" address="0x010" endaddress="0x13" size="4" address_dec="16" heading="1.5" child_no="5" default="0x00000000" sw="rw" hw="ro">
+        <config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="16" address="0x010" endaddress="0x13" size="4"/></busdomains><regwidth>32</regwidth></config><doc>withhold credits of os_snoop_gen_bmp fifo</doc><field name="withhold_credit" offset="3:0" uid="2026-05-1511:36:28T4cb2791f-2a59-4464-8d4a-8956c2b412cc" keypath="slc_output_stage_regfile.os_snoop_gen_bmp.withhold_credit,os_snoop_gen_bmp.withhold_credit,withhold_credit">
+            <doc>Maximum number of credits to withhold from release</doc>
+            <sw>rw</sw>
+            <hw>ro</hw>
+            <default unresolvedDef="0">0000</default>
+        </field>
+        
+    </reg>
+    <section name="csr_slc_rqm" refNameID="gmesh_rqm_regfile" display_name="gmesh_rqm_regfile" uid="2026-05-1511:36:28Te710c3b1-0d5c-4d20-b969-3715bd826842" keypath="slc_output_stage_regfile.csr_slc_rqm,csr_slc_rqm" keypathdown="csr_slc_rqm.rqm_sam_region_regfile.cfg_rqm_region_start.cfg_rqm_region_end.cfg_rqm_region.cfg_rqm_region_pcie.cfg_rqm_numa.cfg_rqm_mid_index.cfg_rqm_slc_hashing_override.cfg_rqm_mid_hashing_override.cfg_rqm_initial_e2e_credits_np.cfg_rqm_initial_e2e_credits_p0.cfg_rqm_initial_e2e_credits_p1.cfg_rqm_initial_e2e_credits_pw.cfg_rqm_initial_e2e_credits_hr.cfg_rqm_initial_e2e_credits_sn.cfg_rqm_max_p0_p1.cfg_rqm_cbusy_slc.cfg_rqm_cbusy_mif.cfg_rqm_cbusy_use_mif.cfg_rqm_pcie_peer_to_peer.cfg_rqm_target_mif_table_index.cfg_rqm_table_index_to_mif.cfg_rqm_mif_hashing.cfg_rqm_cbusy_drop_prefetch_tgt.cfg_rqm_src_numa_id_override.cfg_rqm_eid.cfg_rqm_arb_wrr.cfg_rate_limiter_regfile.cfg_rqm_rate_limiter.cfg_rqm_core_p1_opcodes.cfg_rqm_core_p0_p1_expected_opcodes.cfg_rqm_miphb_read_opcodes.cfg_rqm_color_override.cfg_rqm_fabric_config_space.cfg_rqm_ccr.cfg_rqm_core_config_space.cfg_rqm_chiplet,rqm_sam_region_regfile.cfg_rqm_region_start.cfg_rqm_region_end.cfg_rqm_region.cfg_rqm_region_pcie,cfg_rqm_region_start,cfg_rqm_region_end,cfg_rqm_region,cfg_rqm_region_pcie,cfg_rqm_numa,cfg_rqm_mid_index,cfg_rqm_slc_hashing_override,cfg_rqm_mid_hashing_override,cfg_rqm_initial_e2e_credits_np,cfg_rqm_initial_e2e_credits_p0,cfg_rqm_initial_e2e_credits_p1,cfg_rqm_initial_e2e_credits_pw,cfg_rqm_initial_e2e_credits_hr,cfg_rqm_initial_e2e_credits_sn,cfg_rqm_max_p0_p1,cfg_rqm_cbusy_slc,cfg_rqm_cbusy_mif,cfg_rqm_cbusy_use_mif,cfg_rqm_pcie_peer_to_peer,cfg_rqm_target_mif_table_index,cfg_rqm_table_index_to_mif,cfg_rqm_mif_hashing,cfg_rqm_cbusy_drop_prefetch_tgt,cfg_rqm_src_numa_id_override,cfg_rqm_eid,cfg_rqm_arb_wrr,cfg_rate_limiter_regfile.cfg_rqm_rate_limiter,cfg_rqm_rate_limiter,cfg_rqm_core_p1_opcodes,cfg_rqm_core_p0_p1_expected_opcodes,cfg_rqm_miphb_read_opcodes,cfg_rqm_color_override,cfg_rqm_fabric_config_space,cfg_rqm_ccr,cfg_rqm_core_config_space,cfg_rqm_chiplet" hwmapaddr="7" csize="1004" offset="20" caddress="20" address="0x014" endaddress="0x3FF" size="1004" address_dec="20" heading="1.6" child_no="6">
+        <config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="20" address="0x014" endaddress="0x3FF" size="1004"/></busdomains></config><doc>RQM CSR Register File</doc><section name="rqm_sam_region_regfile" refNameID="rqm_sam_region_regfile" uid="2026-05-1511:36:28T82ef3c24-d01d-4842-b737-a7fd16727240" keypath="slc_output_stage_regfile.csr_slc_rqm.rqm_sam_region_regfile,csr_slc_rqm.rqm_sam_region_regfile,rqm_sam_region_regfile" keypathdown="rqm_sam_region_regfile.cfg_rqm_region_start.cfg_rqm_region_end.cfg_rqm_region.cfg_rqm_region_pcie,cfg_rqm_region_start,cfg_rqm_region_end,cfg_rqm_region,cfg_rqm_region_pcie" count="8" hwmapaddr="8" max_reg_size="32" csize="128" offset="0" caddress="0" address="0x014" endaddress="0x93" size="16" address_dec="20" address2="0x024" heading="1.6.1" child_no="1">
+            <config><repeats><repeat count="8" name="rqm_sam_region_regfile"/></repeats><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="0" address="0x014" endaddress="0x93" size="16" address2="0x024"/></busdomains></config><doc>The RQM SAM region configuration.
+For the RQM to be functional, the SAM must be configured.
+The SAM can be configured even during ACTIVE state, after config_done has been asserted.
+To configure the SAM after config_done has been asserted, SW needs to:
+1.Ensure there are no more transactions to this region.
+2.Disable the region.
+3.Config the region
+4.Enable the region</doc><reg name="cfg_rqm_region_start" refNameID="cfg_rqm_region_start" uid="2026-05-1511:36:28T0f75acce-d1bc-47af-a363-798b2d5cad09" keypath="slc_output_stage_regfile.csr_slc_rqm.rqm_sam_region_regfile.cfg_rqm_region_start,csr_slc_rqm.rqm_sam_region_regfile.cfg_rqm_region_start,rqm_sam_region_regfile.cfg_rqm_region_start,cfg_rqm_region_start" hwmapaddr="9" csize="4" offset="0" caddress="0" address="0x014" endaddress="0x17" size="4" address_dec="20" heading="1.6.1.1" child_no="1" default="0x00000000" sw="rw" hw="ro">
+                <config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="0" address="0x014" endaddress="0x17" size="4"/></busdomains><regwidth>32</regwidth></config><field name="address" offset="27:0" uid="2026-05-1511:36:28Tf2eaff57-ada4-4421-8c5a-ba322326058d" keypath="slc_output_stage_regfile.csr_slc_rqm.rqm_sam_region_regfile.cfg_rqm_region_start.address,csr_slc_rqm.rqm_sam_region_regfile.cfg_rqm_region_start.address,rqm_sam_region_regfile.cfg_rqm_region_start.address,cfg_rqm_region_start.address,address">
+                    <doc>SAM Region Start Address, 1MB granule (bits [47:20])
+In the design, the 20 LSBs of the request address are asssumed to be 0x7FFFF.
+SAM region is defined by cfg_sam_region_start[27:0] &lt;= chi_req.addr[47:20] &lt;= cfg_sam_region_end[27:0]</doc>
+                    <sw>rw</sw>
+                    <hw>ro</hw>
+                    <default unresolvedDef="0">0000000000000000000000000000</default>
+                </field>
+            </reg>
+            <reg name="cfg_rqm_region_end" refNameID="cfg_rqm_region_end" uid="2026-05-1511:36:28T1391c371-cc89-4730-b8c0-159bcdf1c65e" keypath="slc_output_stage_regfile.csr_slc_rqm.rqm_sam_region_regfile.cfg_rqm_region_end,csr_slc_rqm.rqm_sam_region_regfile.cfg_rqm_region_end,rqm_sam_region_regfile.cfg_rqm_region_end,cfg_rqm_region_end" hwmapaddr="10" csize="4" offset="4" caddress="4" address="0x018" endaddress="0x1B" size="4" address_dec="24" heading="1.6.1.2" child_no="2" default="0x00000000" sw="rw" hw="ro">
+                <config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="4" address="0x018" endaddress="0x1B" size="4"/></busdomains><regwidth>32</regwidth></config><field name="address" offset="27:0" uid="2026-05-1511:36:28T400dcbe8-e775-466b-b0e7-76e492693143" keypath="slc_output_stage_regfile.csr_slc_rqm.rqm_sam_region_regfile.cfg_rqm_region_end.address,csr_slc_rqm.rqm_sam_region_regfile.cfg_rqm_region_end.address,rqm_sam_region_regfile.cfg_rqm_region_end.address,cfg_rqm_region_end.address,address">
+                    <doc>SAM Region End Address, 1MB granule (bits [47:20])
+In the design, the 20 LSBs of the request address are asssumed to be 0x7FFFF.
+SAM region is defined by cfg_sam_region_start[27:0] &lt;= chi_req.addr[47:20] &lt;= cfg_sam_region_end[27:0]</doc>
+                    <sw>rw</sw>
+                    <hw>ro</hw>
+                    <default unresolvedDef="0">0000000000000000000000000000</default>
+                </field>
+            </reg>
+            <reg name="cfg_rqm_region" refNameID="cfg_rqm_region" uid="2026-05-1511:36:28T8a45f6c7-be2a-48f9-8bee-95151344768c" keypath="slc_output_stage_regfile.csr_slc_rqm.rqm_sam_region_regfile.cfg_rqm_region,csr_slc_rqm.rqm_sam_region_regfile.cfg_rqm_region,rqm_sam_region_regfile.cfg_rqm_region,cfg_rqm_region" hwmapaddr="11" csize="4" offset="8" caddress="8" address="0x01C" endaddress="0x1F" size="4" address_dec="28" heading="1.6.1.3" child_no="3" default="0x00000000" sw="rw" hw="ro">
+                
+                <config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="8" address="0x01C" endaddress="0x1F" size="4"/></busdomains><regwidth>32</regwidth></config><field name="numa_id" offset="5:4" uid="2026-05-1511:36:28T52cfba7e-f04c-4e03-b4ea-69bd88e1e73f" keypath="slc_output_stage_regfile.csr_slc_rqm.rqm_sam_region_regfile.cfg_rqm_region.numa_id,csr_slc_rqm.rqm_sam_region_regfile.cfg_rqm_region.numa_id,rqm_sam_region_regfile.cfg_rqm_region.numa_id,cfg_rqm_region.numa_id,numa_id">
+                    <doc>The NUMA ID of a region</doc>
+                    <sw>rw</sw>
+                    <hw>ro</hw>
+                    <default unresolvedDef="0">00</default>
+                </field>
+                <field name="is_miphb" offset="8:8" uid="2026-05-1511:36:28T31cc7c71-9e54-4f80-a30b-9ea50d1df4b8" keypath="slc_output_stage_regfile.csr_slc_rqm.rqm_sam_region_regfile.cfg_rqm_region.is_miphb,csr_slc_rqm.rqm_sam_region_regfile.cfg_rqm_region.is_miphb,rqm_sam_region_regfile.cfg_rqm_region.is_miphb,cfg_rqm_region.is_miphb,is_miphb">
+                    <doc>The target is High Bandwidth MI-P</doc>
+                    <sw>rw</sw>
+                    <hw>ro</hw>
+                    <default unresolvedDef="0">0</default>
+                </field>
+                <field name="direct_eid" offset="25:16" uid="2026-05-1511:36:28T5070d187-3b45-4981-852d-456ccf0477b2" keypath="slc_output_stage_regfile.csr_slc_rqm.rqm_sam_region_regfile.cfg_rqm_region.direct_eid,csr_slc_rqm.rqm_sam_region_regfile.cfg_rqm_region.direct_eid,rqm_sam_region_regfile.cfg_rqm_region.direct_eid,cfg_rqm_region.direct_eid,direct_eid">
+                    <doc>SAM Region Enumerate ID. Applicable only if target type is set to MI, RMem, PConfig or PMem.
+Otherwise the target EID will be calculated by the hashing function or
+configuration logic.</doc>
+                    <sw>rw</sw>
+                    <hw>ro</hw>
+                    <default unresolvedDef="0">0000000000</default>
+                </field>
+                <field name="cxl" offset="28:28" ispresent_dep="true" uid="2026-05-1511:36:28T517af76e-0785-46b8-bab4-0b9a947a75e8" keypath="slc_output_stage_regfile.csr_slc_rqm.rqm_sam_region_regfile.cfg_rqm_region.cxl,csr_slc_rqm.rqm_sam_region_regfile.cfg_rqm_region.cxl,rqm_sam_region_regfile.cfg_rqm_region.cxl,cfg_rqm_region.cxl,cxl">
+                    <doc>The target is CXL.mem device (no need to hash over MI-Ds).
+Relevant only in SLC System Address Mapping</doc>
+                    <sw>rw</sw>
+                    <hw>ro</hw>
+                    <default unresolvedDef="0">0</default>
+                </field>
+                <field name="en" offset="31:31" uid="2026-05-1511:36:28T51606ff5-45c8-41c6-a952-015ca7a17046" keypath="slc_output_stage_regfile.csr_slc_rqm.rqm_sam_region_regfile.cfg_rqm_region.en,csr_slc_rqm.rqm_sam_region_regfile.cfg_rqm_region.en,rqm_sam_region_regfile.cfg_rqm_region.en,cfg_rqm_region.en,en">
+                    <doc>SAM Region Valid</doc>
+                    <sw>rw</sw>
+                    <hw>ro</hw>
+                    <default unresolvedDef="0">0</default>
+                </field>
+            </reg><emptyspace address="0x20" endaddress="0x23" heading="1.6.1.4" child_no="4"><config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" address="0x20" endaddress="0x23"/></busdomains></config></emptyspace>
+            
+            
+        </section>
+        <reg name="cfg_rqm_numa" refNameID="cfg_rqm_numa" ispresent_dep="true" uid="2026-05-1511:36:28T563bac15-5ffd-4264-aab1-9c66d3a326fa" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_numa,csr_slc_rqm.cfg_rqm_numa,cfg_rqm_numa" count="4" hwmapaddr="13" csize="16" offset="128" caddress="128" address="0x094" endaddress="0xA3" size="4" address_dec="148" address2="0x098" heading="1.6.2" child_no="2" default="0x00000000" sw="rw" hw="ro">
+            <config><repeats><repeat count="4" name="cfg_rqm_numa"/></repeats><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="128" address="0x094" endaddress="0xA3" size="4" address2="0x098"/></busdomains><regwidth>32</regwidth></config><doc>Numa cluster attributes, Relevant only in SLC System Address Mapping</doc><field name="size" offset="1:0" encode="numa_size_enum" uid="2026-05-1511:36:28T427c5d71-a62e-436c-8d34-cf9826610455" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_numa.size,csr_slc_rqm.cfg_rqm_numa.size,cfg_rqm_numa.size,size">
+                <doc><list type="enum" name="numa_size_enum" uid="2026-05-1511:36:28T0ff534a1-e501-4d63-a4fb-7f95ce89ac6d">
+                        <value name="FULL" doc="The NUMA ID represents F cluster" uid="2026-05-1511:36:28T04ff6370-f673-4ca1-85b1-641a79b97e3a">0</value>
+                        <value name="HALF" doc="The NUMA ID represents H cluster" uid="2026-05-1511:36:28Tb405a483-36ea-4237-a435-deb936ed5a44">1</value>
+                        <value name="NONE" doc="The NUMA ID is not used" uid="2026-05-1511:36:28T0c1b5b75-03da-4c9d-97e8-53f693061790">2</value>
+                    </list>The NUMA cluster size
+                </doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0" enum.unresolvedDef="FULL">00</default>
+            </field>
+            <field name="location" offset="5:4" encode="numa_location_enum" uid="2026-05-1511:36:28T36785449-e696-49ac-a313-c73d397eff30" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_numa.location,csr_slc_rqm.cfg_rqm_numa.location,cfg_rqm_numa.location,location">
+                <doc><list type="enum" name="numa_location_enum" uid="2026-05-1511:36:28T8a133e84-fe8d-4229-8bb1-9ac1d7412d7e">
+                        <value name="LOCAL" doc="The SLC is part of this NUMA ID" uid="2026-05-1511:36:28T471842f9-f7e2-435b-8ab8-f23716291209">0</value>
+                        <value name="PEER" doc="The NUMA ID is at the same fabric as the SLC" uid="2026-05-1511:36:28T48db5c21-819d-4dba-9a56-a1653a0d5ed2">1</value>
+                        <value name="REMOTE" doc="The NUMA ID is at a remote fabric. SLC to SLC requests and snoops goes through MI-F" uid="2026-05-1511:36:28T3353386d-ba99-4924-8022-1e99464f1af4">2</value>
+                    </list>The location of the NUMA cluster with respect to the SLC
+                </doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0" enum.unresolvedDef="LOCAL">00</default>
+            </field>
+            
+        </reg>
+        <reg name="cfg_rqm_mid_index" refNameID="cfg_rqm_mid_index" ispresent_dep="true" uid="2026-05-1511:36:28T56d18465-bbaf-42df-8cec-9cdbb102b60d" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_mid_index,csr_slc_rqm.cfg_rqm_mid_index,cfg_rqm_mid_index" count="4" hwmapaddr="14" csize="16" offset="144" caddress="144" address="0x0A4" endaddress="0xB3" size="4" address_dec="164" address2="0x0A8" heading="1.6.3" child_no="3" default="0x00000000" sw="rw" hw="ro">
+            <config><repeats><repeat count="4" name="cfg_rqm_mid_index"/></repeats><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="144" address="0x0A4" endaddress="0xB3" size="4" address2="0x0A8"/></busdomains><regwidth>32</regwidth></config><field name="to_eid" offset="9:0" uid="2026-05-1511:36:28Tf90a63b1-2315-4daf-b290-02fd8b0192e6" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_mid_index.to_eid,csr_slc_rqm.cfg_rqm_mid_index.to_eid,cfg_rqm_mid_index.to_eid,to_eid">
+                <doc>The MI-D hashing function outputs 2 bits index, this is the EID of
+the MI-D that corresponds to the index.</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0">0000000000</default>
+            </field>
+        </reg>
+        <reg name="cfg_rqm_slc_hashing_override" refNameID="cfg_rqm_slc_hashing_override" uid="2026-05-1511:36:28Tdb344df9-48ba-4af2-9323-6f9101bacaa3" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_slc_hashing_override,csr_slc_rqm.cfg_rqm_slc_hashing_override,cfg_rqm_slc_hashing_override" hwmapaddr="15" csize="4" offset="160" caddress="160" address="0x0B4" endaddress="0xB7" size="4" address_dec="180" heading="1.6.4" child_no="4" default="0x00000000" sw="rw" hw="ro">
+            <config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="160" address="0x0B4" endaddress="0xB7" size="4"/></busdomains><regwidth>32</regwidth></config><doc>the SLC hashing can be overridden by configuration.
+The SAM of the source MI can be set to targets a single SLC</doc><field name="en" offset="0:0" uid="2026-05-1511:36:28T6d05ac08-f327-47f4-88be-6089e0bc919e" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_slc_hashing_override.en,csr_slc_rqm.cfg_rqm_slc_hashing_override.en,cfg_rqm_slc_hashing_override.en,en">
+                <doc>If set, the RQM will override the SLC Hashing EID
+and will assign a new EID based on slc_hashing_override_value register</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0">0</default>
+            </field>
+            <field name="value" offset="13:4" uid="2026-05-1511:36:28T87d3c1c9-306c-4f30-812c-3f110576af3f" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_slc_hashing_override.value,csr_slc_rqm.cfg_rqm_slc_hashing_override.value,cfg_rqm_slc_hashing_override.value,value">
+                <doc>The value of the EID to use in case slc_hashing_override_en is set</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0">0000000000</default>
+            </field>
+            
+        </reg>
+        <reg name="cfg_rqm_mid_hashing_override" refNameID="cfg_rqm_mid_hashing_override" ispresent_dep="true" uid="2026-05-1511:36:28T0a50b3d6-fd4e-4601-9b67-71e39c1ded13" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_mid_hashing_override,csr_slc_rqm.cfg_rqm_mid_hashing_override,cfg_rqm_mid_hashing_override" hwmapaddr="16" csize="4" offset="164" caddress="164" address="0x0B8" endaddress="0xBB" size="4" address_dec="184" heading="1.6.5" child_no="5" default="0x00000000" sw="rw" hw="ro">
+            <config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="164" address="0x0B8" endaddress="0xBB" size="4"/></busdomains><regwidth>32</regwidth></config><doc>the MI-D hashing can be overridden by configuration.
+The SAM of the source MI can be set to targets a single MI-D</doc><field name="en" offset="0:0" uid="2026-05-1511:36:28Tb0c574b9-9816-4239-9d22-27b22c21d585" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_mid_hashing_override.en,csr_slc_rqm.cfg_rqm_mid_hashing_override.en,cfg_rqm_mid_hashing_override.en,en">
+                <doc>If set, the RQM will override the MI-D Hashing EID
+and will assign a new EID based on mid_hashing_override_value register</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0">0</default>
+            </field>
+            <field name="value" offset="13:4" uid="2026-05-1511:36:28T5f133ae9-795a-45aa-9561-7790ba58772a" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_mid_hashing_override.value,csr_slc_rqm.cfg_rqm_mid_hashing_override.value,cfg_rqm_mid_hashing_override.value,value">
+                <doc>The value of the EID to use in case mid_hashing_override_en is set</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0">0000000000</default>
+            </field>
+            
+        </reg>
+        
+        <emptyspace address="0xBC" endaddress="0xBF" heading="1.6.6" child_no="6"><config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" address="0xBC" endaddress="0xBF"/></busdomains></config></emptyspace><reg name="cfg_rqm_initial_e2e_credits_p0" refNameID="cfg_rqm_initial_e2e_credits" ispresent_dep="true" uid="2026-05-1511:36:28T9984d3e0-b2c5-4d0f-9752-27862e412875" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_initial_e2e_credits_p0,csr_slc_rqm.cfg_rqm_initial_e2e_credits_p0,cfg_rqm_initial_e2e_credits_p0" hwmapaddr="18" csize="4" offset="172" caddress="172" address="0x0C0" endaddress="0xC3" size="4" address_dec="192" heading="1.6.6" child_no="7" default="0x00000000" sw="rw" hw="ro">
+            <config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="172" address="0x0C0" endaddress="0xC3" size="4"/></busdomains><regwidth>32</regwidth></config><doc>End to End credit initialization register</doc><field name="value" offset="5:0" uid="2026-05-1511:36:28T84d08b37-52b5-4f4f-8add-20a9eb641737" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_initial_e2e_credits_p0.value,csr_slc_rqm.cfg_rqm_initial_e2e_credits_p0.value,cfg_rqm_initial_e2e_credits_p0.value,value">
+                <doc>The E2E credits amount to load for EID = cfg_rqm_initial_e2e_credits_eid</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0">000000</default>
+            </field>
+            <field name="eid" offset="15:6" rtl.hw_wp="true" uid="2026-05-1511:36:28T972330a0-5200-4778-9a84-c2e69a142301" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_initial_e2e_credits_p0.eid,csr_slc_rqm.cfg_rqm_initial_e2e_credits_p0.eid,cfg_rqm_initial_e2e_credits_p0.eid,eid">
+                <doc>The EID that will be loaded with the cfg_rqm_initial_e2e_credits_value.</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0">0000000000</default>
+            </field>
+            <field name="en" offset="31:31" uid="2026-05-1511:36:28T81d259f7-090b-4275-9088-11e5017f3923" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_initial_e2e_credits_p0.en,csr_slc_rqm.cfg_rqm_initial_e2e_credits_p0.en,cfg_rqm_initial_e2e_credits_p0.en,en">
+                <doc>Set if the RQM can send flits to this EID on this VC.
+e.g. If the RQM is in MI-C, en shall be 0 for all SLCs that are not
+in the same NUMA cluster as this MI-C</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0">0</default>
+            </field>
+            
+        </reg>
+        <reg name="cfg_rqm_initial_e2e_credits_p1" refNameID="cfg_rqm_initial_e2e_credits" ispresent_dep="true" uid="2026-05-1511:36:28T70e11744-0574-4daf-bc77-f153616e2fc9" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_initial_e2e_credits_p1,csr_slc_rqm.cfg_rqm_initial_e2e_credits_p1,cfg_rqm_initial_e2e_credits_p1" hwmapaddr="19" csize="4" offset="176" caddress="176" address="0x0C4" endaddress="0xC7" size="4" address_dec="196" heading="1.6.7" child_no="8" default="0x00000000" sw="rw" hw="ro">
+            <config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="176" address="0x0C4" endaddress="0xC7" size="4"/></busdomains><regwidth>32</regwidth></config><doc>End to End credit initialization register</doc><field name="value" offset="5:0" uid="2026-05-1511:36:28Td963a7bd-181a-4f1c-9af4-96d1f7a4a01e" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_initial_e2e_credits_p1.value,csr_slc_rqm.cfg_rqm_initial_e2e_credits_p1.value,cfg_rqm_initial_e2e_credits_p1.value,value">
+                <doc>The E2E credits amount to load for EID = cfg_rqm_initial_e2e_credits_eid</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0">000000</default>
+            </field>
+            <field name="eid" offset="15:6" rtl.hw_wp="true" uid="2026-05-1511:36:28Taa7088ad-9ca2-497b-ab21-b5b575f1e8cc" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_initial_e2e_credits_p1.eid,csr_slc_rqm.cfg_rqm_initial_e2e_credits_p1.eid,cfg_rqm_initial_e2e_credits_p1.eid,eid">
+                <doc>The EID that will be loaded with the cfg_rqm_initial_e2e_credits_value.</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0">0000000000</default>
+            </field>
+            <field name="en" offset="31:31" uid="2026-05-1511:36:28T28be18dd-21da-475a-8a82-7ed5d13127e4" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_initial_e2e_credits_p1.en,csr_slc_rqm.cfg_rqm_initial_e2e_credits_p1.en,cfg_rqm_initial_e2e_credits_p1.en,en">
+                <doc>Set if the RQM can send flits to this EID on this VC.
+e.g. If the RQM is in MI-C, en shall be 0 for all SLCs that are not
+in the same NUMA cluster as this MI-C</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0">0</default>
+            </field>
+            
+        </reg>
+        
+        <emptyspace address="0xC8" endaddress="0xCB" heading="1.6.9" child_no="9"><config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" address="0xC8" endaddress="0xCB"/></busdomains></config></emptyspace><reg name="cfg_rqm_initial_e2e_credits_hr" refNameID="cfg_rqm_initial_e2e_credits" ispresent_dep="true" uid="2026-05-1511:36:28Ta558c1a9-547a-457c-9c7a-74e2ee05c13e" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_initial_e2e_credits_hr,csr_slc_rqm.cfg_rqm_initial_e2e_credits_hr,cfg_rqm_initial_e2e_credits_hr" hwmapaddr="21" csize="4" offset="184" caddress="184" address="0x0CC" endaddress="0xCF" size="4" address_dec="204" heading="1.6.8" child_no="10" default="0x00000000" sw="rw" hw="ro">
+            <config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="184" address="0x0CC" endaddress="0xCF" size="4"/></busdomains><regwidth>32</regwidth></config><doc>End to End credit initialization register</doc><field name="value" offset="5:0" uid="2026-05-1511:36:28Te42cd0ef-b0e5-43ba-90f6-ab4c80e56114" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_initial_e2e_credits_hr.value,csr_slc_rqm.cfg_rqm_initial_e2e_credits_hr.value,cfg_rqm_initial_e2e_credits_hr.value,value">
+                <doc>The E2E credits amount to load for EID = cfg_rqm_initial_e2e_credits_eid</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0">000000</default>
+            </field>
+            <field name="eid" offset="15:6" rtl.hw_wp="true" uid="2026-05-1511:36:28Tc60f1108-6fd6-4bc3-b190-e98d28b10921" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_initial_e2e_credits_hr.eid,csr_slc_rqm.cfg_rqm_initial_e2e_credits_hr.eid,cfg_rqm_initial_e2e_credits_hr.eid,eid">
+                <doc>The EID that will be loaded with the cfg_rqm_initial_e2e_credits_value.</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0">0000000000</default>
+            </field>
+            <field name="en" offset="31:31" uid="2026-05-1511:36:28T2ed16255-7cf1-470e-b574-a4ed5559bc66" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_initial_e2e_credits_hr.en,csr_slc_rqm.cfg_rqm_initial_e2e_credits_hr.en,cfg_rqm_initial_e2e_credits_hr.en,en">
+                <doc>Set if the RQM can send flits to this EID on this VC.
+e.g. If the RQM is in MI-C, en shall be 0 for all SLCs that are not
+in the same NUMA cluster as this MI-C</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0">0</default>
+            </field>
+            
+        </reg>
+        <reg name="cfg_rqm_initial_e2e_credits_sn" refNameID="cfg_rqm_initial_e2e_credits" ispresent_dep="true" uid="2026-05-1511:36:28T6df7d7cc-4d65-43b5-b680-823f9823c7ec" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_initial_e2e_credits_sn,csr_slc_rqm.cfg_rqm_initial_e2e_credits_sn,cfg_rqm_initial_e2e_credits_sn" hwmapaddr="22" csize="4" offset="188" caddress="188" address="0x0D0" endaddress="0xD3" size="4" address_dec="208" heading="1.6.9" child_no="11" default="0x00000000" sw="rw" hw="ro">
+            <config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="188" address="0x0D0" endaddress="0xD3" size="4"/></busdomains><regwidth>32</regwidth></config><doc>End to End credit initialization register</doc><field name="value" offset="5:0" uid="2026-05-1511:36:28Tb3ef9d31-3ec8-456d-8a6d-18c64d9f659d" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_initial_e2e_credits_sn.value,csr_slc_rqm.cfg_rqm_initial_e2e_credits_sn.value,cfg_rqm_initial_e2e_credits_sn.value,value">
+                <doc>The E2E credits amount to load for EID = cfg_rqm_initial_e2e_credits_eid</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0">000000</default>
+            </field>
+            <field name="eid" offset="15:6" rtl.hw_wp="true" uid="2026-05-1511:36:28Tb96ddb0a-7b6b-4788-a489-7f528fc988d3" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_initial_e2e_credits_sn.eid,csr_slc_rqm.cfg_rqm_initial_e2e_credits_sn.eid,cfg_rqm_initial_e2e_credits_sn.eid,eid">
+                <doc>The EID that will be loaded with the cfg_rqm_initial_e2e_credits_value.</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0">0000000000</default>
+            </field>
+            <field name="en" offset="31:31" uid="2026-05-1511:36:28Ta4a0bbc6-1c8f-4f50-a803-046e79db80a6" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_initial_e2e_credits_sn.en,csr_slc_rqm.cfg_rqm_initial_e2e_credits_sn.en,cfg_rqm_initial_e2e_credits_sn.en,en">
+                <doc>Set if the RQM can send flits to this EID on this VC.
+e.g. If the RQM is in MI-C, en shall be 0 for all SLCs that are not
+in the same NUMA cluster as this MI-C</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0">0</default>
+            </field>
+            
+        </reg>
+        <reg name="cfg_rqm_max_p0_p1" refNameID="cfg_rqm_max_p0_p1" uid="2026-05-1511:36:28T2232f622-11ce-4fdf-937e-2226df364f2c" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_max_p0_p1,csr_slc_rqm.cfg_rqm_max_p0_p1,cfg_rqm_max_p0_p1" hwmapaddr="23" csize="4" offset="192" caddress="192" address="0x0D4" endaddress="0xD7" size="4" address_dec="212" heading="1.6.10" child_no="12" default="0x0000000A" sw="rw" hw="ro">
+            <config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="192" address="0x0D4" endaddress="0xD7" size="4"/></busdomains><regwidth>32</regwidth></config><field name="total_credits" offset="6:0" uid="2026-05-1511:36:28Tc633b1eb-b9a4-41d2-81b4-26a5e6f1b0c5" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_max_p0_p1.total_credits,csr_slc_rqm.cfg_rqm_max_p0_p1.total_credits,cfg_rqm_max_p0_p1.total_credits,total_credits">
+                <doc>Maximum credits that P0+P1 VC can consume together</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="10">0001010</default>
+            </field>
+        </reg>
+        
+        
+        
+        
+        
+        
+        
+        
+        <emptyspace address="0xD8" endaddress="0x36F" heading="1.6.13" child_no="13"><config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" address="0xD8" endaddress="0x36F"/></busdomains></config></emptyspace><reg name="cfg_rqm_src_numa_id_override" refNameID="cfg_rqm_src_numa_id_override" uid="2026-05-1511:36:28Ta4d74d02-0a9b-43a4-8f37-a5d087511ffe" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_src_numa_id_override,csr_slc_rqm.cfg_rqm_src_numa_id_override,cfg_rqm_src_numa_id_override" hwmapaddr="32" csize="4" offset="860" caddress="860" address="0x370" endaddress="0x373" size="4" address_dec="880" heading="1.6.11" child_no="14" default="0x00000000" sw="rw" hw="ro">
+            <config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="860" address="0x370" endaddress="0x373" size="4"/></busdomains><regwidth>32</regwidth></config><doc>Option to override the request src_numa_id</doc><field name="en" offset="0:0" uid="2026-05-1511:36:28T072f3d2a-c6e1-4fc6-a3e3-17eec475b4b0" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_src_numa_id_override.en,csr_slc_rqm.cfg_rqm_src_numa_id_override.en,cfg_rqm_src_numa_id_override.en,en">
+                <doc>If set, the RQM will override the src_numa_id and will assign
+the src_numa_id field based on cfg_rqm_src_numa_id_override.value register</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0">0</default>
+            </field>
+            <field name="value" offset="5:4" uid="2026-05-1511:36:28Tf35238f6-a2d9-4f89-8b06-675cf5f876f3" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_src_numa_id_override.value,csr_slc_rqm.cfg_rqm_src_numa_id_override.value,cfg_rqm_src_numa_id_override.value,value">
+                <doc>The value of the src_numa_id to use in case
+cfg_rqm_src_numa_id_override.en is set</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0">00</default>
+            </field>
+            
+        </reg>
+        <reg name="cfg_rqm_eid" refNameID="cfg_rqm_eid" uid="2026-05-1511:36:28T5cbe0052-534c-4d8a-a3ab-d48177f15ab5" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_eid,csr_slc_rqm.cfg_rqm_eid,cfg_rqm_eid" hwmapaddr="33" csize="4" offset="864" caddress="864" address="0x374" endaddress="0x377" size="4" address_dec="884" heading="1.6.12" child_no="15" default="0x00000000" sw="rw" hw="ro">
+            <config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="864" address="0x374" endaddress="0x377" size="4"/></busdomains><regwidth>32</regwidth></config><field name="default_mia" offset="9:0" uid="2026-05-1511:36:28T8910e589-496e-4d33-b3eb-6d24d089be12" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_eid.default_mia,csr_slc_rqm.cfg_rqm_eid.default_mia,cfg_rqm_eid.default_mia,default_mia">
+                <doc>The enumerate ID of the Default MI-A that serves as the completer for unmapped transactions</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0">0000000000</default>
+            </field>
+            <field name="dvm_hub" offset="25:16" uid="2026-05-1511:36:28T53c79a5d-4e53-4073-be25-8c335680d0ba" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_eid.dvm_hub,csr_slc_rqm.cfg_rqm_eid.dvm_hub,cfg_rqm_eid.dvm_hub,dvm_hub">
+                <doc>The enumerate ID of the DVM hub</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0">0000000000</default>
+            </field>
+        </reg>
+        <reg name="cfg_rqm_arb_wrr" refNameID="cfg_rqm_arb_wrr" uid="2026-05-1511:36:28T931ed445-f29c-4b16-b959-c881de3b7dcb" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_arb_wrr,csr_slc_rqm.cfg_rqm_arb_wrr,cfg_rqm_arb_wrr" count="7" hwmapaddr="34" csize="28" offset="868" caddress="868" address="0x378" endaddress="0x393" size="4" address_dec="888" address2="0x37C" heading="1.6.13" child_no="16" default="0x000000FF" sw="rw" hw="ro">
+            <config><repeats><repeat count="7" name="cfg_rqm_arb_wrr"/></repeats><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="868" address="0x378" endaddress="0x393" size="4" address2="0x37C"/></busdomains><regwidth>32</regwidth></config><field name="weight" offset="7:0" uid="2026-05-1511:36:28Ta7d0097d-d6dc-4990-badf-c896ecbae3aa" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_arb_wrr.weight,csr_slc_rqm.cfg_rqm_arb_wrr.weight,cfg_rqm_arb_wrr.weight,weight">
+                <doc>Weight of each VC in the VC weighted round robin arbiter.</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="255">11111111</default>
+            </field>
+        </reg>
+        <section name="cfg_rate_limiter_regfile" refNameID="cfg_rate_limiter_regfile" uid="2026-05-1511:36:28T87e736ba-f38f-4c49-885e-86ddf499e037" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rate_limiter_regfile,csr_slc_rqm.cfg_rate_limiter_regfile,cfg_rate_limiter_regfile" keypathdown="cfg_rate_limiter_regfile.cfg_rqm_rate_limiter,cfg_rqm_rate_limiter" count="2" hwmapaddr="35" max_reg_size="32" csize="32" offset="896" caddress="896" address="0x394" endaddress="0x3B3" size="16" address_dec="916" address2="0x3A4" heading="1.6.14" child_no="17">
+            <config><repeats><repeat count="2" name="cfg_rate_limiter_regfile"/></repeats><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="896" address="0x394" endaddress="0x3B3" size="16" address2="0x3A4"/></busdomains></config><doc>For SLC :
+We have 2 vectors, cfg_rate_limiter_regfile[0] is used when throttling_bit = 0,
+cfg_rate_limiter_regfile[1] is used when throttling_bit = 1.
+For Non SLC :
+We have 12 vectors, and the vector we use is based on the CBusy and the req color.
+Vectors mapping :
+4'd0 - CBusy 00, Green Rate limiter vector.
+4'd1 - CBusy 00, Yellow Rate limiter vector.
+4'd2 - CBusy 00, Red Rate limiter vector.
+4'd3 - CBusy 01, Green Rate limiter vector.
+4'd4 - CBusy 01, Yellow Rate limiter vector.
+4'd5 - CBusy 01, Red Rate limiter vector.
+4'd6 - CBusy 10, Green Rate limiter vector.
+4'd7 - CBusy 10, Yellow Rate limiter vector.
+4'd8 - CBusy 10, Red Rate limiter vector.
+4'd9 - CBusy 11, Green Rate limiter vector.
+4'd10 - CBusy 11, Yellow Rate limiter vector.
+4'd11 - CBusy 11, Red Rate limiter vector.</doc><reg name="cfg_rqm_rate_limiter" refNameID="cfg_rqm_rate_limiter" uid="2026-05-1511:36:28T9ec6de6d-5544-486a-a361-a04d4600e1aa" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rate_limiter_regfile.cfg_rqm_rate_limiter,csr_slc_rqm.cfg_rate_limiter_regfile.cfg_rqm_rate_limiter,cfg_rate_limiter_regfile.cfg_rqm_rate_limiter,cfg_rqm_rate_limiter" count="4" hwmapaddr="36" csize="16" offset="0" caddress="0" address="0x394" endaddress="0x3A3" size="4" address_dec="916" address2="0x398" heading="1.6.14.1" child_no="1" default="0xFFFFFFFF" sw="rw" hw="ro">
+                <config><repeats><repeat count="4" name="cfg_rqm_rate_limiter"/></repeats><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="0" address="0x394" endaddress="0x3A3" size="4" address2="0x398"/></busdomains><regwidth>32</regwidth></config><field name="vector" offset="31:0" uid="2026-05-1511:36:28T70e6e497-08df-40c0-9e28-90b8921b31b7" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rate_limiter_regfile.cfg_rqm_rate_limiter.vector,csr_slc_rqm.cfg_rate_limiter_regfile.cfg_rqm_rate_limiter.vector,cfg_rate_limiter_regfile.cfg_rqm_rate_limiter.vector,cfg_rqm_rate_limiter.vector,vector">
+                    <doc>Rate limiter bit map.
+the limiter runs over these bits in a cycle,
+enabling a request only when a bit is set (e.g. if we want a 50% rate limiter,
+we will set only the even bits).
+The bitmap[reg_index][bitmap_j] corresponds to 32 * reg_index + bitmap_j</doc>
+                    <sw>rw</sw>
+                    <hw>ro</hw>
+                    <default unresolvedDef="4294967295">11111111111111111111111111111111</default>
+                </field>
+            </reg>
+            
+        </section>
+        
+        
+        <emptyspace address="0x3B4" endaddress="0x3D3" heading="1.6.18" child_no="18"><config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" address="0x3B4" endaddress="0x3D3" address2="0x3D8"/></busdomains></config></emptyspace><reg name="cfg_rqm_miphb_read_opcodes" refNameID="cfg_rqm_miphb_read_opcodes" uid="2026-05-1511:36:28T1d5143e8-fd5f-4b5c-a482-c6e9620b5c6d" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_miphb_read_opcodes,csr_slc_rqm.cfg_rqm_miphb_read_opcodes,cfg_rqm_miphb_read_opcodes" count="4" hwmapaddr="39" csize="16" offset="960" caddress="960" address="0x3D4" endaddress="0x3E3" size="4" address_dec="980" address2="0x3D8" heading="1.6.15" child_no="19" default="0x00000000" sw="rw" hw="ro">
+            <config><repeats><repeat count="4" name="cfg_rqm_miphb_read_opcodes"/></repeats><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="960" address="0x3D4" endaddress="0x3E3" size="4" address2="0x3D8"/></busdomains><regwidth>32</regwidth></config><field name="bitmap" offset="31:0" uid="2026-05-1511:36:28T00560c74-1981-490d-8e99-d7b0bdaa16a3" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_miphb_read_opcodes.bitmap,csr_slc_rqm.cfg_rqm_miphb_read_opcodes.bitmap,cfg_rqm_miphb_read_opcodes.bitmap,bitmap">
+                <doc>Each bit corresponds to the request opcode enum.
+If a bit is set, request to High Bandwidth MI-P will be directed to
+EID = direct_eid (as configured in the relevant sam region).
+If a bit is 0, request to High Bandwidth MI-P will be directed
+to EID = (direct_eid + 1)
+The bitmap[reg_index][bitmap_j] corresponds to 32 * reg_index + bitmap_j</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0">00000000000000000000000000000000</default>
+            </field>
+            <exceptions>
+                <exception type="reg" index="0">
+                    <exception type="field" name="bitmap">
+                        <default unresolvedDef="32'd16">10000</default>
+                    </exception>
+                </exception>
+                <exception type="reg" index="1">
+                    <exception type="field" name="bitmap">
+                        <default unresolvedDef="0"></default>
+                    </exception>
+                </exception>
+                <exception type="reg" index="2">
+                    <exception type="field" name="bitmap">
+                        <default unresolvedDef="0"></default>
+                    </exception>
+                </exception>
+                <exception type="reg" index="3">
+                    <exception type="field" name="bitmap">
+                        <default unresolvedDef="0"></default>
+                    </exception>
+                </exception>
+            </exceptions>
+        </reg>
+        <reg name="cfg_rqm_color_override" refNameID="cfg_rqm_color_override" uid="2026-05-1511:36:28T96fbc382-3aba-4aee-a000-0959cbe2a148" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_color_override,csr_slc_rqm.cfg_rqm_color_override,cfg_rqm_color_override" hwmapaddr="40" csize="4" offset="976" caddress="976" address="0x3E4" endaddress="0x3E7" size="4" address_dec="996" heading="1.6.16" child_no="20" default="0x00000000" sw="rw" hw="ro">
+            <config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="976" address="0x3E4" endaddress="0x3E7" size="4"/></busdomains><regwidth>32</regwidth></config><field name="en" offset="0:0" uid="2026-05-1511:36:28Tde52ba33-3649-4318-97df-1611ea92f7e4" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_color_override.en,csr_slc_rqm.cfg_rqm_color_override.en,cfg_rqm_color_override.en,en">
+                <doc>If set, the RQM will override the input flit's color
+and will assign a new color based on override_color_value register</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0">0</default>
+            </field>
+            <field name="value" offset="5:4" encode="color_enum" uid="2026-05-1511:36:28T084d80c7-d6c7-4349-b512-6b0377af3bcd" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_color_override.value,csr_slc_rqm.cfg_rqm_color_override.value,cfg_rqm_color_override.value,value">
+                <doc><list type="enum" name="color_enum" uid="2026-05-1511:36:28T0cf2cac5-e32f-46f0-b0a4-9ae066681301">
+                        <value name="GREEN" doc="Green Color" uid="2026-05-1511:36:28Td48b2b06-964d-49a4-bfab-a0b02e91bc4a">0</value>
+                        <value name="YELLOW" doc="Yellow Color" uid="2026-05-1511:36:28Te4f453b4-b8a6-4620-8fdc-8d994b5afd7b">1</value>
+                        <value name="RED" doc="Red Color" uid="2026-05-1511:36:28T5fea9b71-e391-497f-9a00-42e623a03ce7">2</value>
+                    </list>The value of the color to use in case override_color_en is set
+                </doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0" enum.unresolvedDef="GREEN">00</default>
+            </field>
+        </reg>
+        
+        
+        <emptyspace address="0x3E8" endaddress="0x3F7" heading="1.6.21" child_no="21"><config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" address="0x3E8" endaddress="0x3F7"/></busdomains></config></emptyspace><reg name="cfg_rqm_core_config_space" refNameID="cfg_rqm_core_config_space" uid="2026-05-1511:36:28Tc4836bcb-8dd3-4be2-97d8-d3f075ff0f44" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_core_config_space,csr_slc_rqm.cfg_rqm_core_config_space,cfg_rqm_core_config_space" hwmapaddr="43" csize="4" offset="996" caddress="996" address="0x3F8" endaddress="0x3FB" size="4" address_dec="1016" heading="1.6.17" child_no="22" default="0x00000000" sw="rw" hw="ro">
+            <config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="996" address="0x3F8" endaddress="0x3FB" size="4"/></busdomains><regwidth>32</regwidth></config><field name="base_address" offset="27:0" uid="2026-05-1511:36:28T7845557d-8d48-4714-84a5-859b1cc6a38b" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_core_config_space.base_address,csr_slc_rqm.cfg_rqm_core_config_space.base_address,cfg_rqm_core_config_space.base_address,base_address">
+                <doc>The base address of the core config space. 1MB granule (bits [47:20])
+Shall be aligned to 128MiB.
+Shall match the SAM configurtion - base address for CCR region</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0">0000000000000000000000000000</default>
+            </field>
+        </reg>
+        <reg name="cfg_rqm_chiplet" refNameID="cfg_rqm_chiplet" uid="2026-05-1511:36:28T47663d94-00da-42e6-aef1-677c3a07162b" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_chiplet,csr_slc_rqm.cfg_rqm_chiplet,cfg_rqm_chiplet" hwmapaddr="44" csize="4" offset="1000" caddress="1000" address="0x3FC" endaddress="0x3FF" size="4" address_dec="1020" heading="1.6.18" child_no="23" default="0x00000000" sw="rw" hw="ro">
+            <config><busdomains><busdomain name="default_map" bus="CUSTOM" addressUnit="8" offset="1000" address="0x3FC" endaddress="0x3FF" size="4"/></busdomains><regwidth>32</regwidth></config><field name="is_half_numa" offset="0:0" encode="numa_domain_enum" uid="2026-05-1511:36:28T43736c71-ab69-49cf-8fd9-daa923b832a7" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_chiplet.is_half_numa,csr_slc_rqm.cfg_rqm_chiplet.is_half_numa,cfg_rqm_chiplet.is_half_numa,is_half_numa">
+                <doc><list type="enum" name="numa_domain_enum" uid="2026-05-1511:36:28T70961517-0ee0-4d9e-b62f-fa1858131a3a">
+                        <value name="FULL_CLUSTER" doc="The RQM is in a chiplet that has a single NUMA domain. (F cluster)" uid="2026-05-1511:36:28Teac4d8a6-6523-46d8-abeb-fc2829d79c0a">0</value>
+                        <value name="HALF_CLUSTER" doc="The RQM is in a chiplet that has two NUMA domains. (H cluster)" uid="2026-05-1511:36:28T1d4b6ce3-c3d9-49b8-bbee-26a2dca77067">1</value>
+                    </list>The Numa domain topology of the chiplet the RQM reside in
+                </doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0" enum.unresolvedDef="FULL_CLUSTER">0</default>
+            </field>
+            <field name="is_rotated" offset="4:4" encode="chiplet_rotation_enum" uid="2026-05-1511:36:28T75d158c7-293b-4d50-b94e-1cd55d85a3d1" keypath="slc_output_stage_regfile.csr_slc_rqm.cfg_rqm_chiplet.is_rotated,csr_slc_rqm.cfg_rqm_chiplet.is_rotated,cfg_rqm_chiplet.is_rotated,is_rotated">
+                <doc><list type="enum" name="chiplet_rotation_enum" uid="2026-05-1511:36:28T515029e2-0191-444a-a985-d673074d317e">
+                        <value name="NOT_ROTATED" doc="The RQM is not in a rotated die" uid="2026-05-1511:36:28T8d3c5082-1180-4575-bed7-80b5fc793a27">0</value>
+                        <value name="ROTATED" doc="The RQM is in a rotated die" uid="2026-05-1511:36:28Tcf020165-3ea8-4126-8483-e56348fe902c">1</value>
+                    </list>The indication regarding the die rotation
+                </doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default unresolvedDef="0" enum.unresolvedDef="NOT_ROTATED">0</default>
+            </field>
+            
+        </reg>
+        
+    </section>
+    
+    
+</block>

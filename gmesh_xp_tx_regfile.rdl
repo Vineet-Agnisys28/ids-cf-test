@@ -1,0 +1,107 @@
+`include "idsProperty2a.rdl"
+
+`ifndef _GMESH_XP_TX_REGFILE_
+`define _GMESH_XP_TX_REGFILE_
+
+regfile gmesh_xp_tx_regfile #(
+   longint unsigned REMOTE_VOQ_NUM      = 0,
+   longint unsigned REMOTE_SHARED_DEPTH = 0
+){
+  name = "gmesh_xp_tx_regfile";
+  desc = "Gmesh XP Tx Port CSR Register File";
+
+  //---------------------------------------------------------------------------
+  // TX PORT STATUS
+  //---------------------------------------------------------------------------
+  reg {
+    default sw = r;
+    default hw = w;
+  `ifdef AGNISYS
+    // Avoid sampling status data again in the generated CSR
+    registered= "false";
+  `endif
+
+    field {
+       desc  = "TX port is active";
+    } active[8:8] = 0;
+
+    field {
+       desc  = "TX port is idle";
+    } idle[0:0] = 0;
+  } sts_port ;
+
+  //---------------------------------------------------------------------------
+  // TX PORT ARBITER
+  //---------------------------------------------------------------------------
+  reg {
+    default sw = rw;
+    default hw = r;
+
+    field {
+       desc = "Mask grant from a port";
+     } mask_grant[7:0] = 0;
+  } cfg_arb ;
+
+  //---------------------------------------------------------------------------
+  // REMOTE VOQ STATUS REGISTERS
+  //---------------------------------------------------------------------------
+  reg {
+    default sw = r;
+    default hw = w;
+  `ifdef AGNISYS
+    // Avoid sampling status data again in the generated CSR
+    registered= "false";
+  `endif
+
+    field {
+       desc = "Count the number of entries used in the designated voq";
+     } reserved_credit[15:0] = 0;
+    field {
+       desc = "Count the number of entries used in the voqs shared pool";
+     } shared_credit[31:16] = 0;
+  } sts_remote_voq[REMOTE_VOQ_NUM] @0x40 ;
+
+  reg {
+    default sw = r;
+    default hw = w;
+  `ifdef AGNISYS
+    // Avoid sampling status data again in the generated CSR
+    registered= "false";
+  `endif
+
+    field {
+       desc = "Count the total number of entries used in the voqs shared pool";
+     } total_credit[15:0] = 0;
+  } sts_remote_shared_pool ;
+
+reg {
+    default sw = rw;
+    default hw = r;
+
+    field {
+       desc = "Set number of credits in tx for each voq to use from the shared pool";
+     } credit[15:0] = REMOTE_SHARED_DEPTH ;
+  } cfg_remote_shared_voq[REMOTE_VOQ_NUM] @0x80 ;
+
+reg {
+    default sw = rw;
+    default hw = r;
+
+    field {
+       desc = "Set number of total credits that can be used for shared pool in neighbor RX";
+     } credit[15:0] = REMOTE_SHARED_DEPTH ;
+  } cfg_remote_shared_total_pool @0xc0 ;
+
+reg {
+    default sw = rw;
+    default hw = r;
+
+    field {
+       desc = "Set pulse for the shared credits configuration";
+       singlepulse  = true;
+     } set[0:0] = 0 ;
+  } cfg_remote_shared_credits ;
+
+};
+
+`endif

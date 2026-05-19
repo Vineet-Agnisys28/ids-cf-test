@@ -1,0 +1,639 @@
+/*-----------------------------------         Starts  HTML        --------------------------*/
+
+/*h1{font-size: 30px;font-family: arial;color:Navy;text-align:center;}*/
+
+body {
+    margin: 0%;
+    /*margin of 0% between gap of entire page length to the text*/
+}
+.index_header_footer{
+    background-color:#D0D0D0;
+    width: 96%;
+    font: 16px arial;
+    
+}
+
+td {
+    overflow-wrap: anywhere;
+}
+
+#index_body {
+    overflow-y: hidden;
+}
+
+a {
+    cursor: pointer;
+}
+
+iframe {
+    height: 98vh;
+    /* Viewport-relative units */
+    width: 78vw;
+    padding-top: 10px;
+}
+.custom_table {   /* idsng testcase table css   */
+    
+        border-collapse: collapse;
+        border: #444;
+        border: 1px solid black;
+    }
+    
+    .custom_table td,/* idsng testcase table css   */
+    .custom_table th {
+        border: 1px solid black;
+    }
+#iframeTabular{
+    height: 98vh;
+    /* Viewport-relative units */
+    width: 98vw;
+}
+#iframeFlowchart{
+    height: 98vh;
+    /* Viewport-relative units */
+    width: 98vw;
+}
+#iframeFlowchartDiv{
+    display: none;
+
+}
+#iframeTabularDiv{
+    display: none;
+}
+#sequenceTableView{
+    display: none;
+}
+#index .decorateHrefSeq{
+    text-decoration: none;
+    color: black;
+}
+#input {
+    position: fixed;
+    left: 4%;
+}
+
+h1 {
+    display: block;
+    font-size: 1.5em;
+    margin-top: 2.00em;
+    margin-bottom: 0.67em;
+    margin-left: 3px;
+    margin-right: 0;
+    font-weight: bold;
+    font-family: "Franklin Gothic Medium";
+}
+
+.body_html_one {
+    margin-top: 2px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    margin-left: 30px;
+}
+
+.index_table {
+    table-layout: auto;
+    border-collapse: collapse;
+    border-style: solid;
+    border: solid;
+    border-width: thin;
+    border-color: #778899;
+    width: 75%;
+    margin-left: 120px;
+}
+
+.index {
+    font-size: 20px;
+    font-family: arial;
+    background-color: #EEEEEE;
+    color: black;
+}
+
+.index_attribute {
+    font-size: 15px;
+    font-family: arial;
+    background-color: #DCDCDC;
+    color: #292351;
+    text-align: center;
+}
+
+.index_iss {
+    font-size: 16px;
+    font-family: arial;
+    background-color: #DCDCDC;
+    color: #292351;
+    text-align: center;
+}
+
+.indexvalue {
+    font-size: 14px;
+    font-family: arial;
+    color: black;
+    font-style: normal;
+}
+
+.indexvalue_prop {
+    font-size: 14px;
+    font-family: arial;
+    color: #70A6CC;
+    font-style: normal;
+}
+
+.classtd {
+    font-size: 12px;
+}
+
+.pallete {
+    font-size: 20px;
+    font-family: arial;
+    background-color: #EEEEEE;
+    color: #292351;
+    width: 96%;
+}
+
+.subindex {
+    font-size: 16px;
+    font-family: arial;
+    background-color: #EEEEEE;
+    color: #292351;
+    width: 96%;
+}
+
+.register_table {
+    table-layout: auto;
+    border-collapse: collapse;
+    border-style: solid;
+    border: solid;
+    border-width: thin;
+    border-color: #778899;
+    margin-left: 14%;
+    width: 70%;
+}
+
+.register_table_reggroup {
+    table-layout: auto;
+    border-collapse: collapse;
+    border-style: solid;
+    border: solid;
+    border-width: thin;
+    border-color: #778899;
+    margin-left: 0;
+    width: 96%;
+}
+
+.expandCollapse {
+    margin: 0;
+    /*vertical and horizontal gap between li and ul tags*/
+    padding-left: 2%;
+    /*difference in length visible between li and ul tags, inter between*/
+}
+
+.count_table {
+    table-layout: auto;
+    border-collapse: collapse;
+    border-style: solid;
+    border: solid;
+    border-width: thin;
+    border-color: #778899;
+    margin-left: 0;
+}
+
+.registerindex {
+    font-size: 15px;
+    font-family: arial;
+    background-color: #EEEEEE;
+    color: #292351;
+}
+
+.registerindex1 {
+    font-size: 14px;
+    font-family: arial;
+    background-color: #EEEEEE;
+    color: #292351;
+    width: auto;
+}
+
+.table_value {
+    font-size: 15px;
+    font-family: arial;
+    color: black;
+    font-style: normal;
+}
+
+.table_value1 {
+    font-size: 12px;
+    font-family: arial;
+    color: black;
+    font-style: normal;
+}
+
+.doc_table {
+    font-size: 14px;
+    font-family: arial;
+    background-color: #EEEEEE;
+    color: black;
+}
+
+#index .decorateHref {
+    /*remove all text decoration from navigation*/
+    text-decoration: none;
+}
+
+#index a:hover {
+    /*hovering over navigation, colors it red*/
+    color: red;
+}
+
+
+
+#index .nav {
+    list-style: none;
+    list-style-type: none;
+    font-size: 12px;
+    position: fixed;
+    height: 88%;
+    overflow: auto;
+    width: 18%;
+    /*        margin-bottom:5%;
+    */
+    /*width:18%;*/
+    /*max-width: 90%;
+    max-height: 90%;*/
+}
+
+
+#index {
+    width: 27%;
+    /*index would be visible with 30% of whole page length*/
+    margin: 0%;
+    /* margin from left view of index*/
+    border-right: thin solid #cccccc;
+    background-color: #eeeeee;
+}
+
+#index li:before {
+    margin-right: 4px;
+}
+
+#index li {
+    list-style: none;
+}
+
+#regidx {
+    display: block;
+}
+
+#seqidx {
+    display: none;
+    visibility: hidden;
+}
+#radioButtonSeq{
+    display: none;
+}
+#seqButtonRadioDiv{
+    display: flex;
+}
+#expand_collapse_all {
+    position: fixed;
+}
+
+#index li.expanded:before {
+    content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA6klEQVR4Xq2TTYqDQBCF30ArLt0pepn2Mh7EY7hzPWt3AXOSgIsWXcW1f508QjEMBNNiPqiWhlePLqvqx1qLMygeZVny0yiltO/7kHjeQZZlwTRNErxfAWR5nr8Mtm1r0jTVSZLAha7rtDGmoQkN6KijKMK6rnCB2rZttZTARJrAFckRA8zzzMARRC8l0ADjOH408jwPYRj+vZhtLIrC1nVtq6qyn6CGWuY8+V8CXW937EKN6IkYsL8gl98SeyilqH3/D4IggAPy2vNd+N4ccLaNMTqOY7jQ973sA2QXMs72MAyHlom5p9f5Abs97D+FdaFVAAAAAElFTkSuQmCC);
+}
+
+#index li.collapsed:before {
+    content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABNklEQVR4Xq1TvWqEQBBeQUWsrPVlvDopgk24JqX4Gj5BCiutQjg40oiBYGtaH0TBzkrBv819e+yibIQLl4FhZnfmG78ZZxVKKblHVJgkSWAKVVVdXdcJ18uZAaZpIsMwcMX5+xI4+L5/LbAsS+E4jmvb9k0E6rp2q6oqUISghSiKaFmWG83znGZZBoUvxYEBljGY55nRXEvf98TzPOanaSrFgREzGMeR6VoAmBfhS3F+VtcJbdtuEsdFfA19M1/TNGJZFjBbBphu13Xk6flFFBjmq33wjuIu+3gnpmkCI7eAqgDti2ALlRlA0lMiAI9Hn9mvs7jDbiD39xkYhiHAbB6rIaJvLpztf/yF/T1QFIV8vr1y2rt7wDYxCIIiDEMax/FNilxggOVv4YDdbprmT48Jsbuf8w8MP0OmQcG1yQAAAABJRU5ErkJggg==);
+}
+
+
+#index .hide {
+    display: none;
+}
+
+#index .show {
+    display: block;
+}
+
+.print {
+    float: left;
+}
+
+#metaTable {
+    margin-left: 5%;
+    height: 20%;
+    margin-right: 5%;
+}
+
+#metaData {
+    /*        border-bottom: thin solid #cccccc;
+    */
+    border-bottom: thin solid #7ec0ee;
+    margin: 0%;
+    /*position:fixed;*/
+    width: 100%;
+    vertical-align: top;
+    /*margin:auto;*/
+    /*  text-align:center;*/
+    /*height:10%;*/
+    background-color: white;
+    margin-right: 10%;
+}
+
+#metaData#metaTable {
+    /*position:fixed;*/
+    width: 70%;
+    height: 10%;
+}
+
+#copyright {
+    color: #444;
+}
+
+/* #printDiv{
+position:fixed;
+}*/
+
+#blockDiv {
+    width: 100%;
+}
+
+#listDiv {
+    position: static;
+    /*overflow: auto;*/
+    margin: 1%;
+    padding: 1%;
+}
+
+#html2 {
+    width: 100%;
+    /*total width of div for right side page, excluding index, including printDiv, metaTable,blockData*/
+    /* padding: 1%;
+    margin: 2%;/\*leave margins of 2% left and right of the div in the page*\/*/
+    margin-top: 0%;
+    /*leave margins of 1% top of the div in the page*/
+    margin-left: 1%;
+    /*leave margins of 1% left of the div in the page*/
+    /*padding-bottom: 0;*/
+    float: left;
+    padding: 0;
+    margin: 0 auto;
+}
+
+/*--------------------------------------         Ends HTML       --------------------------*/
+
+/*---------------------------------------         Starts HTML2    --------------------------*/
+
+@media print {
+    #non-printable {
+        display: none;
+    }
+
+    #printable {
+        display: block;
+    }
+}
+
+
+
+.ul_html2 {
+    margin: 0;
+    padding: 0px 8px;
+}
+
+.classname {
+    background-color: transparent;
+    border: 1px solid #dcdcdc;
+    display: inline-block;
+    color: #AD0909;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 5px 55px;
+    text-decoration: none;
+    min-width: 980px;
+}
+
+.classname:active {
+    position: relative;
+    top: 1px;
+}
+
+.index_heading {
+    font-size: 15px;
+    font-family: sans-serif;
+    color: Navy;
+    text-align: center;
+    margin-top: 1px;
+    position: fixed;
+    /*fixed position in reference to navigation*/
+    padding-left: 3%;
+    /*INDEX having padding from left by 3% equivalent to ul tags*/
+}
+
+h3 {
+    font-size: 20px;
+    font-family: sans-serif;
+    /*color: Navy;*/
+    text-align: center;
+}
+.index_header_footer > h2 {
+    text-align: center;
+}
+
+h2 {
+    font-size: 22px;
+    font-family: sans-serif;
+    /*color: Navy;*/
+    text-align: left;
+}
+
+.table_div {
+    table-layout: auto;
+    border-collapse: collapse;
+    border-style: solid;
+    border: solid;
+    border-width: thin;
+    border-color: #778899;
+    max-width: 0;
+    max-height: 0;
+}
+
+.svg-container {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    padding-bottom: 5%;
+    /* aspect ratio */
+    vertical-align: top;
+    /* overflow-y: auto;*/
+    min-width: 980px;
+    padding-left: 2px;
+}
+
+.heading {
+    font-size: 18px;
+    font-family: "Franklin Gothic Medium";
+    color: rgb(200, 0, 0);
+    text-align: center;
+}
+
+.main_heading {
+    font-size: 25px;
+    font-family: "Franklin Gothic Heavy";
+    color: black;
+    text-align: center;
+}
+
+.text {
+    font-size: 13px;
+    font-family: "Franklin Gothic Medium";
+    color: black;
+    text-align: center;
+}
+
+.container {
+    width: auto;
+    height: auto;
+    padding: 0;
+    display: flex;
+    /**keeps htmlalt2 page in position for index and contents with body page in sync, no overlapping*/
+    overflow-x: hidden;
+
+}
+
+@media screen and (max-width:1300px) {
+    #index {
+        display: none;
+    }
+
+    .print {
+        float: right;
+        margin-left: 50%;
+    }
+
+    #html2 {
+        display: block;
+        /* position: static;*/
+        float: left;
+        padding: 0;
+        width: 100%;
+        margin: 0 auto;
+        horizontal-align: center;
+    }
+
+    #metaTable {
+        margin-left: 5%;
+        height: 20%;
+        margin-right: 5%;
+    }
+}
+
+
+
+
+.parentTable {
+    font-size: 20px;
+    font-family: arial;
+    border: 1px solid black;
+    border-radius: 1px;
+    width: 100%;
+    text-align: center;
+
+}
+
+.header_section {
+    font-size: 18px;
+    font-family: arial;
+    border: solid black;
+    border-width: thin;
+    text-align: left;
+    padding: 1px;
+    background-color: #5cd6d6;
+    color: black;
+    text-align: center;
+
+}
+
+.cell_section {
+    font-size: 11px;
+    font-family: arial;
+    border: solid black;
+    border-width: thin;
+    border-radius: 2px;
+    width: 33%;
+    padding: 1px;
+    text-align: left;
+
+
+}
+
+.div_grayed {
+    background-color: #D0D0D0;
+}
+
+.row_section:hover {
+    background-color: #d9d9d9;
+}
+.C_B_show_name,.sequence_show_name{
+    display: none;
+}
+.myButton{
+    padding: 5px; font-size: 11px; 
+    background-color: #4CAF50;
+     color: white; 
+     border: none; 
+     border-radius: 5px; 
+     margin-left: 10px;
+}
+.changeButton{
+    padding: 5px; font-size: 11px; 
+    background-color: rgb(90, 181, 255);
+     color: rgb(0, 0, 0); 
+     border: none; 
+     border-radius: 5px; 
+     margin-left: 10px;
+}
+.active{
+    background-color: rgb(60, 174, 255);
+    font-weight: bold; 
+}
+#suggestions {
+    border: 1px solid #ccc;
+    display: flex;
+    position: fixed;
+    background-color: white;
+    max-height: 87%;
+    overflow-y: auto;
+    overflow-x: auto;
+    width:21%; 
+    border-radius: 10px;
+    
+    /* Adjust width as needed */
+}
+.suggestion-item {
+    padding: 0.6rem;
+    cursor: pointer;
+}
+.suggestion-item:hover {
+    background-color: #f0f0f0;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 8px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+
+/*--------------------------------------         Ends HTML2       --------------------------*/

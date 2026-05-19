@@ -1,0 +1,51 @@
+`include "idsProperty2a.rdl"
+`include "gmesh_ras_logger_regfile.rdl"
+
+
+`ifndef _GMESH_MIF_RAS_LOGGER_REGFILE_
+`define _GMESH_MIF_RAS_LOGGER_REGFILE_
+
+regfile gmesh_mif_ras_logger_regfile #(
+  bit HAS_ADDR_REG = 0
+) {
+
+  name = "gmesh_ras_logger_regfile";
+  desc = "gMesh RAS logger regfile";
+  enum gmesh_mif_block_id_enum {
+    // Start | Auto generated code - DO NOT EDIT/DELETE
+    kBlockMemLocalFidInst0 {desc = "mif block id of mem_local_fid_inst_0 memory - ECC Mode: Normal";};
+    kBlockMemLocalFidInst1 {desc = "mif block id of mem_local_fid_inst_1 memory - ECC Mode: Normal";};
+    kBlockMemRemoteFidInst0 {desc = "mif block id of mem_remote_fid_inst_0 memory - ECC Mode: Normal";};
+    kBlockMemRemoteFidInst1 {desc = "mif block id of mem_remote_fid_inst_1 memory - ECC Mode: Normal";};
+    kBlockMemRemoteFidInst2 {desc = "mif block id of mem_remote_fid_inst_2 memory - ECC Mode: Normal";};
+    kBlockMemRemoteFidInst3 {desc = "mif block id of mem_remote_fid_inst_3 memory - ECC Mode: Normal";};
+    kBlockMemInpStgLl {desc = "mif block id of mem_inp_stg_ll memory - ECC Mode: Normal";};
+    kBlockMemDsRspLl {desc = "mif block id of mem_ds_rsp_ll memory - ECC Mode: Normal";};
+    kBlockMemDsDatLl {desc = "mif block id of mem_ds_dat_ll memory - ECC Mode: Normal";};
+    kBlockMemRqmVcBuffer {desc = "mif block id of mem_rqm_vc_buffer memory - ECC Mode: Normal";};
+    kBlockMemTxnidToPartidLocal {desc = "mif block id of mem_txnid_to_partid_local memory - ECC Mode: Normal";};
+    kBlockMemTxnidToPartidRemote {desc = "mif block id of mem_txnid_to_partid_remote memory - ECC Mode: Normal";};
+    kBlockMemCdcFifoChiLiteUsReq {desc = "mif block id of mem_cdc_fifo_chi_lite_us_req memory - ECC Mode: Normal";};
+    kBlockMemCdcFifoChiLiteUsDat {desc = "mif block id of mem_cdc_fifo_chi_lite_us_dat memory - ECC Mode: Normal";};
+    kBlockMemCdcFifoChiLiteDsReq {desc = "mif block id of mem_cdc_fifo_chi_lite_ds_req memory - ECC Mode: Normal";};
+    kBlockMemCdcFifoChiLiteDsDat {desc = "mif block id of mem_cdc_fifo_chi_lite_ds_dat memory - ECC Mode: Normal";};
+    // End   | Auto generated code - DO NOT EDIT/DELETE
+    // TODO(nadavrotter): complete all ids, must be ordered according to connectivity (starting with lsb).
+    UnexpectedReqOpcode {desc = "Unexpected request opcode";};
+    UnexpectedRspOpcode {desc = "Unexpected response opcode";};
+    UnexpectedDatOpcode {desc = "Unexpected data opcode";};
+    UnexpectedReqVc     {desc = "Unexpected request VC";};
+    DataCheckErr        {desc = "Data-check error";};
+  };
+
+
+  gmesh_ras_logger_regfile #(
+    // Start | Auto generated code - DO NOT EDIT/DELETE
+    .NUM_PRODUCERS(21)
+    // End   | Auto generated code - DO NOT EDIT/DELETE
+  ) logger;
+
+  logger.logger.sts_ras_logger_err_misc_0_1.block_id->encode = gmesh_mif_block_id_enum;
+
+};
+`endif

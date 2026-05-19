@@ -1,0 +1,336 @@
+`include "idsProperty2a.rdl"
+
+`ifndef _GMESH_MID_REGFILE_
+`define _GMESH_MID_REGFILE_
+
+regfile gmesh_mid_regfile #(
+  longint unsigned NUM_OF_TZ_REGIONS = 8,
+  bit unsigned IS_CXL = 0
+){
+  name = "gmesh_mid_regfile";
+  desc = "MID CSR Registers";
+
+  default sw = rw;
+  default hw = r;
+
+  //////////////////////////
+  // TrustZone Configuration
+  //////////////////////////
+
+  regfile trust_zone_check_cfg_regfile {
+    reg {
+    default sw = rw;
+    default hw = r;
+      field {
+        desc = "TZ check start-address lsb, in 4KB granule (bits [31:12])";
+      } value[31:12] = 0;
+    } cfg_tz_start_addr_lsb;
+
+    reg {
+    default sw = rw;
+    default hw = r;
+      field {
+        desc = "TZ check start-address msb, (bits [47:32])";
+      } value[15:0] = 0;
+    } cfg_tz_start_addr_msb;
+
+    reg {
+    default sw = rw;
+    default hw = r;
+      field {
+        desc = "TZ check end-address lsb, in 4KB granule (bits [31:12])";
+      } value[31:12] = 0;
+    } cfg_tz_end_addr_lsb;
+
+    reg {
+    default sw = rw;
+    default hw = r;
+      field {
+        desc = "TZ check end-address msb, (bits [47:32])";
+      } value[15:0] = 0;
+    } cfg_tz_end_addr_msb;
+
+    reg {
+    default sw = rw;
+    default hw = r;
+      field { desc = "Region enable";    } region_en          [0:0]   = 0;
+      field { desc = "Non Secure Read";  } priv_non_sec_read  [8:8]   = 0;
+      field { desc = "Non Secure Write"; } priv_non_sec_write [9:9]   = 0;
+      field { desc = "Secure Read";      } priv_sec_read      [10:10] = 0;
+      field { desc = "Secure Write";     } priv_sec_write     [11:11] = 0;
+    } cfg_tz_attr;
+  };
+
+  trust_zone_check_cfg_regfile trust_zone_check_cfg[NUM_OF_TZ_REGIONS]  @0x0 +=0x020;
+
+  //////////////////////////
+  // General
+  //////////////////////////
+
+  //
+  enum enum_general_mid_numa_size {
+    kHalf = 2'd0 {desc = "NumaSize == HALF. MC Sees 1/8 of the Address Space "; };
+    kFull = 2'd1 {desc = "NumaSize == FULL. MC Sees 1/16 of the Address Space "; };
+    kTest = 2'd2 {desc = "NumaSize == Test. MinigMesh mode - 2 SLC, 2 MID Mode "; };
+    kTestHalf = 2'd3 {desc = "NumaSize == Test Half. MinigMesh mode 1 Numa"; };
+  } ;
+
+
+  reg cfg_general_mid {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "Trust-Zone Check Enable";
+    } tz_enable[0:0] = 1'b0;
+    field {
+      desc = "Error return. If set, then error will be returned on CHI RSP/TXDAT upon TZ check fail";
+    } tz_err_ind_enable[1:1] = 0;
+    field {
+      desc = "Error interrupt. If set, then error will be captured in registers tz_error*";
+    } tz_err_int_enable[2:2] = 0;
+    field {
+      desc = "1'b0 - Early_Write_Ack Disabled, 1'b1 - Early_Write_Ack Enabled. ";
+    } ewa_enable[3:3] = 1'b1;
+    field {
+      desc = "1'b1 - Read hazard bypass path is enabled ";
+    } rd_hazard_byp_enable[4:4] = 1'b1;
+    field {
+      encode = enum_general_mid_numa_size;
+    } numa_size[6:5] = enum_general_mid_numa_size::kHalf;
+    field {
+      desc = "1'b0 - Ignore WaR/RaR hazard, 1'b1 - support WaR/RaR hazard ";
+    } war_hazard_enable[7:7] = 1'b0;
+    field {
+      sw = r; desc = "Not Supported in DDR Mode";
+    } addr_res[11:8] = 4'd0;
+    field {
+      sw = r; desc = "Indication toward FW to ease MI-D Register Header Re-use (DDR/CXL) ";
+    } is_cxl[31:31] = IS_CXL;
+  };
+  // DDR Mode
+  cfg_general_mid ddr_cfg_general_mid @0x200;
+  ddr_cfg_general_mid->ispresent = !IS_CXL;
+  // CXL Mode
+  cfg_general_mid cxl_cfg_general_mid @0x200;
+  cxl_cfg_general_mid.ewa_enable->reset = 0;
+  cxl_cfg_general_mid.ewa_enable->sw = r;
+  cxl_cfg_general_mid.ewa_enable->desc = "not supported in MI-XL";
+  cxl_cfg_general_mid.numa_size->reset = 0;
+  cxl_cfg_general_mid.numa_size->sw = r;
+  cxl_cfg_general_mid.numa_size->desc = "not supported in MI-XL";
+  cxl_cfg_general_mid.war_hazard_enable->reset = 0;
+  cxl_cfg_general_mid.war_hazard_enable->sw = r;
+  cxl_cfg_general_mid.war_hazard_enable->desc = "not supported in MI-XL";
+  cxl_cfg_general_mid.addr_res->reset =  4'd6;
+  cxl_cfg_general_mid.addr_res->sw = rw;
+  cxl_cfg_general_mid.addr_res->desc = "CXL Address Resolution, Remove 2^cxl_addr_res lsb from chi_req.address";
+  cxl_cfg_general_mid->ispresent = IS_CXL;
+
+
+  reg cfg_qos_queue_prio_mapping {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = " Priority mapping of the VC : 1'b1 - HPR, 1'b0 - LPR";
+    } p0_red[0:0] = 1'b0;
+    field {
+      desc = " Priority mapping of the VC : 1'b1 - HPR, 1'b0 - LPR";
+    } p1_red[1:1] = 1'b0;
+    field {
+      desc = " Priority mapping of the VC : 1'b1 - HPR, 1'b0 - LPR";
+    } p0_yellow[2:2] = 1'b0;
+    field {
+      desc = " Priority mapping of the VC : 1'b1 - HPR, 1'b0 - LPR";
+    } p1_yellow[3:3] = 1'b0;
+    field {
+      desc = " Priority mapping of the VC : 1'b1 - HPR, 1'b0 - LPR";
+    } p0_green[4:4] = 1'b0;
+    field {
+      desc = " Priority mapping of the VC : 1'b1 - HPR, 1'b0 - LPR";
+    } p1_green[5:5] = 1'b0;
+  } ;
+  // DDR Mode
+  cfg_qos_queue_prio_mapping ddr_cfg_qos_queue_prio_mapping;
+  ddr_cfg_qos_queue_prio_mapping->ispresent = !IS_CXL;
+  // CXL Mode
+  cfg_qos_queue_prio_mapping cxl_cfg_qos_queue_prio_mapping;
+  cxl_cfg_qos_queue_prio_mapping.p0_red->sw = r;
+  cxl_cfg_qos_queue_prio_mapping.p0_red->desc = "not supported in MI-XL, Single Prio only";
+  cxl_cfg_qos_queue_prio_mapping.p1_red->sw = r;
+  cxl_cfg_qos_queue_prio_mapping.p1_red->desc = "not supported in MI-XL, Single Prio only";
+  cxl_cfg_qos_queue_prio_mapping.p0_yellow->sw = r;
+  cxl_cfg_qos_queue_prio_mapping.p0_yellow->desc = "not supported in MI-XL, Single Prio only";
+  cxl_cfg_qos_queue_prio_mapping.p1_yellow->sw = r;
+  cxl_cfg_qos_queue_prio_mapping.p1_yellow->desc = "not supported in MI-XL, Single Prio only";
+  cxl_cfg_qos_queue_prio_mapping.p0_green->sw = r;
+  cxl_cfg_qos_queue_prio_mapping.p0_green->desc = "not supported in MI-XL, Single Prio only";
+  cxl_cfg_qos_queue_prio_mapping.p1_green->sw = r;
+  cxl_cfg_qos_queue_prio_mapping.p1_green->desc = "not supported in MI-XL, Single Prio only";
+  cxl_cfg_qos_queue_prio_mapping->ispresent = IS_CXL;
+
+  //////////////////////////
+  // Credit mechanisms
+  //////////////////////////
+
+  reg lcred {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "Number of link credits limit. Enable threshold which is smaller then maximum.";
+    } value[4:0] = 0;
+  } ;
+
+  lcred cfg_lcred_mci_rd_hint_rsp @0x220;
+  lcred cfg_lcred_mci_rd_rsp ;
+  lcred cfg_lcred_mci_wr_hint_rsp ;
+  lcred cfg_lcred_mci_wr_rsp ;
+  lcred cfg_lcred_chi_rxreq ;
+  lcred cfg_lcred_chi_rxdat ;
+  lcred cfg_lcred_chi_rxrsp ;
+
+
+
+  reg  {
+    default sw = rw;
+    default hw = r;
+    desc = "can be use to lower the #Credits delivered to Sender (Value = #WithHold Credit.)";
+
+    field { desc = "MCI Read  Response Channel"; } mci_rd_hint_rsp [3:0]   = 4'h0;
+    field { desc = "MCI Write Response Channel"; } mci_wr_hint_rsp [7:4]   = 4'h0;
+    field { desc = "MCI Write Response Channel"; } mci_wr_rsp      [11:8]  = 4'h0;
+    field { desc = "CHI Rx Request Channel"; }     chi_rx_req      [15:12] = 4'h0;
+    field { desc = "CHI Rx Data Channel"; }        chi_rxdat       [19:16] = 4'h0;
+  } cfg_withhold_credit;
+
+  //////////////////////////
+  // WRR mechanisms
+  //////////////////////////
+
+  reg cfg_mid_in_stage_cred_return_wrr_weights {
+    default sw = rw;
+    default hw = r;
+    field { desc = "LPR"; } read_lpr [7:0]   = 8'h1;
+    field { desc = "HPR"; } read_hpr [15:8]  = 8'h1;
+    field { desc = "WR";  } write    [23:16] = 8'h1;
+    field { desc = "CFG"; } config   [31:24] = 8'h1;
+  };
+  // DDR Mode
+  cfg_mid_in_stage_cred_return_wrr_weights ddr_cfg_mid_in_stage_cred_return_wrr_weights @0x240;
+  ddr_cfg_mid_in_stage_cred_return_wrr_weights->ispresent = !IS_CXL;
+  // CXL Mode
+  cfg_mid_in_stage_cred_return_wrr_weights cxl_cfg_mid_in_stage_cred_return_wrr_weights @0x240;
+  cxl_cfg_mid_in_stage_cred_return_wrr_weights.read_hpr->reset = 0;
+  cxl_cfg_mid_in_stage_cred_return_wrr_weights.read_hpr->sw    = r;
+  cxl_cfg_mid_in_stage_cred_return_wrr_weights.read_hpr->desc  = "not supported in MI-XL, Single Prio only";
+  cxl_cfg_mid_in_stage_cred_return_wrr_weights->ispresent = IS_CXL;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field { desc = "Early Read Request";   } early_rd_req   [7:0]   = 8'h1;
+    field { desc = "Sampled Read Request"; } sampled_rd_req [15:8]  = 8'h1;
+    field { desc = "RRB Read Request";     } rrb_rd_req     [23:16] = 8'h1;
+    } cfg_mid_out_rd_wrr_weights ;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field { desc = "Early Write response"; } early_write_resp  [7:0]   = 8'h4;
+    field { desc = "Late Write Response";  } late_write_resp   [15:8]  = 8'h4;
+    field { desc = "CFG";                  } config            [23:16] = 8'h1;
+    field { desc = "Read Receipt Response";} read_receipt_resp [31:24] = 8'h1;
+  } cfg_mid_out_wrq_rsp_wrr_weights ;
+
+
+  reg cfg_mid_rd_receipt_weights {
+    default sw = rw;
+    default hw = r;
+    field { desc = "Early Read Receipt LPR"; } early_lpr_resp [7:0]   = 8'h1;
+    field { desc = "Early Read Receipt HPR"; } early_hpr_resp [15:8]  = 8'h1;
+    field { desc = "late Read Receipt";      } late_resp      [23:16] = 8'h1;
+    }  ;
+  // DDR Mode
+  cfg_mid_rd_receipt_weights ddr_cfg_mid_rd_receipt_weights;
+  ddr_cfg_mid_rd_receipt_weights->ispresent = !IS_CXL;
+  // CXL Mode
+  cfg_mid_rd_receipt_weights cxl_cfg_mid_rd_receipt_weights;
+  cxl_cfg_mid_rd_receipt_weights.early_lpr_resp->sw = r;
+  cxl_cfg_mid_rd_receipt_weights.early_lpr_resp->desc = "not supported in MI-XL, Only Late Response exists";
+  cxl_cfg_mid_rd_receipt_weights.early_hpr_resp->sw = r;
+  cxl_cfg_mid_rd_receipt_weights.early_hpr_resp->desc = "not supported in MI-XL, Only Late Response exists";
+  cxl_cfg_mid_rd_receipt_weights.late_resp->sw = r;
+  cxl_cfg_mid_rd_receipt_weights.late_resp->desc = "not supported in MI-XL, Only Late Response exists";
+  cxl_cfg_mid_rd_receipt_weights->ispresent = IS_CXL;
+
+
+  // Debug
+  reg {
+    default sw = rw;
+    default hw = r;
+    field { desc = "1'b0 - Mask all Debug outputs toward the MI-DBG "; } en [0:0] = 1'd1;
+  } cfg_mid_debug;
+
+  //////////////////////////
+  // Status
+  //////////////////////////
+
+  //
+  enum enum_tz_error_ctrl_path_sel {
+    kWrite   = 2'd0 {desc = "TrustZone Error MUX: Select Write channel Address+info"; };
+    kReadLpr = 2'd1 {desc = "TrustZone Error MUX: Select Read LPR channel Address+info"; };
+    kReadHpr = 2'd2 {desc = "TrustZone Error MUX: Select Read HPR channel Address+info"; };
+    kRsvd    = 2'd3 {desc = "Reserved"; };
+  } ;
+
+  //
+  enum enum_tz_error_ctrl_override_mode {
+    kFirstErr = 1'b0 {desc = "Latch First Error"; };
+    kOverride = 1'b1 {desc = "Override Prev Error, will show Last Captured Error"; };
+  } ;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {encode = enum_tz_error_ctrl_override_mode; }                override_mode [ 0: 0] = enum_tz_error_ctrl_override_mode::kFirstErr;
+    field {encode = enum_tz_error_ctrl_path_sel; }                     path_sel      [ 5: 4] = enum_tz_error_ctrl_path_sel::kWrite;
+    field {singlepulse  = true; desc = "Clear Error - Write Path";}    clear_write   [29:29] = 1'b0;
+    field {singlepulse  = true; desc = "Clear Error - Read LPR Path";} clear_rd_lpr  [30:30] = 1'b0;
+    field {singlepulse  = true; desc = "Clear Error - Read HPR Path";} clear_rd_hpr  [31:31] = 1'b0;
+  } cfg_tz_error_ctrl @0x260;
+
+  reg {
+    default sw = r;
+    default hw = w;
+    field {desc = "valid Capture Indication - Write Path";}    write  [29:29];
+    field {desc = "valid Capture Indication - Read LPR Path";} rd_lpr [30:30];
+    field {desc = "valid Capture Indication - Read HPR Path";} rd_hpr [31:31];
+  } sts_tz_error_valid ;
+
+  reg {
+    default sw = r;
+    default hw = w;
+    field {
+      desc = "This field is indicating the lsb of the address lsb (rx_req.addr[32:12]) on which an error was captured. according path_sel and valid indication ";
+    } value[31:12];
+  } sts_tz_error_address_lsb ;
+
+  reg {
+    default sw = r;
+    default hw = w;
+    field {
+      desc = "This field is indicating the msb of the address msb (rx_req.addr[47:32]) on which an error was captured. according path_sel and valid indication";
+    } value[15:0];
+  } sts_tz_error_address_msb ;
+
+  reg {
+    default sw = r;
+    default hw = w;
+    desc = "Info is according the path_sel and valid indication";
+    field {desc = "mpam value on which an error was captured";}         mpam         [11:0] ;
+    field {desc = "active_mpam value on which an error was captured";}  active_mpam  [23:12] ;
+    field {desc = "ns value on which an error was captured";}           ns           [24:24] ;
+  } sts_tz_error_info ;
+
+}; // gmesh_mid_regfile
+
+`endif

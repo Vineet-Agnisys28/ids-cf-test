@@ -1,0 +1,47 @@
+//--------------------------
+// JINJA2 GENERATED FILE: DO NOT MANUALLY EDIT
+// This file has been automatically generated from a jinja2 template.
+// Please refer to the BUILD file for details.
+//--------------------------
+
+`include "idsProperty2a.rdl"
+
+`include "gmesh_mif_regfile.rdl"
+`include "gmesh_mif_ras_logger_regfile.rdl"
+
+`ifndef _GMESH_CEDAR_COMPUTE_MIF_CSR_
+`define _GMESH_CEDAR_COMPUTE_MIF_CSR_
+
+addrmap gmesh_cedar_compute_mif_csr {
+  name = "gmesh_cedar_compute_mif_csr";
+  desc = "MIF Top Level CSR Address Map";
+
+`ifdef AGNISYS
+  module_name = "gmesh_cedar_compute_mif_csr";
+  auto_hdl_path=true;
+`endif
+
+  gmesh_mif_regfile mif_regfile @0x0;
+  gmesh_mif_ras_logger_regfile gmesh_ras_logger_regfile;
+
+  reg {
+   desc = "TS sync configuration";
+   field {
+     sw      = rw;
+     hw      = r;
+     desc    = "time stamp sync compensation vlue";
+   } cfg_ts_compensation[15:0] = 0;
+   field {
+     sw      = rw;
+     hw      = r;
+     desc    = "time stamp sync enable";
+   } cfg_ts_sync_en[16:16] = 0;
+  } ts_compensation;
+
+  //Reserved register to allocate all 16 bit address range when generating RTL
+  reg {field {sw= rw; hw= r; desc="Spare Register 1";} value [31:0] = 32'h0000_ffff;} cfg_spare_1 @0x0_FFF8;
+  reg {field {sw= rw; hw= r; desc="Spare Register 2";} value [31:0] = 32'hffff_0000;} cfg_spare_2 @0x0_FFFC;
+
+};
+
+`endif

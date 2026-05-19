@@ -1,0 +1,3 @@
+IDSBATCH slc_output_stage_regfile.rdl -big_endian "false" -pprint "notab" -ipxact_inp_fast -vertical_reuse -preserve_names -verbose -no_warn "2606,2607" -top_property "ipxact_exclude_param=true;sv_localparam=true;header_hermetic=true;addressing=compact;rtl_pack_array=true;external_ack=true;rtl.strict_ports=true;intr_out_flopped=true" -default_reset "async" -rtl_no_error -bus "apb" -D "IPXACT_LOCAL_REF" -D "AGNISYS" -D "CEDAR_COVERAGE" -D "AGNISYS_RTL_ONLY" -output "xrsl verilog" -dir ids  +top_property "define_as_param=true;" +top_property "singleline_comment=true;"
+
+DIFF_ALL

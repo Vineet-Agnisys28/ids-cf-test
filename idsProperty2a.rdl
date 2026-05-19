@@ -1,0 +1,943 @@
+//  Copyright 2015-2017 Agnisys, Inc. All Rights Reserved
+//  ******************************************************
+// File: idsProperty.rdl
+// This is a list of IDesignSpec properties that are supported for SystemRDL
+// For more details see the online documentation
+//
+// Version No. : 7.36.80.0
+//
+// version history :
+//  1.0 : 1 March 2015 : Initial Version
+//  2.0 : 27 March 2017 : Recreated file
+//  2.1 : 4 June 2021
+//  2.2 : 28 July 2021
+//  2.3 : 24 Dec 2021 : Abhishek | Aiyush
+//  2.4 : 11 Sept 2022 : Bhuwan
+//  2.5 : 16 April 2023 : Mohit Saxena
+//  2.5 : 27 September 2023 : Mohit Saxena
+//General Properties
+`ifndef IDS_UDP
+
+`define IDS_UDP
+
+
+
+//Note: For description and all possible values to following properties refer here.
+
+property agni_propl {type = string; component = addrmap; };
+
+
+property header_field_mask {type = boolean; component = addrmap; };
+
+property param_name_format {type = string; component = addrmap; };
+
+property uvm_coverpoint_b {type = string; component = addrmap|regfile|reg; };
+
+property uvm_coverpoint_b_wr {type = string; component = addrmap|regfile|reg;};
+
+property uvm_coverpoint_b_rd {type = string; component = addrmap|regfile|reg; };
+
+property xml_addr_mux {type = number; component = addrmap; };
+
+property field_sort {type = boolean; component = addrmap; };
+
+property show_display_name {type = boolean; component = addrmap; };
+
+property sv_param {type = boolean; component = addrmap; };
+
+property rtl_external_pkg_unique {type = boolean; component = addrmap; };
+
+property rtl_no_access_error {type = boolean; component = addrmap | regfile | reg; };
+
+property snps_ralgen {type = number; component = addrmap; };
+
+property html_show_reserved_bits {type = string; component = addrmap; };
+
+property aggregation_logic {type = string; component = addrmap; };
+
+property no_field_tests {type = boolean; component = field; };
+
+property array_start_index {type = number; component = addrmap|regfile|reg; };
+
+property out_third_party {type = string; component = addrmap; };
+
+property header_package {type = boolean; component = addrmap; };
+
+property header_frwd_declr {type = boolean; component = addrmap; };
+
+property cheader_mask_endianess {type = string; component = addrmap; };
+
+property header_struct_guard {type = string; component = addrmap; };
+
+property incr_reg {type = string; component = reg; };
+
+property decimal_encoding {type = boolean; component = field; };
+
+property msb_broadcast {type = boolean; component = field; };
+
+property rtl_incr_indirect_reg_flo {type = boolean; component = addrmap|reg; };
+
+property add_vip {type = string; component = signal; };
+
+property uvm_contxt {type = string; component = regfile|reg; };
+
+property enum_name_format {type = string; component = addrmap; };
+
+property rtl_strict_ports { type = boolean; component = addrmap; };
+
+property ids_we {type=string; component = field|reg; };
+
+property wide_external_access {type = string ; component = addrmap|regfile|reg|mem;};
+
+property rtl_latch {type = boolean ; component = addrmap|regfile|reg|field;};
+
+property uvm_resetsignal { type = boolean; component = addrmap; };
+
+property uvm_block_class { type = string; component = addrmap; };
+
+property uvm_regfile_class { type = string; component = addrmap; };
+
+property ids_next { type = string; component = field ; };
+
+property ipxact_compact { type = boolean; component = addrmap; };
+
+property ipxact_decrease_offset { type = number; component = addrmap; };
+
+property ipxact_exclude_param { type = boolean; component = addrmap; };
+
+property map_type { type = string; component = reg|regfile|addrmap; };
+
+property rtl_field_enb { type = boolean; component = addrmap|regfile|reg|field;};
+
+property mapto_dpsram { type = string; component = addrmap|regfile;};
+
+property rtl_busport_prefix { type = string; component = addrmap; };
+
+property cheader_initialization { type = boolean; component = addrmap;};
+
+property dynamic_empty_address { type = boolean; component = addrmap|regfile|reg; };
+
+property ext_signal{ type = string; component = addrmap; };
+
+property secded { type = boolean; component = addrmap|regfile|reg; };
+
+property secded_ded_error { type = boolean; component = addrmap; };
+
+property secded_error_inject { type = string; component = addrmap|regfile|reg; };
+
+property secded_parity { type = string; component = reg; };
+
+property chip { type = boolean; component = addrmap; };
+
+property not_generate { type = string; component = addrmap; };
+
+property bus { type = string; component = addrmap; };
+
+property add_doc { type = string; component = addrmap|regfile|reg; };
+
+property add_doc_above { type = string; component = addrmap|regfile|reg; };
+
+property doc_unused_remove { type = boolean; component = addrmap; };
+
+property external_module { type = string; component = addrmap ; };
+
+property partial_access_err  { type = boolean; component = addrmap; };
+
+property invalid_addr_err { type = string ; component = addrmap; };
+
+property page_rd_select { type = string ; component = reg; };
+
+property page_wr_select { type = string ; component = reg; };
+
+property cheader_no_struct  { type = boolean; component = addrmap; } ;
+
+property cheader_ignore  { type = boolean; component = addrmap; } ;
+
+property cheader_guard_nameformat  { type = string; component = addrmap; } ;
+
+property headers_guard_band { type = string ; component = addrmap; };
+
+property sv_guard_band { type = boolean ; component = addrmap; };
+
+property refpath { type = string; component = addrmap|reg|regfile; };
+
+property csharp_name_format {type = string ; component = addrmap|regfile|reg|mem; };
+
+property ids_alias { type = string; component = reg|field; } ;
+
+property svif_elem_name_format { type = string ; component = addrmap; };
+
+property field_prot { type = string ; component = field; };
+
+property vhdlalt2_no_record { type = boolean; component = addrmap; };
+
+property ids_cross { type = string; component = addrmap|reg; };
+
+property cross_wr { type = string; component = reg; };
+
+property cross_rd { type = string; component = reg;};
+
+property rtl_hw_vector { type = boolean; component = addrmap|regfile|reg; };
+
+property coverage_option_name { type = number ; component = addrmap|reg; };
+
+property tilelink_version { type = string; component = addrmap; };
+
+property widget { type = string; component = addrmap; };
+
+property explicit_name { type = string; component = addrmap; };
+
+property description { type = string; component = addrmap; };
+
+property cheader_enum_name_format { type = string; component = addrmap; };
+
+property ext_decode_lines { type = boolean; component = reg|regfile|addrmap ; };
+
+property tmr_error { type = string; component = reg; };
+
+property rtl_port_suffix { type = string; component = addrmap; };
+
+//property alias { type = string; component = reg|field; } ;
+
+property aliased { type = string; component = reg|field; };
+
+property rdl_define { type = string; component = addrmap|reg|regfile; };
+
+
+
+
+//property external { type = number; component = addrmap|reg; };
+
+
+property byte_addressing { type = string; component = addrmap; };
+
+
+property count { type = number; component = addrmap|regfile|reg|field; };
+
+
+property variant { type = string; component = addrmap|regfile|reg|field; };
+
+
+property lock { type=string; component = reg|field; };    // verilog, uvm
+
+
+property lock_set { type=string; component = reg|field; };    // verilog
+
+property lock_r { type=string; component = reg|field; };    // verilog
+
+property lock_clear { type=string; component = reg|field; };    // verilog
+
+
+property lock_toggle { type=string; component = reg|field; };    // verilog
+
+property lock_bitmask { type=boolean; component = addrmap; };    // verilog
+
+
+property rwpair { type = string; component = reg; };  //verilog,uvm
+
+
+property is_rsv { type = boolean; component = addrmap|regfile|reg|field; };
+
+
+property output_file_name { type = string; component = addrmap; };
+
+
+property doc { type = string; component = addrmap|regfile|reg|field; };
+
+
+property addr_sort { type = boolean; component = addrmap|regfile; };
+
+
+property reg_sw { type =string; component = reg; };
+
+property ids_resetsignal { type = string; component = reg | field; };
+
+property ids_reset { type = string; component = addrmap | regfile| reg | field; };
+
+
+property reg_hw { type =string; component = reg; };
+
+
+property reg_default { type =number; component = reg; };
+
+property doc_repeat_compact { type=string; component=addrmap|reg; };
+
+property doc_show_field_tuned_only { type=boolean; component = reg; };//Apply this property when you want reduced html table
+
+property doc_add_field_col { type = string; component = reg; };//Apply this property to add new columns in the html output
+
+property treset { type = string; component = field; };
+
+property tphase { type = string; component = field; };
+
+property tdesc { type = string; component = field; };
+
+property doc_pagination { type= number; component = addrmap; };
+
+property display_name { type=string;component=addrmap|regfile|reg; };
+
+property hierarchical_decode { type = boolean; component = addrmap; };
+
+property doc_rm_define { type = boolean; component = addrmap; };
+
+property doc_rm_enum { type = boolean; component = addrmap; };
+
+property enum_package { type = boolean; component = addrmap; };
+
+property html_reglink { type = boolean; component = addrmap; };
+
+property html_header {type = string; component = addrmap;};
+
+property expanded_toc { type = boolean; component = addrmap; };
+
+property reqid { type = string; component = addrmap|regfile|reg|field; };
+
+property size  { type=number; component = addrmap; };
+
+
+
+
+
+
+//RTL Properties
+
+
+//Note: For description and all possible values to following properties refer here.
+
+property default_reset {type=number; component=addrmap|regfile|reg|field;};
+
+property ipxact_exclude_vendorextensions{type = boolean; component = addrmap;};
+
+property sw_bit_enable { type= string; component = reg|field; };
+
+property bus_domain {type=string; component=addrmap|mem|regfile|reg; };
+
+property inst_name_cppstyle{type = boolean; component = addrmap;};
+
+property inst_name {type = string; component = addrmap|regfile|reg;};
+
+property rsv_rd_val {type =boolean; component = field ; };
+
+property assign { type= string; component = signal; };
+
+
+property rtl_byte_enable { type = boolean; component = addrmap; };
+
+property clock_enable { type = string; component = addrmap|reg|field; };
+
+property wr_rd_valids { type = boolean; component = addrmap|regfile; };
+
+property tmr { type = string; component = addrmap|reg|field; } ;
+
+
+property clock_edge { type = string; component = addrmap|reg; }; // VHDL Verilog
+
+
+property reset_type { type = string; component = addrmap|reg|field; };    // VHDL Verilog
+
+
+property reset_level { type = string; component = addrmap|reg|field; };     // VHDL Verilog
+
+
+property rtl_precedence { type = string; component = addrmap|regfile|reg|field; };
+
+
+property registered { type = string; component = addrmap|regfile|reg|field; };
+
+
+property module_name { type =string; component = addrmap; };
+
+
+property vhdl_entity { type =string; component = addrmap; };
+
+
+property vhdl_package { type =string; component = addrmap; };
+
+
+property avalon_noburst { type = boolean; component = addrmap; };
+
+
+property rtl_name_format { type = string; component = addrmap|regfile|reg; };
+
+
+property rb_valid_stages { type = number; component = addrmap; };
+
+
+property rb_data_stages { type = number; component = addrmap; };
+
+
+property shadow_address  { type = number; component = reg; };
+
+property shadow_reg  { type = string; component = reg; };
+
+
+property rtl_bit_enable  { type = boolean; component = addrmap; };
+
+
+property rtl_hw_w1p  { type = boolean; component = reg|field; };
+
+
+property rtl_hw_w0p  { type = boolean; component = reg|field; };
+
+
+property rtl_hw_wp  { type = boolean; component = reg|field; };
+
+
+property rtl_hw_rp  { type = boolean; component = reg|field; };
+
+
+property rtl_hw_clear  { type = boolean; component = reg|field; };
+
+
+property rtl_hw_set  { type = boolean; component = reg|field; };
+
+property rtl_response_tree  { type = string; component = addrmap; };
+
+
+property addr_decode_stages { type = number; component = addrmap; }; // Verilog
+
+
+property wr_stb_stages { type = number; component = addrmap|reg; }; // Verilog
+
+
+property rd_stb_stages { type = number; component = addrmap|reg; }; // Verilog
+
+
+property buffer_trig { type = string; component = reg; };
+
+property buffer_trig_reg { type = string; component = reg|field; };
+
+
+property external_intf_stages { type = boolean; component = addrmap; };
+
+property external_ack { type = string; component = addrmap; };
+
+property define_as_param {type=boolean; component=addrmap;};
+
+
+
+property endianness  { type = string; component = reg; };
+
+
+
+property clock_name { type = string; component=reg; }; // verilog
+
+
+property cdc_reset { type = string; component=addrmap; };
+
+
+property custom_sync { type = string; component=addrmap; };
+
+
+property reg_wprot { type = string; component=reg; };
+
+
+property rtl_axi4prot { type = boolean; component=addrmap; };
+
+
+property reg_rprot { type = string; component=reg; };
+
+property reg_prot_enb { type = boolean; component=reg; };
+
+
+property reg_prot { type = string; component=reg; };
+
+
+property vhdl_arch { type =string; component = addrmap; };
+
+
+property undefined_rd_val { type =boolean; component = addrmap|reg; };
+
+
+property out_enb_stages { type = number; component = addrmap; } ;    // VHDL
+
+
+property cdc_clock { type =string; component = reg|field; };
+
+
+property page_count { type =number; component = reg; };
+
+
+property page_select { type =string; component = reg; };
+
+
+property hard_reset { type =boolean; component = reg|field; };
+
+
+property rtl_hw_enb { type =boolean; component = reg|field; };
+
+
+property rtl_reg_enb { type =boolean; component = reg; };
+
+
+property reg_precedence { type =string; component = addrmap|regfile|reg; };
+
+
+property default_clock_name { type =string; component = addrmap; };
+
+
+property default_reset_name { type =string; component = addrmap; };
+
+
+property rtl_clock_name { type =string; component = addrmap; };
+
+
+property rtl_reset_name { type =string; component = addrmap; };
+
+
+property rtl_default { type =string; component = reg|field; };
+
+
+property virtual { type = boolean; component = addrmap; };
+
+property indirect_map { type = string; component = reg; };
+
+property datagroup { type = string; component = reg; };
+
+//property clock_gating { type = string; component = reg; };
+
+//property clock_edge { type = string; component = reg; };
+
+property hw_rd_trigger { type = string; component = reg; };
+
+property hw_wr_trigger { type = string; component = reg; };
+
+property datagroup_order { type = string; component = reg; };
+
+property rtl_axi4_prot { type = number; component = addrmap; };
+
+property global_addressing { type = boolean; component = addrmap; };
+
+property unaligned_error { type = boolean; component = addrmap;};
+
+
+property single_address_data_out { type = boolean; component = addrmap; };
+
+
+property header_hermetic { type = boolean; component = addrmap; };
+
+
+property mem_width { type = number; component = addrmap|regfile; };
+
+property buffer_trig_read { type = string; component = reg; };
+
+property fld_genvar { type = boolean; component = addrmap|regfile|reg|field; };
+
+//property type { type = string; component = addrmap|regfile; };
+
+property ext_byte_enb { type = boolean; component = addrmap; };
+
+property rtl_write { type = string; component = reg; };
+
+//RTL Wrapper
+
+property rtl_wrapper { type = boolean; component = addrmap; };
+
+property wrapper_port { type = string; component = field|signal; };
+
+//Crc and Parity Properties
+
+property crc { type = string; component = addrmap; };
+
+property crc_error { type = string; component = addrmap; };
+
+property crc_seed { type = boolean; component = addrmap; };
+
+property parity { type = string; component = addrmap|regfile|reg; };
+
+property parity_error { type = string; component = addrmap|regfile|reg; };
+
+property parity_error_inject {type = string; component = addrmap|regfile|reg ; };
+//property parity { type = boolean; component = addrmap; };
+
+property ecc_sniffer { type = number ;component = addrmap|regfile|reg; };
+
+property direction {type = string; component = signal ; };
+
+
+
+//Counter Properties
+
+
+//Note: For description and all possible values to following properties refer here.
+
+//property counter  { type = string; component = field; };
+
+
+property counter_incr_val  { type = number; component = field; };
+
+
+property counter_decr_val  { type = number; component = field; };
+
+
+property counter_incr_sat  { type = number; component = field; };
+
+
+property counter_decr_sat  { type = number; component = field; };
+
+
+property counter_incr_thld { type = number; component = field; };
+
+
+property counter_decr_thld { type = number; component = field; };
+
+
+property counter_sat { type = string; component = field; };
+
+
+property counter_signal { type = string; component = field; };
+
+
+property counter_precedence { type = string; component = field; };
+
+property counter_sw_rd { type = string; component = field; };
+
+property counter_sw_wr { type = string; component = field; };
+
+property counter_sw_rd_enb { type = string; component = field; };
+
+property counter_sw_wr_enb { type = string; component = field; };
+
+property counter_hw_enb { type = string; component = field; };
+
+property counter_both_enb { type = boolean; component = field; };
+//Interrupt Properties
+
+
+//Note: For description and all possible values to following properties refer here.
+
+
+property intr_irq_per_channel { type =boolean; component = addrmap; };
+
+
+property intr_in  { type = string; component = addrmap; };
+
+
+property intr_out  { type = string; component = addrmap; };
+
+
+property intr_status { type = string; component = reg|field; };
+
+
+property intr_enable { type = string; component = reg|field; };
+
+property intr_pending { type = string; component = reg|field; };
+
+
+property intr_irq_bit  { type = boolean; component = reg; };
+
+
+property intr_detect  { type = string; component = addrmap|reg|field; };
+
+property intr_detect_nometa  { type = string ; component = addrmap; };
+
+property intr_post { type = string; component = reg|field; };
+
+
+property intr_mask { type = string; component = reg|field; };
+
+
+property  halt_enable { type = string; component = reg|field; };
+
+
+property halt_mask { type = string; component = reg|field; };
+
+
+property intr_nonsticky { type = string; component = field; };
+
+property intr_overflow { type = string; component = reg|field; };
+
+//Memory Properties
+
+
+//Note: For description and all possible values to following properties refer here.
+
+
+property sw_access { type = string; component = reg; };
+
+
+property hw_access { type = string; component = reg; };
+
+
+property wr_enb { type = boolean; component = reg; };
+
+
+property rd_enb { type = boolean; component = reg; };
+
+
+property sync_reset { type = boolean; component = reg;};
+
+
+property read_access { type = string; component = mem;};
+
+
+//property clock  { type = string; component = reg;};
+
+
+property reg_rd_addr { type = boolean; component = reg; };
+
+
+//UVM Properties
+
+
+//Note: For description and all possible values to following properties refer here.
+
+property uvm_vreg_class { type = string; component = addrmap; };
+
+property uvm_vreg_field_class { type = string; component = addrmap; };
+
+property uvm_base_class { type = string; component = addrmap|regfile|reg; };
+
+
+property uvm_reg_class { type = string; component = addrmap; };
+
+property uvm_reg_access { type = boolean; component = addrmap; };
+
+property uvm_alter_access { type = boolean; component = addrmap; };
+
+property auto_volatile { type = string; component = addrmap; };
+
+property uvm_guard_band { type = boolean; component = addrmap; };
+
+property uvm_vreg { type = boolean; component = regfile; };
+
+property uvm_class { type = string; component = addrmap|regfile|reg; };
+
+property uvm_inst_class { type = string; component = addrmap|regfile|reg; };
+
+property uvm_field_class { type =string; component = addrmap|reg; };
+
+property uvm_package { type = string; component = addrmap|regfile; };
+
+property uvm_user_coverage  { type = string; component = addrmap|regfile; };
+
+
+property uvm_map { type = string; component = addrmap|regfile; };
+
+property uvm_name_format { type = string; component = addrmap|regfile|reg; };
+
+property uvm_handle_name_format { type = string; component = addrmap|regfile|reg|field; };
+
+property coverage {type = string; component = addrmap|regfile|reg; };
+
+property uvm_add_regmap { type = string; component = addrmap; };
+
+property uvm_add_regmap_offset { type = string; component = addrmap; };
+
+property uvm_reset_constraint { type = boolean; component = addrmap | regfile|reg|field; };
+
+property regdef_pkg { type = boolean; component = addrmap; };
+
+property alt_mode {type = string; component = reg; };
+
+property alt_reg { type = string; component = reg; };
+
+property vertical_reuse { type = string; component = addrmap; };
+
+property uvm_lock_model { type = boolean; component = addrmap; };
+
+property uvm_opt { type = string; component = addrmap; };
+
+ property config_hdl_path { type = boolean; component = addrmap|regfile; };
+
+
+ property uvm_reg_name_format { type = string; component = addrmap|reg|regfile; };
+
+ property uvm_enum_name_format { type = string; component = addrmap|reg|regfile; };
+
+
+
+
+
+
+
+property uvm_global_param { type = boolean; component = addrmap; };
+
+//property alt_reg { type = string; component = reg; };
+
+property ignore_prop { type = string; component = addrmap|regfile|reg|field; };
+
+
+
+/*
+
+           String can be as one from the followings
+
+Generates appropriate coverage code in the output  |        "a, b, f, f.rd, f.wr, b.rd, b.wr,on, off"
+
+                                       a                -        Generates CG cg_addr
+
+                                       f                -        Generates CG rd_cg_vals & wr_cg_vals
+
+                                               f.rd        -        Generates CG rd_cg_vals
+
+                                               f.wr        -        Generates CG wr_cg_vals
+
+                                       b                -        Generates CG rd_cg_bits & wr_cg_bits
+
+                                               b.rd        -        Generates CG rd_cg_bits
+
+                                               b.wr        -        Generates CG wr_cg_bits
+
+*/
+
+
+
+property coverage_per_instance { type = boolean; component = addrmap|regfile|reg; };
+
+
+property coverage_weight { type = number; component = addrmap|regfile|reg; };
+
+
+property coverage_goal { type = number; component = addrmap|regfile|reg; };
+
+
+property coverage_comment { type = string; component = addrmap|regfile|reg; };
+
+
+property coverage_at_least { type = number; component = addrmap|regfile|reg; };
+
+
+property coverage_detect_overlap { type = boolean; component = addrmap|regfile|reg; };
+
+
+property coverage_auto_bin_max { type = number; component = addrmap|regfile|reg; };
+
+
+property coverage_cross_num_print_missing { type = number; component = addrmap|regfile|reg; };
+
+
+property coverage_get_inst_coverage { type = boolean; component = addrmap|regfile|reg; };
+
+
+property is_rand { type = boolean; component = field; };
+
+
+property is_acc { type = boolean; component = field; };
+
+
+property has_reset { type = boolean; component = field; };
+
+
+
+property index_reg { type = string; component = reg; };
+
+
+property depth { type = number; component = reg; };
+
+
+//property hdl_path { type = string; component = addrmap|regfile|reg|field; };
+
+property auto_hdl_path { type = boolean; component = addrmap|regfile; };
+
+
+property hdl_path_internal { type =string; component = addrmap; };
+
+
+property volatile { type = boolean; component = field; };
+
+
+//property constraint { type = string; component = reg|field; };
+
+
+//Reg/Memory Test property
+
+
+//Note: For description and all possible values to following properties refer here.
+
+
+property no_mem_tests { type = boolean; component = reg; };
+
+
+property no_mem_access_test { type = boolean; component =reg; };
+
+
+property no_mem_walk_test { type = boolean; component =reg; };
+
+
+property no_reg_tests { type = boolean; component = addrmap|regfile|reg; };
+
+
+property no_reg_hw_reset_test { type = boolean; component = addrmap|regfile|reg; };
+
+
+property no_reg_bit_bash_test { type = boolean; component = addrmap|regfile|reg; };
+
+
+property no_reg_access_test { type = boolean; component = addrmap|regfile|reg; };
+
+property memory { type = string; component = addrmap|regfile; };
+
+
+//C Header Property
+
+
+//Note: For description and all possible values to following properties refer here.
+
+property cheader_name_format { type = string; component = addrmap; } ;
+
+property compiler_arrayindex_maxvalue { type = number; component = addrmap; };
+
+property cheader_filler { type = boolean;component = addrmap; };
+
+property cheader_opt {type=boolean; component = addrmap; };
+
+property cheader_add_regmap {type=string; component = addrmap; };
+
+property cheader_add_regmap_offset {type=string; component = addrmap; };
+
+property svh_filler { type = boolean;component = addrmap; };
+
+property capi_add_name_prefix { type = string;component = addrmap; };
+//IP-XACT  Property
+
+
+//Note: For description and all possible values to following properties refer here.
+
+
+property vendor { type=string; component = addrmap; };
+
+
+property library { type=string; component = addrmap; };
+
+
+property version { type=string; component = addrmap; };
+
+
+property ipxact_ignore { type = string; component = addrmap; };
+
+//Miscellaneous Registers
+property rtl_hw_latch { type=string; component = addrmap|regfile|reg|field; };
+
+property rtl_sw_read { type=string; component = addrmap|regfile|reg|field; };
+
+property rtl_sw_write { type=string; component = addrmap|regfile|reg|field; };
+
+property rtl_bmax { type=boolean; component = addrmap|regfile|reg|field; };
+
+property rtl_bmin { type=boolean; component = addrmap|regfile|reg|field; };
+
+property rtl_sw_latch { type=string; component = addrmap|regfile|reg|field; };
+
+//sv_interface
+
+property sv_interface { type=string; component = addrmap|regfile; };
+
+//error at field
+
+property rtl_error_pessimistic { type=boolean; component = field; };
+
+//Note: Change the name of reserved field in C-header
+
+property rsv_name_format { type = string; component = addrmap; };
+
+property ext_error { type=boolean; component = addrmap; };
+
+property uvm_class_name_inst {type=string; component = addrmap; };
+
+// `default_nettype none compiler directive
+
+property default_nettype{ type = string; component = addrmap; };
+
+
+`endif

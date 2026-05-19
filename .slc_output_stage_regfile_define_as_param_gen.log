@@ -1,0 +1,17 @@
+IDesignSpec CLI version :  7.110.01.3015 
+<CMD> idsbatch slc_output_stage_regfile.rdl -big_endian "false" -pprint "notab" -ipxact_inp_fast -vertical_reuse -preserve_names -verbose -no_warn "2606,2607" -top_property "ipxact_exclude_param=true;sv_localparam=true;header_hermetic=true;addressing=compact;rtl_pack_array=true;external_ack=true;rtl.strict_ports=true;intr_out_flopped=true" -default_reset "async" -rtl_no_error -bus "apb" -D "IPXACT_LOCAL_REF" -D "AGNISYS" -D "CEDAR_COVERAGE" -D "AGNISYS_RTL_ONLY" -output "verilog2001" -dir "ids" +top_property "define_as_param=true;" +top_property "singleline_comment=true;"
+ERROR-B : null at RTL generation.
+IDSBatch Version (  7.110.01.3015  )            IDS Outputs                   IDS Runtime ( in Minutes)
+                                             Xml Conversion                2.10 Sec
+                                             Intermediate Annotation       0.86 Sec
+                                             verilog                       0.27 Sec
+IDesignSpec CLI version :  7.110.01.3015 
+<CMD> idsbatch slc_output_stage_regfile.rdl -big_endian "false" -pprint "notab" -ipxact_inp_fast -vertical_reuse -preserve_names -verbose -no_warn "2606,2607" -top_property "ipxact_exclude_param=true;sv_localparam=true;header_hermetic=true;addressing=compact;rtl_pack_array=true;external_ack=true;rtl.strict_ports=true;intr_out_flopped=true" -default_reset "async" -rtl_no_error -bus "apb" -D "IPXACT_LOCAL_REF" -D "AGNISYS" -D "CEDAR_COVERAGE" -D "AGNISYS_RTL_ONLY" -output "xrsl verilog" -dir "ids" +top_property "define_as_param=true;" +top_property "singleline_comment=true;"
+ERROR-B : null at RTL generation.
+IDSBatch Version (  7.110.01.3015  )            IDS Outputs                   IDS Runtime ( in Minutes)
+                                             Xml Conversion                2.21 Sec
+                                             Intermediate Annotation       0.78 Sec
+                                             xrsl                          0.00 Sec
+                                             verilog                       0.27 Sec
+Indentiing "ids/slc_output_stage_regfile.xrsl".......Done. 
+File "golden/slc_output_stage_regfile.xrsl" does not exist.

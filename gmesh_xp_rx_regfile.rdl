@@ -1,0 +1,123 @@
+`include "idsProperty2a.rdl"
+
+`ifndef _GMESH_XP_RX_REGFILE_
+`define _GMESH_XP_RX_REGFILE_
+
+regfile gmesh_xp_rx_regfile #(
+   longint unsigned GENERATE_PARITY = 0,
+   longint unsigned VOQ_NUM         = 1,
+   longint unsigned SHARED_VOQ_EN   = 0
+){
+  name = "gmesh_xp_rx_regfile";
+  desc = "Gmesh XP Rx Port CSR Register File";
+
+  //---------------------------------------------------------------------------
+  // OUTSTANDING STATUS REGISTERS
+  //---------------------------------------------------------------------------
+  reg {
+    default sw = r;
+    default hw = w;
+  `ifdef AGNISYS
+    // Avoid sampling status data again in the generated CSR
+    registered= "false";
+  `endif
+
+    field {
+       desc  = "Count the number of outstanding packets to target port";
+    } cnt[31:0] = 0;
+  } sts_outstanding_to_port[8];
+
+  reg {
+    default sw = r;
+    default hw = w;
+  `ifdef AGNISYS
+    // Avoid sampling status data again in the generated CSR
+    registered= "false";
+  `endif
+
+    field {
+       desc  = "Count the total number of outstanding packets in this port";
+    } cnt[31:0] = 0;
+  } sts_total_outstanding ;
+
+  //---------------------------------------------------------------------------
+  // PORT STATUS
+  //---------------------------------------------------------------------------
+  reg {
+    default sw = r;
+    default hw = w;
+  `ifdef AGNISYS
+    // Avoid sampling status data again in the generated CSR
+    registered= "false";
+  `endif
+
+    field {
+       desc  = "RX port is active";
+    } active[31:31] = 0;
+    field {
+       desc  = "RX port is idle";
+    } idle[16:16] = 0;
+    field {
+       desc  = "RX VOQ idle";
+    } voq_idle[VOQ_NUM-1:0] = 0;
+  } sts_port @0x30 ;
+
+  //---------------------------------------------------------------------------
+  // PARITY
+  //---------------------------------------------------------------------------
+  reg {
+    default sw = rw;
+    default hw = r;
+
+      field {
+       desc  = "Generate parity for all incoming traffic";
+    } gen_parity[0:0] = GENERATE_PARITY;
+  } cfg_ctrl ;
+
+  //---------------------------------------------------------------------------
+  // VOQ STATUS & CONFIGURATION REGISTERS
+  //---------------------------------------------------------------------------
+  reg {
+    default sw = r;
+    default hw = w;
+  `ifdef AGNISYS
+    // Avoid sampling status data again in the generated CSR
+    registered= "false";
+  `endif
+
+    field {
+       desc = "Count the number of entries used in the designated voq";
+     } reserved_entries[15:0] = 0;
+    field {
+       desc = "Count the number of entries used in the voqs shared pool";
+     } shared_entries[31:16] = 0;
+  } sts_voq_usage[VOQ_NUM] @0x40 ;
+
+ reg {
+    default sw = r;
+    default hw = w;
+  `ifdef AGNISYS
+    // Avoid sampling status data again in the generated CSR
+    registered= "false";
+  `endif
+
+    field {
+       desc = "Count the total number of entries used in the voqs shared pool";
+     } total_entries[15:0] = 0;
+  } sts_voq_shared_pool ;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+
+    field {
+       desc  = "Disable pop entries from this VOQ";
+    } disable_pop[16:16] = 0;
+    field {
+       desc  = "Debug feature, Number of Voq entries to reduce from it HW availabilty";
+    } entry_reduction[7:0] = 0;
+  } cfg_voq[VOQ_NUM] @0x80 ;
+
+};
+
+`endif

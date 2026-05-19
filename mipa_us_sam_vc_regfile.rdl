@@ -1,0 +1,100 @@
+`ifndef _MIPA_US_SAM_VC_REGFILE_
+`define _MIPA_US_SAM_VC_REGFILE_
+
+regfile mipa_us_sam_vc_regfile #(
+  bit HAS_ACELITEDVM                                = 1,
+  longint unsigned NUM_ACELITE                      = 1,
+  bit HAS_PCIE                                      = 1, // Indicates we have PCIe logic
+
+  longint unsigned NUM_ACELITE_FIXED = (NUM_ACELITE > 0)? NUM_ACELITE : 1, // DO NOT OVERRIDE
+
+  longint unsigned NUM_PCIE_PORTS = 2,
+  longint unsigned NUM_REMOTE_PCIE_ID = 16,
+  longint unsigned PCIE_PEER_TO_PEER_SQN_WIDTH = 4
+)
+  {
+  name = "mipa_us_sam_vc_regfile";
+  desc = "MI-A/P Upstream SAM+VC Register File";
+  enum memory_access_vc_enum {
+    NP      = 3'h0 {desc = "VC Is NP";};
+    P0      = 3'h1 {desc = "VC Is P0";};
+    P1      = 3'h2 {desc = "VC Is P1";};
+    PW      = 3'h3 {desc = "VC Is PW";};
+    IC      = 3'h4 {desc = "VC Is IC";};
+    HR      = 3'h5 {desc = "VC Is HR";};
+    SN      = 3'h6 {desc = "VC Is SN";};
+  };
+
+  enum memory_access_color_enum {
+    GREEN       = 2'h0 {desc = "Green Color";};
+    YELLOW      = 2'h1 {desc = "Yellow Color";};
+    RED         = 2'h2 {desc = "Red Color";};
+  };
+
+
+  reg cfg_target_slc {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "The VC of the transaction in case of memory access (Target is SLC).
+              Should be set to P0 for non PCIE agent and P1 for PCIE Agent";
+      encode = memory_access_vc_enum;
+    } vc[2:0] = memory_access_vc_enum::P1;
+    field {
+      desc = "The Color of the transaction in case of memory access (Target is SLC)";
+      encode = memory_access_color_enum;
+    } color[5:4] = memory_access_color_enum::GREEN;
+  };
+  cfg_target_slc cfg_target_slc_acelite[NUM_ACELITE_FIXED];
+  cfg_target_slc cfg_target_slc_acelitedvm;
+  cfg_target_slc_acelite->ispresent = (NUM_ACELITE > 0);
+  cfg_target_slc_acelitedvm->ispresent = HAS_ACELITEDVM;
+
+  regfile max_sqn_regfile #(
+    longint unsigned NUM_REMOTE_PCIE_ID_EDIT = 16,
+    longint unsigned PCIE_PEER_TO_PEER_SQN_WIDTH_EDIT = 4
+  )
+    {
+    name = "max_sqn_regfile";
+    reg {
+      default sw = rw;
+      default hw = r;
+      field {
+        desc = "Limit of SQN index for each target id";
+      } value [PCIE_PEER_TO_PEER_SQN_WIDTH_EDIT-1:0] = 8;
+    } cfg_us_max_sqn [NUM_REMOTE_PCIE_ID_EDIT];
+  };
+
+  // Assuming no more than 3 PCIE as Agnysis is not coping well with 3 dimensional array
+  max_sqn_regfile #(
+    .NUM_REMOTE_PCIE_ID         (NUM_REMOTE_PCIE_ID),
+    .PCIE_PEER_TO_PEER_SQN_WIDTH(PCIE_PEER_TO_PEER_SQN_WIDTH)
+  ) max_sqn_pcie0;
+
+  max_sqn_regfile #(
+    .NUM_REMOTE_PCIE_ID         (NUM_REMOTE_PCIE_ID),
+    .PCIE_PEER_TO_PEER_SQN_WIDTH(PCIE_PEER_TO_PEER_SQN_WIDTH)
+  ) max_sqn_pcie1;
+
+  max_sqn_regfile #(
+    .NUM_REMOTE_PCIE_ID         (NUM_REMOTE_PCIE_ID),
+    .PCIE_PEER_TO_PEER_SQN_WIDTH(PCIE_PEER_TO_PEER_SQN_WIDTH)
+  ) max_sqn_pcie2;
+
+  max_sqn_pcie0->ispresent=HAS_PCIE;
+  max_sqn_pcie1->ispresent=NUM_PCIE_PORTS>1;
+  max_sqn_pcie2->ispresent=NUM_PCIE_PORTS>2;
+
+  reg {
+      default sw = rw;
+      default hw = r;
+      field {
+        desc = "Source PCIe ID - per pcie port";
+      } source_id [5-1:0] = 8;
+  } cfg_us_pcie [NUM_PCIE_PORTS];
+
+  cfg_us_pcie->ispresent=HAS_PCIE;
+
+
+};
+`endif

@@ -1,0 +1,83 @@
+
+
+
+// TODO(avisahar): Agnisys do not support parametric width - b/274768359
+// After the support, take the parameters from gmesh_slc_pkg
+ regfile slc_output_stage_regfile #(
+    longint unsigned  OS_DAT_FIFO_DEPTH_WIDTH = 4,
+    longint unsigned  OS_CDT_FIFO_DEPTH_WIDTH = 4,
+    longint unsigned  OS_RSP_FIFO_DEPTH_WIDTH = 4,
+    longint unsigned  OS_REQ_FIFO_DEPTH_WIDTH = 4,
+    longint unsigned  OS_BMP_SNP_FIFO_DEPTH_WIDTH = 4
+ ){
+   name = "slc_output_stage_regfile";
+   desc = "SLC Output Stage CSR Register File";
+
+   default sw = rw;
+   default hw = r;
+
+  reg {
+   desc = "withhold credits of os_data_gen fifo";
+   field {
+     sw      = rw;
+     hw      = r;
+     desc    = "Maximum number of credits to withhold from release";
+   } withhold_credit[OS_DAT_FIFO_DEPTH_WIDTH-1:0] = 0;
+  } os_data_gen;
+
+  reg {
+   desc = "withhold credits of os_credit_gen fifo";
+   field {
+     sw      = rw;
+     hw      = r;
+     desc    = "Maximum number of credits to withhold from release";
+   } withhold_credit[OS_CDT_FIFO_DEPTH_WIDTH-1:0] = 0;
+  } os_credit_gen;
+
+  reg {
+   desc = "withhold credits of os_response_gen fifo";
+   field {
+     sw      = rw;
+     hw      = r;
+     desc    = "Maximum number of credits to withhold from release";
+   } withhold_credit[OS_RSP_FIFO_DEPTH_WIDTH-1:0] = 0;
+  } os_response_gen;
+
+  reg {
+   desc = "withhold credits of os_request_gen fifo";
+   field {
+     sw      = rw;
+     hw      = r;
+     desc    = "Maximum number of credits to withhold from release";
+   } withhold_credit[OS_REQ_FIFO_DEPTH_WIDTH-1:0] = 0;
+  } os_request_gen;
+
+  reg {
+   desc = "withhold credits of os_snoop_gen_bmp fifo";
+   field {
+     sw      = rw;
+     hw      = r;
+     desc    = "Maximum number of credits to withhold from release";
+   } withhold_credit[OS_BMP_SNP_FIFO_DEPTH_WIDTH-1:0] = 0;
+  } os_snoop_gen_bmp;
+
+  gmesh_rqm_regfile #(
+    .NUM_SAM_REGIONS(8),
+    .NUM_RATE_LIMITER_VECTORS(2),
+    .IS_SLC (1),
+    .IS_MIC (0),
+    .HAS_NP (0),
+    .HAS_P0 (1),
+    .HAS_P1 (1),
+    .HAS_PW (0),
+    .HAS_HR (1),
+    .HAS_SN (1)
+  ) csr_slc_rqm;
+ };
+
+`endif
+`include "idsProperty2a.rdl"
+`include "gmesh_rqm_regfile.rdl"
+
+`ifndef _SLC_OUTPUT_STAGE_REGFILE_
+`define _SLC_OUTPUT_STAGE_REGFILE_

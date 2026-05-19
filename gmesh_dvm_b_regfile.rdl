@@ -1,0 +1,95 @@
+`include "idsProperty2a.rdl"
+
+`ifndef _GMESH_DVM_B_REGFILE_
+`define _GMESH_DVM_B_REGFILE_
+
+ regfile gmesh_dvm_b_regfile  #(
+   longint unsigned ARB_WEIGHT_WIDTH = 8,
+   longint unsigned NUM_CORES                       = 84,
+   longint unsigned NUM_MIPA_US                        = 16
+
+ ){
+   name = "gmesh_dvm_b_regfile";
+   desc = "Gmesh DVM-B CSR Register File";
+
+
+
+  reg {
+    desc  = "Snoop DVM Credits per Core - the max number of non-sync operations core can get before completion";
+    field {
+       desc  = "MIC value";
+       sw    = rw;
+       hw    = r;
+     } mic_value[7:0] = 4;
+    field {
+       desc  = "MIPA value";
+       sw    = rw;
+       hw    = r;
+     } mipa_value[15:8] = 4;
+  } cfg_snp_dvm_credit @0x0;
+
+
+
+
+
+ // This register array is a splitted register of the broadcast bitmap which is greater than 32
+  reg {
+    field {
+       desc  = "MI-C Broadcast bitmap enable - Each bit indicates respectively the MI-C target associated to the current DVM-B.
+                The bitmap[i][j] corresponds to 32 * i + j
+                i - reg_index
+                j - bitmap_j";
+       sw    = rw;
+       hw    = r;
+     } bitmap[31:0] = 0;
+  } cfg_mic_broadcast[(NUM_CORES+31)/32] @0x20;
+
+
+
+
+
+ // This register array is a splitted register of the broadcast bitmap which is greater than 32
+  reg {
+    field {
+       desc  = "MI-A/P Broadcast bitmap enable - Each bit indicates respectively the MI-A/P target associated to the current DVM-B.
+                The bitmap[i][j] corresponds to 32 * i + j
+                i - reg_index
+                j - bitmap_j";
+       sw    = rw;
+       hw    = r;
+     } bitmap[31:0] = 0;
+  } cfg_mipa_broadcast[(NUM_MIPA_US+31)/32] @0x40;
+
+  reg {
+   desc = "Response channel arbiter weights";
+   field {desc = "local tracker request response arb weight"; sw=rw;hw=r;} local_tracker[ARB_WEIGHT_WIDTH-1:0] = {ARB_WEIGHT_WIDTH{1'b1}};
+   field {desc = "non sync request response arb weight";sw=rw;hw=r;} non_sync[ARB_WEIGHT_WIDTH-1+8:8] = {ARB_WEIGHT_WIDTH{1'b1}};
+  } cfg_tx_rsp_arb_weight;
+
+  //=========================
+  //  Status
+  //==========================
+  reg sts_watermark {
+    field {
+      sw    = r;
+      hw    = w;
+      desc  = "Watermark Value";
+    } value[15:0];
+    field {
+      sw    = w;
+      hw    = r;
+      singlepulse = true;
+      desc  = "Clear Watermark Value";
+    } clear[16:16] = 0;
+  };
+
+  sts_watermark sts_dvm_tracker_watermark;
+  sts_dvm_tracker_watermark->desc = "DVM Tracker Fullness status - indicates the max amount of requests waiting for Completion from last Clear indication";
+
+
+
+
+
+ };
+
+`endif

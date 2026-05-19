@@ -1,0 +1,36 @@
+`ifndef _MIPA_US_PORTS_TO_RPM_REGFILE_
+`define _MIPA_US_PORTS_TO_RPM_REGFILE_
+
+regfile mipa_us_axi_ports_to_rpm_regfile #(
+  bit              HAS_ACELITEDVM                 = 1,
+  longint unsigned NUM_ACELITE                    = 1,
+  longint unsigned NUM_ACELITE_FIXED              = (NUM_ACELITE > 0)? NUM_ACELITE : 1, // DO NOT OVERRIDE
+  longint unsigned NUM_PORTS                      = 2,
+  // At most 8
+  longint unsigned WEIGHT_WIDTH                   = 8
+)
+  {
+  name = "mipa_us_axi_ports_to_rpm_regfile";
+  desc = "MI-A/P AXI Ports to RPM Register File. Including WRR into Uniform RPM";
+  default sw = rw;
+  default hw = r;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "weight of wrr AceLiteDVM";
+    } value[WEIGHT_WIDTH-1:0] = {{WEIGHT_WIDTH}{1'b1}};
+  } cfg_arb_wrr_weights_acelitedvm;
+  cfg_arb_wrr_weights_acelitedvm->ispresent = (HAS_ACELITEDVM);
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "weight of wrr AceLite Port";
+    } value[WEIGHT_WIDTH-1:0] = {{WEIGHT_WIDTH}{1'b1}};
+  } cfg_arb_wrr_weights_acelite [NUM_ACELITE_FIXED];
+  cfg_arb_wrr_weights_acelite->ispresent = (NUM_ACELITE > 0);
+};
+`endif

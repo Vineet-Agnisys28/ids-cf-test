@@ -1,0 +1,608 @@
+//--------------------------
+// JINJA2 GENERATED FILE: DO NOT MANUALLY EDIT
+// This file has been automatically generated from a jinja2 template.
+// Please refer to the BUILD file for details.
+//--------------------------
+
+////////////////////////////////////////////////////
+//// jinja code: building param groups and vars ////
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+`include "idsProperty2a.rdl"
+
+`include "gmesh_xp_rx_regfile.rdl"
+`include "gmesh_xp_tx_regfile.rdl"
+`include "gmesh_xp_ras_logger_regfile.rdl"
+
+`ifndef _GMESH_CEDAR_COMPUTE_XP_CSR_
+`define _GMESH_CEDAR_COMPUTE_XP_CSR_
+
+addrmap gmesh_cedar_compute_xp_csr {
+  name = "gmesh_cedar_compute_xp_csr";
+  // TODO(dorsha): add codeblock
+//  `ifdef AGNISYS
+//     rtl_name_format="%s3_%s2_%s1_%s_%r_%f" ;
+//     define_as_param=true ;
+//  `endif
+  desc = "XP Top Level CSR Address Map for cedar_compute";
+
+`ifdef AGNISYS
+  // Set the default module name of the generated file.
+  module_name = "gmesh_cedar_compute_xp_csr";
+
+  // If true, creates an input enable signal on the hardware interface when the field is HW writable '<reg>_<field>_in_enb'.
+  // If false, applied at top then  disables the generation of '<reg>_<field>_in_enb' signal for an entire regmap.
+  // rtl_hw_enb = false ;
+
+  // If applied on register as true, creates an output signal '<reg>_enb' on the hardware interface
+  // if SW access of the register is writable irrespective of the HW access.
+  // If applied at top as false, disables the generation of 'reg_enb' signal for an entire regmap.
+  // rtl_reg_enb = false ;
+
+  // Set the hdl path automatically for all generated registers.
+  auto_hdl_path = true ;
+`endif
+
+  //---------------------------------------------------------------------------
+  // Global registers
+  //---------------------------------------------------------------------------
+  reg {
+    default sw = r;
+    default hw = w;
+
+    field {
+       desc = "y Offset coordinate";
+     } y_offset[15:8] = 0;
+    field {
+       desc = "X Offset coordinate";
+     } x_offset[7:0] = 0;
+  } sts_xp ;
+  
+  //---------------------------------------------------------------------------
+  // Channel: req0
+  //---------------------------------------------------------------------------
+  // Port: west(0)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_west_req0 @0x1000;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_west_req0 @0x1100;
+  // Port: mi0(1)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi0_req0 @0x1200;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi0_req0 @0x1300;
+  // Port: north(2)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_north_req0 @0x1400;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_north_req0 @0x1500;
+  // Port: mi1(3)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi1_req0 @0x1600;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi1_req0 @0x1700;
+  // Port: east(4)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_east_req0 @0x1800;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_east_req0 @0x1900;
+  // Port: mi2(5)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi2_req0 @0x1a00;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi2_req0 @0x1b00;
+  // Port: south(6)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_south_req0 @0x1c00;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_south_req0 @0x1d00;
+  // Port: mi3(7)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi3_req0 @0x1e00;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi3_req0 @0x1f00;
+  //---------------------------------------------------------------------------
+  // Channel: req1
+  //---------------------------------------------------------------------------
+  // Port: west(0)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_west_req1 @0x2000;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_west_req1 @0x2100;
+  // Port: mi0(1)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi0_req1 @0x2200;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi0_req1 @0x2300;
+  // Port: north(2)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_north_req1 @0x2400;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_north_req1 @0x2500;
+  // Port: mi1(3)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi1_req1 @0x2600;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi1_req1 @0x2700;
+  // Port: east(4)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_east_req1 @0x2800;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_east_req1 @0x2900;
+  // Port: mi2(5)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi2_req1 @0x2a00;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi2_req1 @0x2b00;
+  // Port: south(6)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_south_req1 @0x2c00;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_south_req1 @0x2d00;
+  // Port: mi3(7)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi3_req1 @0x2e00;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi3_req1 @0x2f00;
+  
+  //---------------------------------------------------------------------------
+  // Channel: rsp0
+  //---------------------------------------------------------------------------
+  // Port: west(0)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_west_rsp0 @0x3000;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_west_rsp0 @0x3100;
+  // Port: mi0(1)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi0_rsp0 @0x3200;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi0_rsp0 @0x3300;
+  // Port: north(2)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_north_rsp0 @0x3400;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_north_rsp0 @0x3500;
+  // Port: mi1(3)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi1_rsp0 @0x3600;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi1_rsp0 @0x3700;
+  // Port: east(4)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_east_rsp0 @0x3800;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_east_rsp0 @0x3900;
+  // Port: mi2(5)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi2_rsp0 @0x3a00;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi2_rsp0 @0x3b00;
+  // Port: south(6)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_south_rsp0 @0x3c00;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_south_rsp0 @0x3d00;
+  // Port: mi3(7)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi3_rsp0 @0x3e00;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi3_rsp0 @0x3f00;
+  //---------------------------------------------------------------------------
+  // Channel: rsp1
+  //---------------------------------------------------------------------------
+  // Port: west(0)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_west_rsp1 @0x4000;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_west_rsp1 @0x4100;
+  // Port: mi0(1)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi0_rsp1 @0x4200;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi0_rsp1 @0x4300;
+  // Port: north(2)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_north_rsp1 @0x4400;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_north_rsp1 @0x4500;
+  // Port: mi1(3)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi1_rsp1 @0x4600;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi1_rsp1 @0x4700;
+  // Port: east(4)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_east_rsp1 @0x4800;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_east_rsp1 @0x4900;
+  // Port: mi2(5)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi2_rsp1 @0x4a00;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi2_rsp1 @0x4b00;
+  // Port: south(6)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_south_rsp1 @0x4c00;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_south_rsp1 @0x4d00;
+  // Port: mi3(7)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi3_rsp1 @0x4e00;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi3_rsp1 @0x4f00;
+  
+  //---------------------------------------------------------------------------
+  // Channel: dat
+  //---------------------------------------------------------------------------
+  // Port: west(0)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_west_dat @0x5000;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_west_dat @0x5100;
+  // Port: mi0(1)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi0_dat @0x5200;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi0_dat @0x5300;
+  // Port: north(2)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_north_dat @0x5400;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_north_dat @0x5500;
+  // Port: mi1(3)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi1_dat @0x5600;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi1_dat @0x5700;
+  // Port: east(4)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_east_dat @0x5800;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_east_dat @0x5900;
+  // Port: mi2(5)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi2_dat @0x5a00;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi2_dat @0x5b00;
+  // Port: south(6)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_south_dat @0x5c00;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_south_dat @0x5d00;
+  // Port: mi3(7)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi3_dat @0x5e00;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi3_dat @0x5f00;
+  
+  //---------------------------------------------------------------------------
+  // Channel: snp
+  //---------------------------------------------------------------------------
+  // Port: west(0)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_west_snp @0x6000;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_west_snp @0x6100;
+  // Port: mi0(1)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi0_snp @0x6200;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi0_snp @0x6300;
+  // Port: north(2)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_north_snp @0x6400;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_north_snp @0x6500;
+  // Port: mi1(3)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi1_snp @0x6600;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi1_snp @0x6700;
+  // Port: east(4)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_east_snp @0x6800;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_east_snp @0x6900;
+  // Port: mi2(5)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi2_snp @0x6a00;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi2_snp @0x6b00;
+  // Port: south(6)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_south_snp @0x6c00;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_south_snp @0x6d00;
+  // Port: mi3(7)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi3_snp @0x6e00;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi3_snp @0x6f00;
+  
+  //---------------------------------------------------------------------------
+  // Channel: crd0
+  //---------------------------------------------------------------------------
+  // Port: west(0)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_west_crd0 @0x7000;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_west_crd0 @0x7100;
+  // Port: mi0(1)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi0_crd0 @0x7200;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi0_crd0 @0x7300;
+  // Port: north(2)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_north_crd0 @0x7400;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_north_crd0 @0x7500;
+  // Port: mi1(3)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi1_crd0 @0x7600;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi1_crd0 @0x7700;
+  // Port: east(4)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_east_crd0 @0x7800;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_east_crd0 @0x7900;
+  // Port: mi2(5)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi2_crd0 @0x7a00;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi2_crd0 @0x7b00;
+  // Port: south(6)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_south_crd0 @0x7c00;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_south_crd0 @0x7d00;
+  // Port: mi3(7)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi3_crd0 @0x7e00;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi3_crd0 @0x7f00;
+  //---------------------------------------------------------------------------
+  // Channel: crd1
+  //---------------------------------------------------------------------------
+  // Port: west(0)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_west_crd1 @0x8000;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_west_crd1 @0x8100;
+  // Port: mi0(1)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi0_crd1 @0x8200;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi0_crd1 @0x8300;
+  // Port: north(2)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_north_crd1 @0x8400;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_north_crd1 @0x8500;
+  // Port: mi1(3)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi1_crd1 @0x8600;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi1_crd1 @0x8700;
+  // Port: east(4)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_east_crd1 @0x8800;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_east_crd1 @0x8900;
+  // Port: mi2(5)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi2_crd1 @0x8a00;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi2_crd1 @0x8b00;
+  // Port: south(6)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (0),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=4
+      .SHARED_VOQ_EN   (0)) rx_south_crd1 @0x8c00;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=4
+      .REMOTE_SHARED_DEPTH (0)) tx_south_crd1 @0x8d00;
+  // Port: mi3(7)
+  gmesh_xp_rx_regfile
+    #(.GENERATE_PARITY (1),
+      .VOQ_NUM         (8), // Actual VOQ_NUM=1
+      .SHARED_VOQ_EN   (0)) rx_mi3_crd1 @0x8e00;
+  gmesh_xp_tx_regfile
+    #(.REMOTE_VOQ_NUM      (8), // Actual REMOTE_VOQ_NUM=1
+      .REMOTE_SHARED_DEPTH (0)) tx_mi3_crd1 @0x8f00;
+
+
+gmesh_xp_ras_logger_regfile gmesh_xp_ras_logger_regfile;
+
+};
+
+`endif
+

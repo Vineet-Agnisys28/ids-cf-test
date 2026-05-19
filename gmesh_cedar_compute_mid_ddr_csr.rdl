@@ -1,0 +1,48 @@
+//--------------------------
+// JINJA2 GENERATED FILE: DO NOT MANUALLY EDIT
+// This file has been automatically generated from a jinja2 template.
+// Please refer to the BUILD file for details.
+//--------------------------
+
+`include "idsProperty2a.rdl"
+
+`include "gmesh_mid_regfile.rdl"
+`include "gmesh_mid_ras_logger_regfile.rdl"
+
+`ifndef _GMESH_cedar_compute_mid_ddr_CSR_
+`define _GMESH_cedar_compute_mid_ddr_CSR_
+
+addrmap gmesh_cedar_compute_mid_ddr_csr {
+  name = "gmesh_cedar_compute_mid_ddr_csr";
+  desc = "MID Top Level CSR Address Map";
+
+`ifdef AGNISYS
+  module_name = "gmesh_cedar_compute_mid_ddr_csr";
+  auto_hdl_path=true;
+`endif
+
+ gmesh_mid_regfile #(
+    .IS_CXL                 (0),
+    .NUM_OF_TZ_REGIONS      (8)
+ ) mid_regfile @0x0;
+
+ reg {
+   desc = "TS sync configuration";
+   field {
+     sw      = rw;
+     hw      = r;
+     desc    = "time stamp sync compensation vlue";
+   } cfg_ts_compensation[15:0] = 0;
+   field {
+     sw      = rw;
+     hw      = r;
+     desc    = "time stamp sync enable";
+   } cfg_ts_sync_en[16:16] = 0;
+  } ts_compensation;
+
+
+ gmesh_mid_ras_logger_regfile gmesh_ras_logger_regfile @0x1000;
+
+};
+
+`endif

@@ -1,0 +1,822 @@
+`include "idsProperty2a.rdl"
+`include "gmesh_resource_pool_manager_regfile.rdl"
+`include "gmesh_rqm_regfile.rdl"
+
+`ifndef _MIF_TOP_REGFILE_
+`define _MIF_TOP_REGFILE_
+
+// property auto_hdl_path{type=boolean; component=regfile;};
+
+regfile gmesh_mif_regfile #(
+   longint unsigned NUM_TXNID = 1024,
+   longint unsigned NUM_TXNID_WIDTH = 10,// $clog2(NUM_TXNID)
+   longint unsigned NUM_TXNID_TRACKER_WIDTH = 7,
+   longint unsigned NUM_COLORS = 3,
+   longint unsigned NUM_DRAM_VCS = 2,
+   longint unsigned INP_QUEUE_MAX_ADDR_WIDTH = 11,// $clog2(INP_STG_LL_MEM_DEPTH+1)
+   longint unsigned NUM_VC_QUEUES            = 7,
+   longint unsigned NUM_VC_QUEUES_WIDTH      = 3, // $clog2(NUM_VC_QUEUES)
+   longint unsigned NUM_REQ_VC_QUEUES        = NUM_VC_QUEUES-1, // -1 is because VC=IC is not expected on the REQ channel
+   longint unsigned NUM_REQ_VC_QUEUES_WIDTH  = 3, // $clog2(NUM_VC_QUEUES)
+   longint unsigned NUM_INP_QUEUES           = NUM_REQ_VC_QUEUES + (NUM_COLORS*NUM_DRAM_VCS - NUM_DRAM_VCS) + 1, // the "+1" is to subtract the internal config input-queue
+   longint unsigned NUM_INP_QUEUES_WIDTH     = 4,// $clog2(NUM_INP_QUEUES)
+   longint unsigned INP_STG_WRR_WEIGHT_WIDTH = 8,
+   longint unsigned DS_RSP_WRR_WEIGHT_WIDTH  = 8,
+   longint unsigned DS_DAT_WRR_WEIGHT_WIDTH  = 8,
+   longint unsigned INP_STG_COLOR_WRR_WEIGHT_WIDTH = 8,
+   longint unsigned NUM_QOS = 16,
+   longint unsigned INP_STG_NUM_REQ_WRR =  NUM_INP_QUEUES - NUM_COLORS,
+   longint unsigned DS_RSP_MAX_ADDR_WIDTH = 11,// $clog2(DS_RSP_LL_MEM_DEPTH+1)
+   longint unsigned DS_DAT_MAX_ADDR_WIDTH = 11,// $clog2(DS_DAT_LL_MEM_DEPTH+1)
+   longint unsigned LOCAL_FID_RPM_USAGE_CNT_WIDTH = 11, // $clog2(NUM_TXNID+1)
+   longint unsigned D2D_VC_CRD_WIDTH = 8,
+   longint unsigned D2D_CH_CRD_WIDTH = 8,
+   longint unsigned LCRD_WIDTH = 8,
+   longint unsigned NUM_DVM_TGT_IDS = 16,// the tgt_dvm_h_id field is currently 4 bits
+   longint unsigned NUM_IC_TGT_IDS = 64,
+   longint unsigned NODE_ID_WIDTH = 12,
+   longint unsigned CBUSY_THRESHOLD_WIDTH = 11 // Equals to INP_STG_LL_MAX_ADDR_WIDTH
+ )
+ {
+  name = "gmesh_mif_regfile";
+  desc = "This is the MIF top RDL file";
+
+  // MIF ID register
+  reg {
+    desc = "MIF ID register- each MIF pair must have 2 differnent IDs to
+            differentiate the transaction originator";
+    default sw=rw;
+    default hw=r;
+    field {
+      desc = "MIF pair ID";
+    } id [0:0] = 1'b0;
+  }cfg_mif_id;
+
+  //RQM Regfile
+  // TODO(nadavrotter): align to TBD address
+  gmesh_rqm_regfile
+  #(
+     .HAS_NP(1),
+     .HAS_P0(1),
+     .HAS_P1(1),
+     .HAS_PW(1),
+     .HAS_HR(1),
+     .HAS_SN(1)
+  ) mif_rqm;
+
+  //DS REQ D2D VC Credits init value
+  reg {
+    desc = "Per VC credits over the D2D";
+    default sw=rw;
+    default hw=r;
+    field {
+      desc = "D2D VC credits init value";
+    } init_value [D2D_VC_CRD_WIDTH-1:0] = 64; //according to D2D RTD
+  }cfg_d2d_vc_crd[NUM_REQ_VC_QUEUES];
+
+  //DS D2D REQ Channel Credits init value
+  reg {
+    desc = "Per CHI channel credits over the D2D";
+    default sw=rw;
+    default hw=r;
+    field {
+      desc = "D2D CHI channel credits init value";
+    } init_value [D2D_CH_CRD_WIDTH-1:0] = 47; //according to D2D RTD
+  }cfg_d2d_req_ch_crd;
+
+  //DS D2D RSP Channel Credits init value
+  reg {
+    desc = "Per CHI channel credits over the D2D";
+    default sw=rw;
+    default hw=r;
+    field {
+      desc = "D2D CHI channel credits init value";
+    } init_value [D2D_CH_CRD_WIDTH-1:0] = 47; //according to D2D RTD
+  }cfg_d2d_rsp_ch_crd;
+
+  //DS D2D DAT Channel Credits init value
+  reg {
+    desc = "Per CHI channel credits over the D2D";
+    default sw=rw;
+    default hw=r;
+    field {
+      desc = "D2D CHI channel credits init value";
+    } init_value [D2D_CH_CRD_WIDTH-1:0] = 47; //according to D2D RTD
+  }cfg_d2d_dat_ch_crd;
+
+  // DVM tgt_id mapping
+  reg {
+    desc = "Target ID mapping for DVMop/DVMdat messages- indexed by tgt_dvm_h_id";
+    default sw=rw;
+    default hw=r;
+    field {
+      desc = "Target ID";
+    } tgt_id [NODE_ID_WIDTH-1:0] = {NODE_ID_WIDTH{1'b0}};
+  }cfg_mif_dvm_tgt_id_map[NUM_DVM_TGT_IDS];
+
+  // IC tgt_id mapping
+  reg {
+    desc = "Target ID mapping for VC==IC messages";
+    default sw=rw;
+    default hw=r;
+    field {
+      desc = "Mapped Target ID according to the tdest";
+    } tgt_id [NODE_ID_WIDTH-1:0] = {NODE_ID_WIDTH{1'b0}};
+    field {
+      desc = "tdest fild value";
+    } tdest[29:16] = 14'b0;
+    field {
+      desc = "valid bit to qualify the tdest field and allow tdest=='0 case";
+    } valid[31:31] = 1'b0;
+  }cfg_mif_ic_tgt_id_map[NUM_IC_TGT_IDS];
+
+  // MIF general config register
+  reg {
+    desc = "MIF config register";
+    default sw=rw;
+    default hw=r;
+    field {
+      desc = "configuration done indication";
+    } done [0:0] = 1'b0;
+  }cfg_mif_config;
+
+  //Input stage color WRR weights regs
+  reg {
+    desc = "Weights for input stage color WRR arbiters";
+    default sw=rw;
+    default hw=r;
+    field {
+      desc = "Weights for input stage color WRR arbiters";
+    } weight [INP_STG_WRR_WEIGHT_WIDTH-1:0] = {INP_STG_WRR_WEIGHT_WIDTH{1'b1}};
+  }cfg_inp_stg_color_wrr[NUM_COLORS][NUM_DRAM_VCS];
+
+  //Input stage WRR weights regs
+  reg {
+    desc = "Weights for input stage main WRR arbiter";
+    default sw=rw;
+    default hw=r;
+    field {
+      desc = "Weights for input stage main WRR arbiter";
+    } weight [INP_STG_WRR_WEIGHT_WIDTH-1:0] = {INP_STG_WRR_WEIGHT_WIDTH{1'b1}};
+  }cfg_inp_stg_wrr[INP_STG_NUM_REQ_WRR];
+
+  //DS_RSP WRR weights regs
+  reg {
+    desc = "Weights for downstream rsp WRR arbiter";
+    default sw=rw;
+    default hw=r;
+    field {
+      desc = "Weights for downstream rsp WRR arbiter";
+    } weight [DS_RSP_WRR_WEIGHT_WIDTH-1:0] = {DS_RSP_WRR_WEIGHT_WIDTH{1'b1}};
+  }cfg_ds_rsp_wrr[NUM_VC_QUEUES];
+
+  //DS_DAT WRR weights regs
+  reg {
+    desc = "Weights for downstream dat WRR arbiter";
+    default sw=rw;
+    default hw=r;
+    field {
+      desc = "Weights for downstream dat WRR arbiter";
+    } weight [DS_DAT_WRR_WEIGHT_WIDTH-1:0] = {DS_DAT_WRR_WEIGHT_WIDTH{1'b1}};
+  }cfg_ds_dat_wrr[NUM_VC_QUEUES];
+
+  // MIF cbusy threshold registers
+  reg {
+    desc = "Thresholds for input request queues fullness level to generates MifBusy[1:0].
+           The value of MifBusy[1:0] reflects the load of MIF input queues,
+           and follows the following logic:
+           if      (input_queue_fullness < threshold[0])                  then MifCbusy = 00 (Light load)
+           else if ( threshold[0] <= input_queue_fullness < threshold[1]) then MifCbusy = 01 (Medium load)
+           else if ( threshold[1] <= input_queue_fullness < threshold[2]) then MifCbusy = 10 (Medium-High load)
+           else if (input_queue_fullness >= threshold[2])                 then MifCbusy = 11 (High load)
+           ";
+    default sw=rw;
+    default hw=r;
+    field {
+      desc = "MIF pair ID";
+    } threshold [CBUSY_THRESHOLD_WIDTH-1:0] = {CBUSY_THRESHOLD_WIDTH{1'b1}};
+  }cfg_mif_cbusy[3];
+
+
+  //Color scrubber free running counter
+  reg {
+    desc = "Color scrubber free running counter threshold to create a basic counting tick.
+            Typically ~1ms";
+    default sw=rw;
+    default hw=r;
+    field {
+      desc = "counter threshold";
+    } threshold [31:0] = 32'h1E8480; //2M for 2Ghz clock
+  }cfg_color_scrubber_tick_counter_threshold;
+
+  //Color scrubber free running counter
+  reg {
+    desc = "Color scrubber stale time counter threshold to create a color stale time window.
+            count in granule of ~1ms";
+    default sw=rw;
+    default hw=r;
+    field {
+      desc = "counter threshold";
+    } threshold [31:0] = 32'h10; //~16ms
+  }cfg_color_scrubber_counter_threshold;
+
+  //The below CSRs should be working by their default values
+
+  //Input stage Linked-listL RPM Regfile
+  gmesh_resource_pool_manager_regfile #(.RESOURCE_WIDTH(INP_QUEUE_MAX_ADDR_WIDTH), .NUM_CTX(NUM_INP_QUEUES)) inp_stg_ll;
+  inp_stg_ll.cfg_rpm_shared_total.limit->reset = 11'd1024;
+  inp_stg_ll.cfg_rpm_reserved.limit->reset = 11'd3;
+  inp_stg_ll.cfg_rpm_shared.limit->reset = 11'd1024;
+
+  //local_fid handler RPM Regfile
+  gmesh_resource_pool_manager_regfile #(.RESOURCE_WIDTH(LOCAL_FID_RPM_USAGE_CNT_WIDTH), .NUM_CTX(NUM_REQ_VC_QUEUES), .STS_CSR_IS_PRESENT(1)) local_fid_rpm;
+  local_fid_rpm.cfg_rpm_shared_total.limit->reset = 11'd1024;
+  local_fid_rpm.cfg_rpm_reserved.limit->reset = 11'd2;
+  local_fid_rpm.cfg_rpm_shared.limit->reset = 11'd1024;
+
+  //DS RSP Linked-listL RPM Regfile
+  gmesh_resource_pool_manager_regfile #(.RESOURCE_WIDTH(DS_RSP_MAX_ADDR_WIDTH), .NUM_CTX(NUM_VC_QUEUES)) ds_rsp_ll;
+  ds_rsp_ll.cfg_rpm_shared_total.limit->reset = 11'd1024;
+  ds_rsp_ll.cfg_rpm_reserved.limit->reset = 11'd3;
+  ds_rsp_ll.cfg_rpm_shared.limit->reset = 11'd1024;
+
+  //DS DAT Linked-listL RPM Regfile
+  gmesh_resource_pool_manager_regfile #(.RESOURCE_WIDTH(DS_DAT_MAX_ADDR_WIDTH), .NUM_CTX(NUM_VC_QUEUES)) ds_dat_ll;
+  ds_dat_ll.cfg_rpm_shared_total.limit->reset = 11'd1024;
+  ds_dat_ll.cfg_rpm_reserved.limit->reset = 11'd3;
+  ds_dat_ll.cfg_rpm_shared.limit->reset = 11'd1024;
+
+  //MIF Indirect access to internal data structures
+  reg cfg_indirect_access_data#(
+   longint unsigned INDIRECT_DATA_WIDTH = 32)
+   {
+    field {
+      desc = "MIF indirect access data register. For read access,
+              this CSR holds the read data from the internal data structure (e.g. memory).
+              For write access, this CSR if filled by SW to be written into the internal data structure";
+      sw = rw;
+      hw = rw;
+    } value[INDIRECT_DATA_WIDTH-1:0] = 0;
+  };
+
+  reg cfg_indirect_access_control #(
+   longint unsigned INDIRECT_ADDR_WIDTH = 16)
+   {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "Indirect address to access";
+    } address[INDIRECT_ADDR_WIDTH-1:0] = 0;
+    field {
+      desc = "Indirect mode: write (1) or read (0).";
+    } write[30:30] = 0;
+    field {
+      hw = rw;
+      swmod;
+      desc = "Initiate an indirect access (R/W) to the MIF internal data structure.
+              SW should set this bit to 1 to trigger an access.
+              HW clears once it is done.
+              When writing, the indirects_data CSR should be set before triggering.
+              When reading, HW will fill the indirect_data CSRs upon completion.";
+    } go[31:31] = 0;
+  };
+
+  cfg_indirect_access_control #(
+   .INDIRECT_ADDR_WIDTH(NUM_TXNID_WIDTH)
+  ) cfg_indirect_access_control_local_tracker;
+
+  cfg_indirect_access_data #(
+   .INDIRECT_DATA_WIDTH(NUM_TXNID_TRACKER_WIDTH)
+  ) cfg_indirect_access_data_local_tracker;
+
+  cfg_indirect_access_control #(
+   .INDIRECT_ADDR_WIDTH(NUM_TXNID_WIDTH)
+  ) cfg_indirect_access_control_remote_tracker;
+
+  cfg_indirect_access_data #(
+   .INDIRECT_DATA_WIDTH(NUM_TXNID_TRACKER_WIDTH)
+  ) cfg_indirect_access_data_remote_tracker;
+
+  //MIF debug enable
+  reg {
+    desc = "MIF debug enable- when set, mif debug statuses are being sampled into CSRs.
+           Power saving";
+    default sw=rw;
+    default hw=r;
+    field {
+      desc = "MIF debug enable- when set, mif debug statuses are being sampled into CSRs";
+    } enable [0:0] = 1'b0;
+  }cfg_mif_debug;
+
+  reg sts_crd #(
+   longint unsigned CRD_WIDTH = 8
+   ) {
+    desc = "Credits status reflection- For debug";
+    default sw=r;
+    default hw=rw;
+    field {
+      desc = "credit count";
+    } count [CRD_WIDTH-1:0] = 0;
+  };
+
+  sts_crd  #(
+   .CRD_WIDTH(D2D_CH_CRD_WIDTH)
+  ) sts_d2d_dat_ch_crd;
+
+  sts_crd #(
+   .CRD_WIDTH(D2D_CH_CRD_WIDTH)
+  ) sts_d2d_req_ch_crd;
+
+  sts_crd #(
+   .CRD_WIDTH(D2D_CH_CRD_WIDTH)
+  ) sts_d2d_rsp_ch_crd;
+
+  sts_crd #(
+   .CRD_WIDTH(LCRD_WIDTH)
+  ) sts_e2e_crd_lcrd;
+
+  sts_crd #(
+   .CRD_WIDTH(LCRD_WIDTH)
+  ) sts_rsp_lcrd;
+
+  sts_crd #(
+   .CRD_WIDTH(LCRD_WIDTH)
+  ) sts_dat_lcrd;
+
+  reg sts_ll_queues_occupancy #(
+   longint unsigned MAX_ADDR_WIDTH = 11
+   ) {
+    desc = "Linked list queue occupancy reflection- For debug";
+    default sw=r;
+    default hw=rw;
+    field {
+      desc = "queue occupancy";
+    } occupancy [MAX_ADDR_WIDTH-1:0] = 0;
+  };
+
+  sts_ll_queues_occupancy #(
+   .MAX_ADDR_WIDTH(INP_QUEUE_MAX_ADDR_WIDTH)
+  ) sts_inp_stg_ll_queues_occupancy[NUM_INP_QUEUES];
+
+  sts_ll_queues_occupancy #(
+   .MAX_ADDR_WIDTH(DS_RSP_MAX_ADDR_WIDTH)
+  ) sts_ds_rsp_ll_queues_occupancy[NUM_VC_QUEUES];
+
+  sts_ll_queues_occupancy #(
+   .MAX_ADDR_WIDTH(DS_DAT_MAX_ADDR_WIDTH)
+  ) sts_ds_dat_ll_queues_occupancy[NUM_VC_QUEUES];
+
+
+  reg {
+    desc = "Linked List general status reflection- For debug";
+    default sw=r;
+    default hw=rw;
+    field {
+      desc = "Input stage linked list init done";
+    } inp_stg_ll_init_done[0:0] = 0;
+    field {
+      desc = "Downstream Rsp linked list init done";
+    } ds_rsp_ll_init_done[1:1] = 0;
+    field {
+      desc = "Downstream Dat linked list init done";
+    } ds_dat_ll_init_done[2:2] = 0;
+  }sts_linked_lists;
+
+  //Tracker counter Opcode mapping
+  reg {
+    desc = "These registers state the set value for the TxnID tracker's counter,
+            per CHI REQ Opcode ";
+    default sw=rw;
+    default hw=r;
+    field {
+      desc = "Counter set value, per CHI REQ Opcode";
+    } set_value [2:0] = 3'b0;
+    field {
+      desc = "Counter decrement value select.
+              For each CHI RSP/DAT opcode, the tracker counter can take one of
+              two decrement values according to this bit";
+    } dec_value_sel [3:3] = 1'b0;
+  }cfg_chi_req_op2set[256];
+
+  <% @req_set_val = (
+     [0, 0, "ReqLCrdReturn"],                            #0x0
+     [0, 0, "ReadShared"],                               #0x1
+     [0, 0, "ReadClean"],                                #0x2
+     [2, 1, "ReadOnce"],                                 #0x3
+     [2, 1, "ReadNoSnp"],                                #0x4
+     [0, 0, "PCrdReturn"],                               #0x5
+     [0, 0, "Reserved"],                                 #0x6
+     [0, 0, "ReadUnique"],                               #0x7
+     [0, 0, "CleanShared"],                              #0x8
+     [0, 0, "CleanInvalid"],                             #0x9
+     [0, 0, "MakeInvalid"],                              #0xA
+     [0, 0, "CleanUnique"],                              #0xB
+     [0, 0, "MakeUnique"],                               #0xC
+     [0, 0, "Evict"],                                    #0xD
+     [0, 0, "Reserved"],                                 #0xE
+     [0, 0, "Reserved"],                                 #0xF
+     [0, 0, "Reserved"],                                 #0x10
+     [1, 0, "ReadNoSnpSep"],                             #0x11
+     [0, 0, "Reserved"],                                 #0x12
+     [0, 0, "CleanSharedPersistSep"],                    #0x13
+     [0, 0, "DVMOp"],                                    #0x14
+     [0, 0, "WriteEvictFull"],                           #0x15
+     [0, 0, "Reserved"],                                 #0x16
+     [0, 0, "WriteCleanFull"],                           #0x17
+     [3, 0, "WriteUniquePtl"],                           #0x18
+     [3, 0, "WriteUniqueFull"],                          #0x19
+     [0, 0, "WriteBackPtl"],                             #0x1A
+     [0, 0, "WriteBackFull"],                            #0x1B
+     [3, 0, "WriteNoSnpPtl"],                            #0x1C
+     [3, 0, "WriteNoSnpFull"],                           #0x1D
+     [0, 0, "Reserved"],                                 #0x1E
+     [0, 0, "Reserved"],                                 #0x1F
+     [0, 0, "WriteUniqueFullStash"],                     #0x20
+     [0, 0, "WriteUniquePtlStash"],                      #0x21
+     [0, 0, "StashOnceShared"],                          #0x22
+     [0, 0, "StashOnceUnique"],                          #0x23
+     [2, 1, "ReadOnceCleanInvalid"],                     #0x24
+     [2, 1, "ReadOnceMakeInvalid"],                      #0x25
+     [0, 0, "ReadNotSharedDirty"],                       #0x26
+     [0, 0, "CleanSharedPersist"],                       #0x27
+     [3, 0, "AtomicStoreAdd"],                           #0x28
+     [3, 0, "AtomicStoreClr"],                           #0x29
+     [3, 0, "AtomicStoreEor"],                           #0x2A
+     [3, 0, "AtomicStoreSet"],                           #0x2B
+     [3, 0, "AtomicStoreSmax"],                          #0x2C
+     [3, 0, "AtomicStoreSmin"],                          #0x2D
+     [3, 0, "AtomicStoreUmax"],                          #0x2E
+     [3, 0, "AtomicStoreUmin"],                          #0x2F
+     [3, 0, "AtomicLoadAdd"],                            #0x30
+     [3, 0, "AtomicLoadClr"],                            #0x31
+     [3, 0, "AtomicLoadEor"],                            #0x32
+     [3, 0, "AtomicLoadSet"],                            #0x33
+     [3, 0, "AtomicLoadSmax"],                           #0x34
+     [3, 0, "AtomicLoadSmin"],                           #0x35
+     [3, 0, "AtomicLoadUmax"],                           #0x36
+     [3, 0, "AtomicLoadUmin"],                           #0x37
+     [3, 0, "AtomicSwap"],                               #0x38
+     [3, 0, "AtomicCompare"],                            #0x39
+     [0, 0, "PrefetchTgt"],                              #0x3A
+     [0, 0, "Reserved"],                                 #0x3B
+     [0, 0, "Reserved"],                                 #0x3C
+     [0, 0, "Reserved"],                                 #0x3D
+     [0, 0, "Reserved"],                                 #0x3E
+     [0, 0, "Reserved"],                                 #0x3F
+     [0, 0, "Reserved"],                                 #0x40
+     [0, 0, "MakeReadUnique"],                           #0x41
+     [0, 0, "WriteEvictOrEvict"],                        #0x42
+     [2, 0, "WriteUniqueZero"],                          #0x43
+     [2, 0, "WriteNoSnpZero"],                           #0x44
+     [0, 0, "Reserved"],                                 #0x45
+     [0, 0, "Reserved"],                                 #0x46
+     [0, 0, "StashOnceSepShared"],                       #0x47
+     [0, 0, "StashOnceSepUnique"],                       #0x48
+     [0, 0, "Reserved"],                                 #0x49
+     [0, 0, "Reserved"],                                 #0x4A
+     [0, 0, "Reserved"],                                 #0x4B
+     [0, 0, "ReadPreferUnique"],                         #0x4C
+     [0, 0, "Reserved"],                                 #0x4D
+     [0, 0, "Reserved"],                                 #0x4E
+     [0, 0, "Reserved"],                                 #0x4F
+     [0, 0, "WriteNoSnpFullCleanSh"],                    #0x50
+     [0, 0, "WriteNoSnpFullCleanInv"],                   #0x51
+     [0, 0, "WriteNoSnpFullCleanShPerSep"],              #0x52
+     [0, 0, "Reserved"],                                 #0x53
+     [0, 0, "WriteUniqueFullCleanSh"],                   #0x54
+     [0, 0, "Reserved"],                                 #0x55
+     [0, 0, "WriteUniqueFullCleanShPerSep"],             #0x56
+     [0, 0, "Reserved"],                                 #0x57
+     [0, 0, "WriteBackFullCleanSh"],                     #0x58
+     [0, 0, "WriteBackFullCleanInv"],                    #0x59
+     [0, 0, "WriteBackFullCleanShPerSep"],               #0x5A
+     [0, 0, "Reserved"],                                 #0x5B
+     [0, 0, "WriteCleanFullCleanSh"],                    #0x5C
+     [0, 0, "Reserved"],                                 #0x5D
+     [0, 0, "WriteCleanFullCleanShPerSep"],              #0x5E
+     [0, 0, "Reserved"],                                 #0x5F
+     [0, 0, "WriteNoSmpPtlCleanSh"],                     #0x60
+     [0, 0, "WriteNoSmpPtlCleanInv"],                    #0x61
+     [0, 0, "WriteNoSmpPtlCleanShPerSep"],               #0x62
+     [0, 0, "Reserved"],                                 #0x63
+     [0, 0, "WriteUniquePtlCleanSh"],                    #0x64
+     [0, 0, "Reserved"],                                 #0x65
+     [0, 0, "WriteUniquePtlCleanShPerSep"],              #0x66
+     [0, 0, "Reserved"],                                 #0x67
+     [0, 0, "Reserved"],                                 #0x68
+     [0, 0, "Reserved"],                                 #0x69
+     [0, 0, "Reserved"],                                 #0x6A
+     [0, 0, "Reserved"],                                 #0x6B
+     [0, 0, "Reserved"],                                 #0x6C
+     [0, 0, "Reserved"],                                 #0x6D
+     [0, 0, "Reserved"],                                 #0x6E
+     [0, 0, "Reserved"],                                 #0x6F
+     [0, 0, "Reserved"],                                 #0x70
+     [0, 0, "Reserved"],                                 #0x71
+     [0, 0, "Reserved"],                                 #0x72
+     [0, 0, "Reserved"],                                 #0x73
+     [0, 0, "Reserved"],                                 #0x74
+     [0, 0, "Reserved"],                                 #0x75
+     [0, 0, "Reserved"],                                 #0x76
+     [0, 0, "Reserved"],                                 #0x77
+     [0, 0, "Reserved"],                                 #0x78
+     [0, 0, "Reserved"],                                 #0x79
+     [0, 0, "Reserved"],                                 #0x7A
+     [0, 0, "Reserved"],                                 #0x7B
+     [0, 0, "Reserved"],                                 #0x7C
+     [0, 0, "Reserved"],                                 #0x7D
+     [0, 0, "Reserved"],                                 #0x7E
+     [0, 0, "Reserved"],                                 #0x7F
+     [1, 0, "ReadNoSnpH2H"],                             #0x80
+     [2, 0, "ReadOnceH2H"],                              #0x81
+     [2, 0, "ReadCleanH2H"],                             #0x82
+     [2, 0, "ReadUniqueH2H"],                            #0x83
+     [2, 0, "ReadPreferUniqueH2H"],                      #0x84
+     [2, 0, "MakeReadUniqueH2H"],                        #0x85
+     [0, 0, "Reserved"],                                 #0x86
+     [0, 0, "Reserved"],                                 #0x87
+     [1, 0, "CleanSharedH2H"],                           #0x88
+     [1, 0, "CleanInvalidH2H"],                          #0x89
+     [1, 0, "MakeInvalidH2H"],                           #0x8A
+     [0, 0, "Reserved"],                                 #0x8B
+     [0, 0, "Reserved"],                                 #0x8C
+     [0, 0, "Reserved"],                                 #0x8D
+     [0, 0, "Reserved"],                                 #0x8E
+     [3, 1, "WriteNoSnpFullH2H"],                        #0x8F
+     [3, 1, "WriteNoSnpPtlH2H"],                         #0x90
+     [2, 1, "WriteNoSnpZeroH2H"],                        #0x91
+     [3, 1, "WriteUniqueFullH2H"],                       #0x92
+     [2, 1, "WriteUniqueZeroH2H"],                       #0x93
+     [3, 1, "WriteUniquePtlH2H"],                        #0x94
+     [0, 0, "Reserved"],                                 #0x95
+     [0, 0, "Reserved"],                                 #0x96
+     [0, 0, "Reserved"],                                 #0x97
+     [0, 0, "Reserved"],                                 #0x98
+     [0, 0, "Reserved"],                                 #0x99
+     [0, 0, "Reserved"],                                 #0x9A
+     [0, 0, "Reserved"],                                 #0x9B
+     [0, 0, "Reserved"],                                 #0x9C
+     [0, 0, "Reserved"],                                 #0x9D
+     [0, 0, "Reserved"],                                 #0x9E
+     [0, 0, "Reserved"],                                 #0x9F
+     [1, 0, "MakeUniqueH2H"],                            #0xA0
+     [1, 0, "EvictH2H"],                                 #0xA1
+     [0, 0, "Reserved"],                                 #0xA2
+     [0, 0, "Reserved"],                                 #0xA3
+     [0, 0, "Reserved"],                                 #0xA4
+     [0, 0, "Reserved"],                                 #0xA5
+     [0, 0, "Reserved"],                                 #0xA6
+     [0, 0, "Reserved"],                                 #0xA7
+     [0, 0, "Reserved"],                                 #0xA8
+     [0, 0, "Reserved"],                                 #0xA9
+     [0, 0, "Reserved"],                                 #0xAA
+     [0, 0, "Reserved"],                                 #0xAB
+     [0, 0, "Reserved"],                                 #0xAC
+     [0, 0, "Reserved"],                                 #0xAD
+     [0, 0, "Reserved"],                                 #0xAE
+     [0, 0, "Reserved"],                                 #0xAF
+     [0, 0, "DVMOpH2H"],                                 #0xB0
+     [0, 0, "Reserved"],                                 #0xB1
+     [0, 0, "Reserved"],                                 #0xB2
+     [0, 0, "Reserved"],                                 #0xB3
+     [0, 0, "Reserved"],                                 #0xB4
+     [0, 0, "Reserved"],                                 #0xB5
+     [0, 0, "Reserved"],                                 #0xB6
+     [0, 0, "Reserved"],                                 #0xB7
+     [0, 0, "Reserved"],                                 #0xB8
+     [0, 0, "Reserved"],                                 #0xB9
+     [0, 0, "Reserved"],                                 #0xBA
+     [0, 0, "Reserved"],                                 #0xBB
+     [0, 0, "Reserved"],                                 #0xBC
+     [0, 0, "Reserved"],                                 #0xBD
+     [0, 0, "Reserved"],                                 #0xBE
+     [0, 0, "Reserved"],                                 #0xBF
+     [2, 0, "SnpReadOnceH2H"],                           #0xC0
+     [2, 0, "SnpReadCleanH2H"],                          #0xC1
+     [2, 0, "SnpMakeInvalidH2H"],                        #0xC2
+     [2, 0, "SnpReadUniqueH2H"],                         #0xC3
+     [2, 0, "SnpEvictH2H"],                              #0xC4
+     [2, 1, "SnpWriteBackH2H"],                          #0xC5
+     [2, 1, "SnpWriteCleanH2H"],                         #0xC6
+     [2, 0, "SnpWriteZeroH2H"],                          #0xC7
+     [0, 0, "Reserved"],                                 #0xC8
+     [0, 0, "Reserved"],                                 #0xC9
+     [0, 0, "Reserved"],                                 #0xCA
+     [0, 0, "Reserved"],                                 #0xCB
+     [0, 0, "Reserved"],                                 #0xCC
+     [0, 0, "Reserved"],                                 #0xCD
+     [0, 0, "Reserved"],                                 #0xCE
+     [0, 0, "Reserved"],                                 #0xCF
+     [0, 0, "Reserved"],                                 #0xD0
+     [0, 0, "Reserved"],                                 #0xD1
+     [0, 0, "Reserved"],                                 #0xD2
+     [0, 0, "Reserved"],                                 #0xD3
+     [0, 0, "Reserved"],                                 #0xD4
+     [0, 0, "Reserved"],                                 #0xD5
+     [0, 0, "Reserved"],                                 #0xD6
+     [0, 0, "Reserved"],                                 #0xD7
+     [0, 0, "Reserved"],                                 #0xD8
+     [0, 0, "Reserved"],                                 #0xD9
+     [0, 0, "Reserved"],                                 #0xDA
+     [0, 0, "Reserved"],                                 #0xDB
+     [0, 0, "Reserved"],                                 #0xDC
+     [0, 0, "Reserved"],                                 #0xDD
+     [0, 0, "Reserved"],                                 #0xDE
+     [0, 0, "Reserved"],                                 #0xDF
+     [0, 0, "Reserved"],                                 #0xE0
+     [0, 0, "Reserved"],                                 #0xE1
+     [0, 0, "Reserved"],                                 #0xE2
+     [0, 0, "Reserved"],                                 #0xE3
+     [0, 0, "Reserved"],                                 #0xE4
+     [0, 0, "Reserved"],                                 #0xE5
+     [0, 0, "Reserved"],                                 #0xE6
+     [0, 0, "Reserved"],                                 #0xE7
+     [0, 0, "Reserved"],                                 #0xE8
+     [0, 0, "Reserved"],                                 #0xE9
+     [0, 0, "Reserved"],                                 #0xEA
+     [0, 0, "Reserved"],                                 #0xEB
+     [0, 0, "Reserved"],                                 #0xEC
+     [0, 0, "Reserved"],                                 #0xED
+     [0, 0, "Reserved"],                                 #0xEE
+     [0, 0, "Reserved"],                                 #0xEF
+     [0, 0, "Reserved"],                                 #0xF0
+     [0, 0, "Reserved"],                                 #0xF1
+     [0, 0, "Reserved"],                                 #0xF2
+     [0, 0, "Reserved"],                                 #0xF3
+     [0, 0, "Reserved"],                                 #0xF4
+     [0, 0, "Reserved"],                                 #0xF5
+     [0, 0, "Reserved"],                                 #0xF6
+     [0, 0, "Reserved"],                                 #0xF7
+     [0, 0, "Reserved"],                                 #0xF8
+     [0, 0, "Reserved"],                                 #0xF9
+     [0, 0, "Reserved"],                                 #0xFA
+     [0, 0, "Reserved"],                                 #0xFB
+     [0, 0, "Reserved"],                                 #0xFC
+     [0, 0, "Reserved"],                                 #0xFD
+     [0, 0, "Reserved"],                                 #0xFE
+     [0, 0, "Reserved"]);                                #0xFF
+    %>
+
+`ifndef IGNORE_HETEROGENEOUS_ARRAY_ASSIGNMENT
+   <% for $i (0..255) { %>
+        <%$desc=$req_set_val[$i][2];%>
+       cfg_chi_req_op2set[<%=$i%>].set_value->reset = <%=$req_set_val[$i][0]%>;
+       cfg_chi_req_op2set[<%=$i%>].dec_value_sel->reset = <%=$req_set_val[$i][1]%>;
+       //cfg_chi_req_op2set[<%=$i%>].set_value->desc  = "set value for req opcode: <%=$desc%>";
+   <% } %>
+`endif
+
+
+  reg {
+    desc = "These registers state the decrement value for the TxnID tracker's counter.
+            For each CHI RSP opcode, the tracker counter can take one of
+            two decrement values according to the dec_value_sel, determine per REQ opcode";
+    default sw=rw;
+    default hw=r;
+    field {
+      desc = "Counter dec value, per CHI RSP Opcode";
+    } dec_value0 [1:0] = 2'b0;
+    field {
+      desc = "Counter dec value, per CHI RSP Opcode";
+    } dec_value1 [3:2] = 2'b0;
+  }cfg_chi_rsp_op2dec[64];
+
+
+ <% @rsp_dec_val = (
+    [0, 0, "RespLCrdRetrun"],            #0x0
+    [0, 0, "SnpResp"],                   #0x1
+    [1, 1, "CompAck"],                   #0x2
+    [0, 0, "RetryAck"],                  #0x3
+    [1, 1, "Comp"],                      #0x4
+    [2, 2, "CompDBIDResp"],              #0x5
+    [1, 1, "DBIDResp"],                  #0x6
+    [0, 0, "PCrdGrant"],                 #0x7
+    [1, 1, "ReadReceipt"],               #0x8
+    [0, 0, "SnpRespFwded"],              #0x9
+    [0, 0, "TagMatch"],                  #0xA
+    [1, 1, "RespSepData"],               #0xB
+    [0, 0, "Persist"],                   #0xC
+    [0, 0, "CompPersist"],               #0xD
+    [1, 1, "DBIDRespOrd"],               #0xE
+    [0, 0, "Reserved"],                  #0xF
+    [0, 0, "StashDone"],                 #0x10
+    [0, 0, "CompStashDone"],             #0x11
+    [0, 0, "Reserved"],                  #0x12
+    [0, 0, "Reserved"],                  #0x13
+    [0, 0, "CompCMO"],                   #0x14
+    [0, 0, "Reserved"],                  #0x15
+    [0, 0, "Reserved"],                  #0x16
+    [0, 0, "Reserved"],                  #0x17
+    [0, 0, "Reserved"],                  #0x18
+    [0, 0, "Reserved"],                  #0x19
+    [0, 0, "Reserved"],                  #0x1A
+    [0, 0, "Reserved"],                  #0x1B
+    [0, 0, "Reserved"],                  #0x1C
+    [0, 0, "Reserved"],                  #0x1D
+    [0, 0, "Reserved"],                  #0x1E
+    [0, 0, "Reserved"],                  #0x1F
+    [0, 0, "Reserved"],                  #0x20
+    [2, 1, "SnpRespH2H"],                #0x21
+    [1, 1, "CompAckH2H"],                #0x22
+    [3, 3, "CompH2H_Nack"],              #0x23
+    [2, 1, "CompH2H"],                   #0x24
+    [2, 2, "CompDBIDRespH2H"],           #0x25
+    [1, 1, "DBIDRespH2H"],               #0x26
+    [1, 1, "CompH2H_Fwded"],             #0x27
+    [0, 0, "Reserved"],                  #0x28
+    [1, 1, "SnpRespH2H_Fwded"],          #0x29
+    [0, 0, "Reserved"],                  #0x2A
+    [0, 0, "Reserved"],                  #0x2B
+    [0, 0, "Reserved"],                  #0x2C
+    [0, 0, "Reserved"],                  #0x2D
+    [0, 0, "Reserved"],                  #0x2E
+    [0, 0, "Reserved"],                  #0x2F
+    [0, 0, "CompDVMH"],                  #0x30
+    [0, 0, "Reserved"],                  #0x31
+    [0, 0, "Reserved"],                  #0x32
+    [0, 0, "Reserved"],                  #0x33
+    [0, 0, "Reserved"],                  #0x34
+    [0, 0, "Reserved"],                  #0x35
+    [0, 0, "Reserved"],                  #0x36
+    [0, 0, "Reserved"],                  #0x37
+    [0, 0, "Reserved"],                  #0x38
+    [0, 0, "Reserved"],                  #0x39
+    [0, 0, "Reserved"],                  #0x3A
+    [0, 0, "Reserved"],                  #0x3B
+    [0, 0, "Reserved"],                  #0x3C
+    [0, 0, "Reserved"],                  #0x3D
+    [0, 0, "Reserved"],                  #0x3E
+    [0, 0, "Reserved"]                   #0x3F
+    );%>
+
+`ifndef IGNORE_HETEROGENEOUS_ARRAY_ASSIGNMENT
+  <% for $i (0..63) { %>
+      <%$desc=$rsp_dec_val[$i][2];%>
+      cfg_chi_rsp_op2dec[<%=$i%>].dec_value0->reset = <%=$rsp_dec_val[$i][0]%>;
+      cfg_chi_rsp_op2dec[<%=$i%>].dec_value1->reset = <%=$rsp_dec_val[$i][1]%>;
+      //cfg_chi_rsp_op2dec[<%=$i%>].dec_value->desc  = "set value for req opcode: <%=$desc%>";
+  <% } %>
+`endif
+
+  reg {
+    desc = "These registers state the decrement value for the TxnID tracker's counter.
+            For each CHI RSP opcode, the tracker counter can take one of
+            two decrement values according to the dec_value_sel, determine per REQ opcode";
+    default sw=rw;
+    default hw=r;
+    field {
+      desc = "Counter set value, per CHI REQ Opcode";
+    } dec_value0 [1:0] = 2'b0;
+    field {
+      desc = "Counter set value, per CHI REQ Opcode";
+    } dec_value1 [3:2] = 2'b0;
+  }cfg_chi_dat_op2dec[32];
+
+ <% @dat_dec_val = (
+    [0, 0, "DataLCrdReturn"],         #0x0
+    [0, 0, "SnpRespData"],            #0x1
+    [0, 0, "CopyBackWrData"],         #0x2
+    [1, 1, "NonCopyBackWrData"],      #0x3
+    [1, 2, "CompData"],               #0x4
+    [0, 0, "SnpRespDataPtl"],         #0x5
+    [0, 0, "SnpRespDataFwded"],       #0x6
+    [1, 1, "WriteDataCancel"],        #0x7
+    [0, 0, "Reserved"],               #0x8
+    [0, 0, "Reserved"],               #0x9
+    [0, 0, "Reserved"],               #0xA
+    [1, 1, "DataSepResp"],            #0xB
+    [2, 2, "NCBWrDataCompAck"],       #0xC
+    [0, 0, "Reserved"],               #0xD
+    [0, 0, "Reserved"],               #0xE
+    [0, 0, "Reserved"],               #0xF
+    [0, 0, "Reserved"],               #0x10
+    [0, 0, "Reserved"],               #0x11
+    [0, 0, "Reserved"],               #0x12
+    [1, 1, "NonCopyBackWrDataH2H"],   #0x13
+    [1, 1, "CompDataH2H"],            #0x14
+    [0, 0, "Reserved"],               #0x15
+    [0, 0, "CompDataFwdedH2H"],       #0x16
+    [1, 1, "WriteDataCancelH2H"],     #0x17
+    [0, 0, "Reserved"],               #0x18
+    [0, 0, "Reserved"],               #0x19
+    [0, 0, "Reserved"],               #0x1A
+    [0, 0, "DVMDat"],                 #0x1B
+    [0, 0, "Reserved"],               #0x1C
+    [0, 0, "Reserved"],               #0x1D
+    [0, 0, "Reserved"],               #0x1E
+    [0, 0, "Reserved"]);              #0x1F
+    %>
+
+`ifndef IGNORE_HETEROGENEOUS_ARRAY_ASSIGNMENT
+  <% for $i (0..31) { %>
+      <%$desc=$dat_dec_val[$i][2];%>
+      cfg_chi_dat_op2dec[<%=$i%>].dec_value0->reset = <%=$dat_dec_val[$i][0]%>;
+      cfg_chi_dat_op2dec[<%=$i%>].dec_value1->reset = <%=$dat_dec_val[$i][1]%>;
+      //cfg_chi_dat_op2dec[<%=$i%>].dec_value->desc  = "set value for req opcode: <%=$desc%>";
+  <% } %>
+`endif
+
+};
+
+`endif
+

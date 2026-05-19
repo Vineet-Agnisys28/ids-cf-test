@@ -1,0 +1,824 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<block name="slc_output_stage_regfile" refNameID="slc_output_stage_regfile" global="true" display_name="slc_output_stage_regfile" reset_type="async" ipxact_exclude_param="true" sv_localparam="true" header_hermetic="true" addressing="compact" rtl_pack_array="true" external_ack="true" rtl.strict_ports="true" intr_out_flopped="true" define_as_param="true" singleline_comment="true">
+    <reg name="os_data_gen" refNameID="os_data_gen">
+        <field name="withhold_credit" offset="($OS_DAT_FIFO_DEPTH_WIDTH - 1) : 0">
+            <doc>Maximum number of credits to withhold from release</doc>
+            <sw>rw</sw>
+            <hw>ro</hw>
+            <default>0</default>
+        </field>
+        <doc>withhold credits of os_data_gen fifo</doc>
+    </reg>
+    <reg name="os_credit_gen" refNameID="os_credit_gen">
+        <field name="withhold_credit" offset="($OS_CDT_FIFO_DEPTH_WIDTH - 1) : 0">
+            <doc>Maximum number of credits to withhold from release</doc>
+            <sw>rw</sw>
+            <hw>ro</hw>
+            <default>0</default>
+        </field>
+        <doc>withhold credits of os_credit_gen fifo</doc>
+    </reg>
+    <reg name="os_response_gen" refNameID="os_response_gen">
+        <field name="withhold_credit" offset="($OS_RSP_FIFO_DEPTH_WIDTH - 1) : 0">
+            <doc>Maximum number of credits to withhold from release</doc>
+            <sw>rw</sw>
+            <hw>ro</hw>
+            <default>0</default>
+        </field>
+        <doc>withhold credits of os_response_gen fifo</doc>
+    </reg>
+    <reg name="os_request_gen" refNameID="os_request_gen">
+        <field name="withhold_credit" offset="($OS_REQ_FIFO_DEPTH_WIDTH - 1) : 0">
+            <doc>Maximum number of credits to withhold from release</doc>
+            <sw>rw</sw>
+            <hw>ro</hw>
+            <default>0</default>
+        </field>
+        <doc>withhold credits of os_request_gen fifo</doc>
+    </reg>
+    <reg name="os_snoop_gen_bmp" refNameID="os_snoop_gen_bmp">
+        <field name="withhold_credit" offset="($OS_BMP_SNP_FIFO_DEPTH_WIDTH - 1) : 0">
+            <doc>Maximum number of credits to withhold from release</doc>
+            <sw>rw</sw>
+            <hw>ro</hw>
+            <default>0</default>
+        </field>
+        <doc>withhold credits of os_snoop_gen_bmp fifo</doc>
+    </reg>
+    <section name="csr_slc_rqm" refparam.HAS_HR="1" refparam.HAS_PW="0" global="true" display_name="gmesh_rqm_regfile" refparam.IS_SLC="1" refNameID="gmesh_rqm_regfile" refparam.NUM_SAM_REGIONS="8" refparam.NUM_RATE_LIMITER_VECTORS="2" refparam.HAS_SN="1" refparam.HAS_NP="0" refparam.HAS_P1="1" refparam.HAS_P0="1" refparam.IS_MIC="0">
+        <section name="rqm_sam_region_regfile" refNameID="rqm_sam_region_regfile" count="$NUM_SAM_REGIONS">
+            <reg name="cfg_rqm_region_start" refNameID="cfg_rqm_region_start">
+                <field name="address" offset="27:0">
+                    <doc>SAM Region Start Address, 1MB granule (bits [47:20])
+In the design, the 20 LSBs of the request address are asssumed to be 0x7FFFF.
+SAM region is defined by cfg_sam_region_start[27:0] &lt;= chi_req.addr[47:20] &lt;= cfg_sam_region_end[27:0]</doc>
+                    <sw>rw</sw>
+                    <hw>ro</hw>
+                    <default>0</default>
+                </field>
+            </reg>
+            <reg name="cfg_rqm_region_end" refNameID="cfg_rqm_region_end">
+                <field name="address" offset="27:0">
+                    <doc>SAM Region End Address, 1MB granule (bits [47:20])
+In the design, the 20 LSBs of the request address are asssumed to be 0x7FFFF.
+SAM region is defined by cfg_sam_region_start[27:0] &lt;= chi_req.addr[47:20] &lt;= cfg_sam_region_end[27:0]</doc>
+                    <sw>rw</sw>
+                    <hw>ro</hw>
+                    <default>0</default>
+                </field>
+            </reg>
+            <reg name="cfg_rqm_region" refNameID="cfg_rqm_region">
+                <field name="memory_type" offset="3:0" encode="sam_memory_type_enum" ispresent="~ $IS_SLC">
+                    <doc><list type="enum" name="sam_memory_type_enum">
+                            <value name="MI" doc="Memory Type Is Mi">0</value>
+                            <value name="SLC" doc="Memory Type Is Slc">1</value>
+                            <value name="RMEM" doc="Memory Type Is RMem">2</value>
+                            <value name="PCONFIG" doc="Memory Type Is PConfig">3</value>
+                            <value name="PMEM" doc="Memory Type Is PMem">4</value>
+                            <value name="CONFIG" doc="Memory Type Is Config">5</value>
+                            <value name="CCR0" doc="Memory Type Is Ccr0">6</value>
+                            <value name="CCR1" doc="Memory Type Is Ccr1">7</value>
+                            <value name="CCR2" doc="Memory Type Is Ccr2">8</value>
+                        </list>SAM Region Memory Type.
+                    </doc>
+                    <sw>rw</sw>
+                    <hw>ro</hw>
+                    <default>MI</default>
+                </field>
+                <field name="numa_id" offset="5:4">
+                    <doc>The NUMA ID of a region</doc>
+                    <sw>rw</sw>
+                    <hw>ro</hw>
+                    <default>0</default>
+                </field>
+                <field name="is_miphb" offset="8:8">
+                    <doc>The target is High Bandwidth MI-P</doc>
+                    <sw>rw</sw>
+                    <hw>ro</hw>
+                    <default>0</default>
+                </field>
+                <field name="direct_eid" offset="((16 + $EID_WIDTH) - 1) : 16">
+                    <doc>SAM Region Enumerate ID. Applicable only if target type is set to MI, RMem, PConfig or PMem.
+Otherwise the target EID will be calculated by the hashing function or
+configuration logic.</doc>
+                    <sw>rw</sw>
+                    <hw>ro</hw>
+                    <default>0</default>
+                </field>
+                <field name="cxl" offset="28:28" ispresent="$IS_SLC">
+                    <doc>The target is CXL.mem device (no need to hash over MI-Ds).
+Relevant only in SLC System Address Mapping</doc>
+                    <sw>rw</sw>
+                    <hw>ro</hw>
+                    <default>0</default>
+                </field>
+                <field name="en" offset="31:31">
+                    <doc>SAM Region Valid</doc>
+                    <sw>rw</sw>
+                    <hw>ro</hw>
+                    <default>0</default>
+                </field>
+            </reg>
+            <reg name="cfg_rqm_region_pcie" ispresent="$HAS_PCIE_LUT" refNameID="cfg_rqm_region_pcie">
+                <field name="id" offset="4:0">
+                    <doc>The target PCIe id.
+To allow the reordering at the destination each PCIe
+peer-to-peer request is assigned with PCIe ID.
+For PCIe located in chiplet 0, pcie_id MSB shall be 0.
+For PCIe located in chiplet 1, pcie_id MSB shall be 1</doc>
+                    <sw>rw</sw>
+                    <hw>ro</hw>
+                    <default>0</default>
+                </field>
+            </reg>
+            <doc>The RQM SAM region configuration.
+For the RQM to be functional, the SAM must be configured.
+The SAM can be configured even during ACTIVE state, after config_done has been asserted.
+To configure the SAM after config_done has been asserted, SW needs to:
+1.Ensure there are no more transactions to this region.
+2.Disable the region.
+3.Config the region
+4.Enable the region</doc>
+        </section>
+        <reg name="cfg_rqm_numa" ispresent="($IS_SLC | $IS_MIF)" refNameID="cfg_rqm_numa" count="4">
+            <field name="size" offset="1:0" encode="numa_size_enum">
+                <doc><list type="enum" name="numa_size_enum">
+                        <value name="FULL" doc="The NUMA ID represents F cluster">0</value>
+                        <value name="HALF" doc="The NUMA ID represents H cluster">1</value>
+                        <value name="NONE" doc="The NUMA ID is not used">2</value>
+                    </list>The NUMA cluster size
+                </doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>FULL</default>
+            </field>
+            <field name="location" offset="5:4" encode="numa_location_enum">
+                <doc><list type="enum" name="numa_location_enum">
+                        <value name="LOCAL" doc="The SLC is part of this NUMA ID">0</value>
+                        <value name="PEER" doc="The NUMA ID is at the same fabric as the SLC">1</value>
+                        <value name="REMOTE" doc="The NUMA ID is at a remote fabric.
+SLC to SLC requests and snoops goes through MI-F">2</value>
+                    </list>The location of the NUMA cluster with respect to the SLC
+                </doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>LOCAL</default>
+            </field>
+            <doc>Numa cluster attributes, Relevant only in SLC System Address Mapping</doc>
+        </reg>
+        <reg name="cfg_rqm_mid_index" ispresent="$IS_SLC" refNameID="cfg_rqm_mid_index" count="4">
+            <field name="to_eid" offset="($EID_WIDTH - 1) : 0">
+                <doc>The MI-D hashing function outputs 2 bits index, this is the EID of
+the MI-D that corresponds to the index.</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+        </reg>
+        <reg name="cfg_rqm_slc_hashing_override" refNameID="cfg_rqm_slc_hashing_override">
+            <field name="en" offset="0:0">
+                <doc>If set, the RQM will override the SLC Hashing EID
+and will assign a new EID based on slc_hashing_override_value register</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <field name="value" offset="((4 + $EID_WIDTH) - 1) : 4">
+                <doc>The value of the EID to use in case slc_hashing_override_en is set</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <doc>the SLC hashing can be overridden by configuration.
+The SAM of the source MI can be set to targets a single SLC</doc>
+        </reg>
+        <reg name="cfg_rqm_mid_hashing_override" ispresent="$IS_SLC" refNameID="cfg_rqm_mid_hashing_override">
+            <field name="en" offset="0:0">
+                <doc>If set, the RQM will override the MI-D Hashing EID
+and will assign a new EID based on mid_hashing_override_value register</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <field name="value" offset="((4 + $EID_WIDTH) - 1) : 4">
+                <doc>The value of the EID to use in case mid_hashing_override_en is set</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <doc>the MI-D hashing can be overridden by configuration.
+The SAM of the source MI can be set to targets a single MI-D</doc>
+        </reg>
+        <reg name="cfg_rqm_initial_e2e_credits_np" ispresent="$HAS_NP" refNameID="cfg_rqm_initial_e2e_credits">
+            <field name="value" offset="($E2E_CREDIT_WIDTH - 1) : 0">
+                <doc>The E2E credits amount to load for EID = cfg_rqm_initial_e2e_credits_eid</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <field name="eid" offset="((6 + $EID_WIDTH) - 1) : 6" rtl.hw_wp="true">
+                <doc>The EID that will be loaded with the cfg_rqm_initial_e2e_credits_value.</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <field name="en" offset="31:31">
+                <doc>Set if the RQM can send flits to this EID on this VC.
+e.g. If the RQM is in MI-C, en shall be 0 for all SLCs that are not
+in the same NUMA cluster as this MI-C</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <doc>End to End credit initialization register</doc>
+        </reg>
+        <reg name="cfg_rqm_initial_e2e_credits_p0" ispresent="$HAS_P0" refNameID="cfg_rqm_initial_e2e_credits">
+            <field name="value" offset="($E2E_CREDIT_WIDTH - 1) : 0">
+                <doc>The E2E credits amount to load for EID = cfg_rqm_initial_e2e_credits_eid</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <field name="eid" offset="((6 + $EID_WIDTH) - 1) : 6" rtl.hw_wp="true">
+                <doc>The EID that will be loaded with the cfg_rqm_initial_e2e_credits_value.</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <field name="en" offset="31:31">
+                <doc>Set if the RQM can send flits to this EID on this VC.
+e.g. If the RQM is in MI-C, en shall be 0 for all SLCs that are not
+in the same NUMA cluster as this MI-C</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <doc>End to End credit initialization register</doc>
+        </reg>
+        <reg name="cfg_rqm_initial_e2e_credits_p1" ispresent="$HAS_P1" refNameID="cfg_rqm_initial_e2e_credits">
+            <field name="value" offset="($E2E_CREDIT_WIDTH - 1) : 0">
+                <doc>The E2E credits amount to load for EID = cfg_rqm_initial_e2e_credits_eid</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <field name="eid" offset="((6 + $EID_WIDTH) - 1) : 6" rtl.hw_wp="true">
+                <doc>The EID that will be loaded with the cfg_rqm_initial_e2e_credits_value.</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <field name="en" offset="31:31">
+                <doc>Set if the RQM can send flits to this EID on this VC.
+e.g. If the RQM is in MI-C, en shall be 0 for all SLCs that are not
+in the same NUMA cluster as this MI-C</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <doc>End to End credit initialization register</doc>
+        </reg>
+        <reg name="cfg_rqm_initial_e2e_credits_pw" ispresent="$HAS_PW" refNameID="cfg_rqm_initial_e2e_credits">
+            <field name="value" offset="($E2E_CREDIT_WIDTH - 1) : 0">
+                <doc>The E2E credits amount to load for EID = cfg_rqm_initial_e2e_credits_eid</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <field name="eid" offset="((6 + $EID_WIDTH) - 1) : 6" rtl.hw_wp="true">
+                <doc>The EID that will be loaded with the cfg_rqm_initial_e2e_credits_value.</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <field name="en" offset="31:31">
+                <doc>Set if the RQM can send flits to this EID on this VC.
+e.g. If the RQM is in MI-C, en shall be 0 for all SLCs that are not
+in the same NUMA cluster as this MI-C</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <doc>End to End credit initialization register</doc>
+        </reg>
+        <reg name="cfg_rqm_initial_e2e_credits_hr" ispresent="$HAS_HR" refNameID="cfg_rqm_initial_e2e_credits">
+            <field name="value" offset="($E2E_CREDIT_WIDTH - 1) : 0">
+                <doc>The E2E credits amount to load for EID = cfg_rqm_initial_e2e_credits_eid</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <field name="eid" offset="((6 + $EID_WIDTH) - 1) : 6" rtl.hw_wp="true">
+                <doc>The EID that will be loaded with the cfg_rqm_initial_e2e_credits_value.</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <field name="en" offset="31:31">
+                <doc>Set if the RQM can send flits to this EID on this VC.
+e.g. If the RQM is in MI-C, en shall be 0 for all SLCs that are not
+in the same NUMA cluster as this MI-C</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <doc>End to End credit initialization register</doc>
+        </reg>
+        <reg name="cfg_rqm_initial_e2e_credits_sn" ispresent="$HAS_SN" refNameID="cfg_rqm_initial_e2e_credits">
+            <field name="value" offset="($E2E_CREDIT_WIDTH - 1) : 0">
+                <doc>The E2E credits amount to load for EID = cfg_rqm_initial_e2e_credits_eid</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <field name="eid" offset="((6 + $EID_WIDTH) - 1) : 6" rtl.hw_wp="true">
+                <doc>The EID that will be loaded with the cfg_rqm_initial_e2e_credits_value.</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <field name="en" offset="31:31">
+                <doc>Set if the RQM can send flits to this EID on this VC.
+e.g. If the RQM is in MI-C, en shall be 0 for all SLCs that are not
+in the same NUMA cluster as this MI-C</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <doc>End to End credit initialization register</doc>
+        </reg>
+        <reg name="cfg_rqm_max_p0_p1" refNameID="cfg_rqm_max_p0_p1">
+            <field name="total_credits" offset="$E2E_CREDIT_WIDTH : 0">
+                <doc>Maximum credits that P0+P1 VC can consume together</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>10</default>
+            </field>
+        </reg>
+        <reg name="cfg_rqm_cbusy_slc" ispresent="~ $IS_SLC" refNameID="cfg_rqm_cbusy">
+            <field name="max_out" offset="0:0">
+                <doc>If set, CBusy is based on the maximum CBusy in the sliding window.
+Otherwise CBusy is based on a factored average of the sliding window</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <field name="window_size" offset="3:1">
+                <doc>Set to value between 3 and 7.
+WinSize sets the size of the sliding window to 2^WinSize entries.</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>3</default>
+            </field>
+            <field name="busy_factor" offset="11:4">
+                <doc>Average factor for the CBusy. BusyFactor is set in U1.7 fixed point.</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>1</default>
+            </field>
+            <field name="aging_period" offset="31:12">
+                <doc>Aging interval of the sliding window. If set to 0, the aging mechanism is disabled</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+        </reg>
+        <reg name="cfg_rqm_cbusy_mif" ispresent="~ $IS_SLC" refNameID="cfg_rqm_cbusy">
+            <field name="max_out" offset="0:0">
+                <doc>If set, CBusy is based on the maximum CBusy in the sliding window.
+Otherwise CBusy is based on a factored average of the sliding window</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <field name="window_size" offset="3:1">
+                <doc>Set to value between 3 and 7.
+WinSize sets the size of the sliding window to 2^WinSize entries.</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>3</default>
+            </field>
+            <field name="busy_factor" offset="11:4">
+                <doc>Average factor for the CBusy. BusyFactor is set in U1.7 fixed point.</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>1</default>
+            </field>
+            <field name="aging_period" offset="31:12">
+                <doc>Aging interval of the sliding window. If set to 0, the aging mechanism is disabled</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+        </reg>
+        <reg name="cfg_rqm_cbusy_use_mif" ispresent="~ $IS_SLC" refNameID="cfg_rqm_cbusy_use_mif">
+            <field name="window" offset="0:0">
+                <doc>If set, the RQM uses indications from the MI-F for CBusy calculation.
+Should be disabled in MIs connected to a specific NUMA domain. (e.g. MI-C)</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+        </reg>
+        <reg name="cfg_rqm_pcie_peer_to_peer" ispresent="$HAS_PCIE_LUT" refNameID="cfg_rqm_pcie_peer_to_peer" count="144">
+            <field name="lut" offset="($EID_WIDTH - 1) : 0">
+                <doc>To allow the reordering at the destination each PCIe peer-to-peer request is assigned with PCIe ID
+noting the source of the request and a sequence number for each request.
+The target MI-F of each flits is set by this lookup table, the input of the table is
+{SQN, TargetPCIe_id[3:0]} and the output is the EID of the target.
+If the PCIe target is in a remote die, the LUT is used and the output of the
+LUT is the EID of the target MI-F</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+        </reg>
+        <reg name="cfg_rqm_target_mif_table_index" ispresent="$HAS_MIF_HASH" refNameID="cfg_rqm_target_mif_table_index" count="8">
+            <field name="threshold" offset="5:0">
+                <doc>The threshold that determines the TableIndex which is used as an
+index to a lookup table of the target MI-F EID.
+The table index is calulated as follows (A = {SLC[0],SLC[6:2]}) :
+if A&lt;TH0: TableIndex = 0
+elif A&lt;TH1: TableIndex =1
+elif A&lt;TH2: TableIndex = 2
+elif A&lt;TH3: TableIndex = 3
+elif A&lt;TH4: TableIndex = 4
+elif A&lt;TH5: TableIndex = 5
+elif A&lt;TH6: TableIndex = 6
+elif A&lt;TH7: TableIndex = 7
+else: TableIndex = 8
+The thresholds TH0-TH7 shall be set according to the following table and the number of
+active MI-Fs:
+TH Idx   Eight Active MI-Fs      Nine Active MI-Fs
+0                 7                    6
+1                 14                   12
+2                 21                   19
+3                 28                   25
+4                 39                   35
+5                 46                   41
+6                 53                   48
+7                 60                   54</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <exceptions>
+                <exception type="reg" index="0">
+                    <exception type="field" name="threshold">
+                        <default>6'd7</default>
+                    </exception>
+                </exception>
+                <exception type="reg" index="1">
+                    <exception type="field" name="threshold">
+                        <default>6'd14</default>
+                    </exception>
+                </exception>
+                <exception type="reg" index="2">
+                    <exception type="field" name="threshold">
+                        <default>6'd21</default>
+                    </exception>
+                </exception>
+                <exception type="reg" index="3">
+                    <exception type="field" name="threshold">
+                        <default>6'd28</default>
+                    </exception>
+                </exception>
+                <exception type="reg" index="4">
+                    <exception type="field" name="threshold">
+                        <default>6'd39</default>
+                    </exception>
+                </exception>
+                <exception type="reg" index="5">
+                    <exception type="field" name="threshold">
+                        <default>6'd46</default>
+                    </exception>
+                </exception>
+                <exception type="reg" index="6">
+                    <exception type="field" name="threshold">
+                        <default>6'd53</default>
+                    </exception>
+                </exception>
+                <exception type="reg" index="7">
+                    <exception type="field" name="threshold">
+                        <default>6'd60</default>
+                    </exception>
+                </exception>
+            </exceptions>
+        </reg>
+        <reg name="cfg_rqm_table_index_to_mif" ispresent="$HAS_MIF_HASH" refNameID="cfg_rqm_table_index_to_mif" count="9">
+            <field name="eid" offset="($EID_WIDTH - 1) : 0">
+                <doc>A lookup table of the target MI-F EID, the index to the lookup table
+is the table index calculated based on cfg_rqm_target_mif_table_index_threshold.
+The lookup table should be configured with the active MI-F EID in order from left
+to right. The EID of the leftmost active MI-F should be written to the first entry
+of the table (MI-F0 EID). If there are 9 active MI-Fs then the EID of the
+rightmost active MI-F is written to the last entry (MI-F8 EID) and if there are 8
+active MI-F the EID of the rightmost active MI-F is written to the MI-F7 EID entry.</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+        </reg>
+        <reg name="cfg_rqm_mif_hashing" ispresent="$HAS_MIF_HASH" refNameID="cfg_rqm_mif_hashing">
+            <field name="en" offset="0:0">
+                <doc>If enabled, target EID of PCIe remote memory access is calculated by MI-F hashing.
+If not enabled, the EID is taken from the Direct EID of the SAM region</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>1</default>
+            </field>
+        </reg>
+        <reg name="cfg_rqm_cbusy_drop_prefetch_tgt" ispresent="~ $IS_SLC" refNameID="cfg_rqm_cbusy_drop_prefetch_tgt">
+            <field name="en" offset="0:0">
+                <doc>If set, the RQM drops PrefetchTgt requests if the CBusy value is
+equal to or greater than cfg_rqm_cbusy_drop_prefetch_tgt.value</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <field name="value" offset="5:4">
+                <doc>The CBusy threshold, if the CBusy value is equal to or greater than this threshold
+and cfg_rqm_cbusy_drop_prefetch_tgt_en, The RQM drops PrefetchTgt requests</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <doc>The RQM can optionally drop PrefetchTgt requests according to the CBusy state.
+The RQM holds a configurable CBusy threshold and if this option is enabled by
+software PrefetchTgt requests are dropped by the RQM if the CBusy value is
+equal to or greater than the CBusy threshold</doc>
+        </reg>
+        <reg name="cfg_rqm_src_numa_id_override" refNameID="cfg_rqm_src_numa_id_override">
+            <field name="en" offset="0:0">
+                <doc>If set, the RQM will override the src_numa_id and will assign
+the src_numa_id field based on cfg_rqm_src_numa_id_override.value register</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <field name="value" offset="5:4">
+                <doc>The value of the src_numa_id to use in case
+cfg_rqm_src_numa_id_override.en is set</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <doc>Option to override the request src_numa_id</doc>
+        </reg>
+        <reg name="cfg_rqm_eid" refNameID="cfg_rqm_eid">
+            <field name="default_mia" offset="($EID_WIDTH - 1) : 0">
+                <doc>The enumerate ID of the Default MI-A that serves as the completer for unmapped transactions</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <field name="dvm_hub" offset="((16 + $EID_WIDTH) - 1) : 16">
+                <doc>The enumerate ID of the DVM hub</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+        </reg>
+        <reg name="cfg_rqm_arb_wrr" refNameID="cfg_rqm_arb_wrr" count="7">
+            <field name="weight" offset="7:0">
+                <doc>Weight of each VC in the VC weighted round robin arbiter.</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>255</default>
+            </field>
+        </reg>
+        <section name="cfg_rate_limiter_regfile" refNameID="cfg_rate_limiter_regfile" count="$NUM_RATE_LIMITER_VECTORS">
+            <reg name="cfg_rqm_rate_limiter" refNameID="cfg_rqm_rate_limiter" count="4">
+                <field name="vector" offset="31:0">
+                    <doc>Rate limiter bit map.
+the limiter runs over these bits in a cycle,
+enabling a request only when a bit is set (e.g. if we want a 50% rate limiter,
+we will set only the even bits).
+The bitmap[reg_index][bitmap_j] corresponds to 32 * reg_index + bitmap_j</doc>
+                    <sw>rw</sw>
+                    <hw>ro</hw>
+                    <default>4294967295</default>
+                </field>
+            </reg>
+            <doc>For SLC :
+We have 2 vectors, cfg_rate_limiter_regfile[0] is used when throttling_bit = 0,
+cfg_rate_limiter_regfile[1] is used when throttling_bit = 1.
+For Non SLC :
+We have 12 vectors, and the vector we use is based on the CBusy and the req color.
+Vectors mapping :
+4'd0 - CBusy 00, Green Rate limiter vector.
+4'd1 - CBusy 00, Yellow Rate limiter vector.
+4'd2 - CBusy 00, Red Rate limiter vector.
+4'd3 - CBusy 01, Green Rate limiter vector.
+4'd4 - CBusy 01, Yellow Rate limiter vector.
+4'd5 - CBusy 01, Red Rate limiter vector.
+4'd6 - CBusy 10, Green Rate limiter vector.
+4'd7 - CBusy 10, Yellow Rate limiter vector.
+4'd8 - CBusy 10, Red Rate limiter vector.
+4'd9 - CBusy 11, Green Rate limiter vector.
+4'd10 - CBusy 11, Yellow Rate limiter vector.
+4'd11 - CBusy 11, Red Rate limiter vector.</doc>
+        </section>
+        <reg name="cfg_rqm_core_p1_opcodes" ispresent="$IS_MIC" refNameID="cfg_rqm_core_p1_opcodes" count="4">
+            <field name="bitmap" offset="31:0">
+                <doc>If a bit is set, a core request to SLC is transmitted with P1 VC.
+The MSB of the opcode is not used by
+the core so we need only NUM_REQ_OPCODES/2 (128) bits.
+By default the opcodes that are p1 are :
+ReadShared
+ReadClean
+ReadOnce
+ReadNoSnp
+ReadUnique
+ReadNoSnpSep
+ReadOnceCleanInvalid
+ReadOnceMakeInvalid
+ReadNotSharedDirty
+CleanUnique
+MakeUnique
+MakeReadUnique
+The bitmap[reg_index][bitmap_j] corresponds to 32 * reg_index + bitmap_j</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <exceptions>
+                <exception type="reg" index="0">
+                    <exception type="field" name="bitmap">
+                        <default>32'd8650764</default>
+                    </exception>
+                </exception>
+                <exception type="reg" index="1">
+                    <exception type="field" name="bitmap">
+                        <default>0</default>
+                    </exception>
+                </exception>
+                <exception type="reg" index="2">
+                    <exception type="field" name="bitmap">
+                        <default>0</default>
+                    </exception>
+                </exception>
+                <exception type="reg" index="3">
+                    <exception type="field" name="bitmap">
+                        <default>0</default>
+                    </exception>
+                </exception>
+            </exceptions>
+        </reg>
+        <reg name="cfg_rqm_core_p0_p1_expected_opcodes" ispresent="$IS_MIC" refNameID="cfg_rqm_core_p0_p1_expected_opcodes" count="4">
+            <field name="bitmap" offset="31:0">
+                <doc>Bitmap of the opcodes that expected to be transmitted with p0 or p1 VC.
+In case we get an expected p0/p1 opcode not to SLC, SAM error will be asserted</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+        </reg>
+        <reg name="cfg_rqm_miphb_read_opcodes" refNameID="cfg_rqm_miphb_read_opcodes" count="4">
+            <field name="bitmap" offset="31:0">
+                <doc>Each bit corresponds to the request opcode enum.
+If a bit is set, request to High Bandwidth MI-P will be directed to
+EID = direct_eid (as configured in the relevant sam region).
+If a bit is 0, request to High Bandwidth MI-P will be directed
+to EID = (direct_eid + 1)
+The bitmap[reg_index][bitmap_j] corresponds to 32 * reg_index + bitmap_j</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <exceptions>
+                <exception type="reg" index="0">
+                    <exception type="field" name="bitmap">
+                        <default>32'd16</default>
+                    </exception>
+                </exception>
+                <exception type="reg" index="1">
+                    <exception type="field" name="bitmap">
+                        <default>0</default>
+                    </exception>
+                </exception>
+                <exception type="reg" index="2">
+                    <exception type="field" name="bitmap">
+                        <default>0</default>
+                    </exception>
+                </exception>
+                <exception type="reg" index="3">
+                    <exception type="field" name="bitmap">
+                        <default>0</default>
+                    </exception>
+                </exception>
+            </exceptions>
+        </reg>
+        <reg name="cfg_rqm_color_override" refNameID="cfg_rqm_color_override">
+            <field name="en" offset="0:0">
+                <doc>If set, the RQM will override the input flit's color
+and will assign a new color based on override_color_value register</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+            <field name="value" offset="5:4" encode="color_enum">
+                <doc><list type="enum" name="color_enum">
+                        <value name="GREEN" doc="Green Color">0</value>
+                        <value name="YELLOW" doc="Yellow Color">1</value>
+                        <value name="RED" doc="Red Color">2</value>
+                    </list>The value of the color to use in case override_color_en is set
+                </doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>GREEN</default>
+            </field>
+        </reg>
+        <reg name="cfg_rqm_fabric_config_space" ispresent="~ $IS_SLC" refNameID="cfg_rqm_fabric_config_space">
+            <field name="base_address" offset="27:0">
+                <doc>The base address of the fabric config space. 1MB granule (bits [47:20])
+Shall match the SAM configurtion - base address for config region</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+        </reg>
+        <reg name="cfg_rqm_ccr" ispresent="~ $IS_SLC" refNameID="cfg_rqm_ccr" count="3">
+            <field name="base_address" offset="27:0">
+                <doc>The CCR is set with base EID pointing to the EID of the first agent in the CCR and is incremented with the
+address offset. 1MB granule (bits [47:20]).
+Base address of a CCR region must be aligned with the size of the CCR region.
+Shall match the SAM configurtion - start address for the corresponding CCR region.
+CCR0 supports up to 128 agents of 1MiB each. CCR0 address range is 128MiB.
+CCR1 supports up to 16 agents of 1MiB each. CCR1 address range is 16MiB.
+CCR2 supports up to 32 agents of 16MiB each. CCR2 address range is 512MiB.</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+        </reg>
+        <reg name="cfg_rqm_core_config_space" refNameID="cfg_rqm_core_config_space">
+            <field name="base_address" offset="27:0">
+                <doc>The base address of the core config space. 1MB granule (bits [47:20])
+Shall be aligned to 128MiB.
+Shall match the SAM configurtion - base address for CCR region</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+        </reg>
+        <reg name="cfg_rqm_chiplet" refNameID="cfg_rqm_chiplet">
+            <field name="is_half_numa" offset="0:0" encode="numa_domain_enum">
+                <doc><list type="enum" name="numa_domain_enum">
+                        <value name="FULL_CLUSTER" doc="The RQM is in a chiplet that has a single NUMA domain. (F cluster)">0</value>
+                        <value name="HALF_CLUSTER" doc="The RQM is in a chiplet that has two NUMA domains. (H cluster)">1</value>
+                    </list>The Numa domain topology of the chiplet the RQM reside in
+                </doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>FULL_CLUSTER</default>
+            </field>
+            <field name="is_rotated" offset="4:4" encode="chiplet_rotation_enum">
+                <doc><list type="enum" name="chiplet_rotation_enum">
+                        <value name="NOT_ROTATED" doc="The RQM is not in a rotated die">0</value>
+                        <value name="ROTATED" doc="The RQM is in a rotated die">1</value>
+                    </list>The indication regarding the die rotation
+                </doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>NOT_ROTATED</default>
+            </field>
+            <field name="id" offset="8:8" ispresent="$HAS_PCIE_LUT">
+                <doc>The chiplet ID the RQM reside in. chiplet 0 contains
+Numas 0 &amp; 1 (if exist) and chiplet 1 contains Numas 2 &amp; 3 (if exist)</doc>
+                <sw>rw</sw>
+                <hw>ro</hw>
+                <default>0</default>
+            </field>
+        </reg>
+        <doc>RQM CSR Register File</doc>
+    </section>
+    <doc><list type="param">
+            <value name="OS_DAT_FIFO_DEPTH_WIDTH" private="1" localparam="true">4</value>
+            <value name="OS_CDT_FIFO_DEPTH_WIDTH" private="1" localparam="true">4</value>
+            <value name="OS_RSP_FIFO_DEPTH_WIDTH" private="1" localparam="true">4</value>
+            <value name="OS_REQ_FIFO_DEPTH_WIDTH" private="1" localparam="true">4</value>
+            <value name="OS_BMP_SNP_FIFO_DEPTH_WIDTH" private="1" localparam="true">4</value>
+            <value name="NUM_SAM_REGIONS" private="1" localparam="true">8</value>
+            <value name="EID_WIDTH" private="1" localparam="true">10</value>
+            <value name="NUM_RATE_LIMITER_VECTORS" private="1" localparam="true">2</value>
+            <value name="E2E_CREDIT_WIDTH" private="1" localparam="true">6</value>
+            <value name="IS_SLC" private="1" localparam="true">1</value>
+            <value name="IS_MIC" private="1" localparam="true">0</value>
+            <value name="IS_MIF" private="1" localparam="true">0</value>
+            <value name="HAS_NP" private="1" localparam="true">0</value>
+            <value name="HAS_P0" private="1" localparam="true">1</value>
+            <value name="HAS_P1" private="1" localparam="true">1</value>
+            <value name="HAS_PW" private="1" localparam="true">0</value>
+            <value name="HAS_HR" private="1" localparam="true">1</value>
+            <value name="HAS_SN" private="1" localparam="true">1</value>
+            <value name="HAS_PCIE_LUT" private="1" localparam="true">0</value>
+            <value name="HAS_MIF_HASH" private="1" localparam="true">0</value>
+        </list>
+        SLC Output Stage CSR Register File</doc>
+    <config>
+        <regwidth>32</regwidth>
+        <addressunit>8</addressunit>
+    <variants><variant name="none" isselected="true"><doc>'none' variant states including all templates which are not assigned any 
+  variant property.</doc></variant></variants><buswidth>32</buswidth></config>
+</block>

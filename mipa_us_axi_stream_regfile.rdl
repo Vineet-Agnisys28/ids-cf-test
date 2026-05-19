@@ -1,0 +1,29 @@
+`ifndef _MIPA_US_AXI_STREAM_REGFILE_
+`define _MIPA_US_AXI_STREAM_REGFILE_
+
+regfile mipa_us_axi_stream_regfile #(
+  longint unsigned AXIS_S_NUM_TDESTS   = 150,
+  longint unsigned AXIS_S_TDEST_WIDTH  = 14,
+  longint unsigned AXIS_S_TGT_ID_WIDTH = 12 // Must match flit pkg, DO NOT CHANGE
+)
+  {
+  name = "mipa_us_axi_stream_regfile";
+  desc = "MI-A/P Upstream AXI-Stream Register File";
+
+  reg cfg_mapping {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "TDEST to map to tgt_id";
+    } tdest[AXIS_S_TDEST_WIDTH-1:0] = 0;
+    field {
+      desc = "tgt_id mapped from associated TDEST";
+    } tgt_id[16+AXIS_S_TGT_ID_WIDTH-1:16] = 0;
+    field {
+      desc = "Valid bit for the TDEST --> tgt_id mapping of this register";
+    } valid[31:31] = 0;
+  };
+  cfg_mapping  csr_cfg_us_axis_mapping[AXIS_S_NUM_TDESTS];
+
+};
+`endif

@@ -1,0 +1,555 @@
+`include "idsProperty2a.rdl"
+`include "gmesh_resource_pool_manager_regfile.rdl"
+
+`ifndef _GMESH_DVM_H_REGFILE_
+`define _GMESH_DVM_H_REGFILE_
+
+ regfile gmesh_dvm_h_regfile #(
+   longint unsigned LEAKY_BUCKET_CNT_WIDTH          = 8,
+   longint unsigned LEAKY_BUCKET_CNT_INC_WIDTH      = 8,
+   longint unsigned LEAKY_BUCKET_THRESHOLD_WIDTH    = 8,
+   longint unsigned NUM_SYSTEM_DVM_H                = 3,
+   longint unsigned NUM_DVM_B                       = 84,
+   longint unsigned NUM_CORES                       = 84,
+   longint unsigned NUM_CORES_CLOG2                 = 7,
+   longint unsigned NUM_MIPA_US                     = 64,
+   longint unsigned NUM_TARGETS_CLOG2               = 7,
+   longint unsigned ARB_WEIGHT_WIDTH                = 8,
+   longint unsigned BROADCAST_BITMAP_MEM_DEPTH      = 32,
+   longint unsigned BROADCAST_BITMAP_MEM_DEPTH_CLOG2= 5,
+   longint unsigned DBID_ADDR_WIDTH                 = 5,
+   longint unsigned QOS_MASK_FILTERS_NUM            = 8,
+   longint unsigned THERMAL_DATA_WIDTH              = 8
+
+ ){
+   name = "gmesh_dvm_h_regfile";
+   desc = "Gmesh DVM-H CSR Register File";
+
+
+  enum dvmop_type_enum {
+    TLBI = 3'b000 {desc = "TLB Invalidate"; };
+    BPI  = 3'b001 {desc = "Branch Predictor Invalidate"; };
+    PICI = 3'b010 {desc = "Physical Instruction Cache Invalidate"; };
+    VICI = 3'b011 {desc = "Virtual Instruction Cache Invalidate"; };
+    SYNC = 3'b100 {desc = "Synchronization"; };
+  };
+
+  enum exception_level_enum {
+    HypervisorAndAllGuestOS = 2'b00 {desc = "Hypervisor and all Guest OS"; };
+    EL3                     = 2'b01 {desc = "EL3"; };
+    GuestOS                 = 2'b10 {desc = "Guest OS"; };
+    Hypervisor              = 2'b11 {desc = "Hypervisor"; };
+  };
+
+  enum security_enum {
+    SecureAndNonSecure                           = 2'b00 {desc = "Secure and Non-secure"; };
+    NonSecureAddressFromSecureContext            = 2'b01 {desc = "Non-secure address from a Secure context"; };
+    SecureAndNonSecureIfPiciAll_OtherwiseSecure  = 2'b10 {desc = "Secure and Non-secure if DVMOp type is PICI and invalidation is all.
+                                                                  Secure in all other cases"; };
+    NonSecure                                    = 2'b11 {desc = "Non-secure"; };
+  };
+
+
+
+  enum indirect_access_op_enum {
+    READ  = 1'b1 {desc = "Indirect Access Operation is Read"; };
+    WRITE = 1'b0 {desc = "Indirect Access Operation is Write"; };
+  };
+
+
+
+
+  reg {
+    field {
+      desc  = "Indicates that all required configurations are done. SW returns the register to 0 during configuration and set it when done";
+      sw    = rw;
+      hw    = r;
+     } done[0:0] = 0;
+  } cfg_dvm_config;
+
+  //=========================
+  //  QoS Logic
+  //==========================
+
+
+  reg {
+    desc = "QoS Configuration";
+    field {
+      desc  = "Leaky bucket feature enable:
+               0-Disable
+               1-Enable";
+      sw    = rw;
+      hw    = r;
+     } bypass[0:0] = 1;
+  } cfg_qos;
+
+  reg {
+    field {
+      desc  = "Leaky bucket Cycle interval to decrement the counter";
+      sw    = rw;
+      hw    = r;
+     } threshold[31:0] = 1;
+  } cfg_qos_leaky_bucket_cnt_dec_cycle_interval;
+
+  reg {
+    desc = "Leaky Bucket Counter Configuration";
+    field {
+      desc  = "Leaky bucket increment value";
+      sw    = rw;
+      hw    = r;
+     } inc_value[LEAKY_BUCKET_CNT_INC_WIDTH-1:0] = 1;
+    field {
+      desc  = "Leaky bucket decrement value";
+      sw    = rw;
+      hw    = r;
+     } dec_value[16+LEAKY_BUCKET_CNT_INC_WIDTH-1:16] = 1;
+  } cfg_qos_leaky_bucket_cnt;
+
+  reg {
+    desc = "Leaky Bucket Threshold Configuration";
+    field {
+      desc  = "Leaky bucket high threshold value";
+      sw    = rw;
+      hw    = r;
+     } high[LEAKY_BUCKET_THRESHOLD_WIDTH-1:0] = 1;
+    field {
+      desc  = "Leaky bucket low threshold value";
+      sw    = rw;
+      hw    = r;
+     } low[16+LEAKY_BUCKET_THRESHOLD_WIDTH-1:16] = 1;
+  } cfg_qos_leaky_bucket_cnt_threshold;
+
+  reg {
+    desc = "QoS Mask Filter: tune the Leaky Bucket Counter to specific requests instead of all DVMOp requests
+                             The Feature includes 4 patterns, each pattern has:
+                               1.DVMOp type[2:0]
+                               2.Exception Level[1:0]
+                               3.VMID Valid
+                               4.Security[1:0]
+                             If the incoming request matches to one of the patterns, the QoS Logic increment the dedicated counter of the requester
+                             If it doesn't match, the QoS Logic doesn't increment the counter";
+    field {
+      desc  = "Mask filter dvmop type Enable";
+      sw    = rw;
+      hw    = r;
+     } dvmop_type_en[0:0] = 1;
+    field {
+      desc  = "Mask filter dvmop type Value";
+      sw    = rw;
+      hw    = r;
+      encode = dvmop_type_enum;
+     } dvmop_type_value[6:4] = dvmop_type_enum::TLBI;
+    field {
+      desc  = "Mask filter exception level Enable";
+      sw    = rw;
+      hw    = r;
+     } exception_level_en[8:8] = 1;
+    field {
+      desc  = "Mask filter exception level Value";
+      sw    = rw;
+      hw    = r;
+      encode = exception_level_enum;
+     } exception_level_value[13:12] = exception_level_enum::HypervisorAndAllGuestOS;
+    field {
+      desc  = "Mask filter vmid_valid Enable";
+      sw    = rw;
+      hw    = r;
+     }vmid_valid_en[16:16] = 0;
+    field {
+      desc  = "Mask filter vmid_valid Value";
+      sw    = rw;
+      hw    = r;
+     }vmid_valid_value[20:20] = 0;
+    field {
+      desc  = "Mask filter security Enable";
+      sw    = rw;
+      hw    = r;
+     } security_en[24:24] = 1;
+    field {
+      desc  = "Mask filter security Value";
+      sw    = rw;
+      hw    = r;
+      encode = security_enum;
+     } security_value[29:28] = security_enum::SecureAndNonSecure;
+  } cfg_qos_mask_filter[QOS_MASK_FILTERS_NUM];
+
+  reg {
+    field {
+      desc  = "Mask Pattern Enable:
+               0- Pattern disabled - if all Patterns are disabled - every DVMOp increments the Leaky Bucket counters
+               1- Pattern Enable   - only pattern matched DVMOp increments the Leaky Bucket counters";
+      sw    = rw;
+      hw    = r;
+     } en[QOS_MASK_FILTERS_NUM-1:0] = 0;
+  } cfg_qos_mask_filter_config;
+
+  //=========================
+  // thermal
+  //==========================
+
+  regfile dvm_thermal_regfile {
+    reg {
+      field {
+        desc  = "Bitmap of the DVM-B set to be triggered.
+                The bitmap[i][j] corresponds to 32 * i + j
+                i - reg_index
+                j - bitmap_j";
+        sw    = rw;
+        hw    = r;
+      } bitmap[31:0] = 0;
+    } cfg_dvm_b_set[(NUM_DVM_B+31)/32];
+  };
+  dvm_thermal_regfile dvm_thermal[THERMAL_DATA_WIDTH];
+  //=========================
+  // Internal Credits
+  //==========================
+  reg {
+    field {
+       desc  = "DVMDAT Credits per DVM-B - the max number of non-sync operations DVM-B can get before completion";
+       sw    = rw;
+       hw    = r;
+    } dvm_b[7:0] = 32;
+    field {
+       desc  = "DVMDAT Credits per DVM-H - the max number of non-sync operations DVM-H can get before completion";
+       sw    = rw;
+       hw    = r;
+    } dvm_h[15:8] = 32;
+  } cfg_dvmdat_internal_credits;
+
+  //=========================
+  // External Credits
+  //==========================
+  reg {
+    field {
+       desc  = "External Credits can return back to the requester from 2 different stages:
+                0 - After pulling request from req_fifo
+                1 - After QoS Logic";
+       sw    = rw;
+       hw    = r;
+    } sel[0:0] = 1;
+  } cfg_e2e_credits_return;
+
+  //=========================
+  // MAP DVM-H to Target ID
+  //==========================
+  reg {
+    field {
+       desc  = "DVM-H ID to Target ID";
+       sw    = rw;
+       hw    = r;
+    } tgtid[11:0] = 0;
+  } cfg_dvm_h_mapping[NUM_SYSTEM_DVM_H];
+  //=========================
+  // Current DVM-H Index
+  //==========================
+  reg {
+    field {
+       desc  = "Current DVM-H Index";
+       sw    = rw;
+       hw    = r;
+    } value[7:0] = 0;
+  } cfg_dvm_h_self_id;
+
+
+  //=========================
+  //  Arbitration Weights
+  //==========================
+  reg {
+    desc = "QoS Output arbiter weights";
+    field {desc  = "QoS input request";                     sw=rw;hw=r;} req_in[ARB_WEIGHT_WIDTH-1:0]            = {ARB_WEIGHT_WIDTH{1'b1}};
+    field {desc  = "The Output of the pending fifo request";sw=rw;hw=r;} pend_fifo_out[ARB_WEIGHT_WIDTH-1+8:8]   = {ARB_WEIGHT_WIDTH{1'b1}};
+  } cfg_qos_arb_weights;
+
+  reg {
+    desc = "External DVM-H input fifo arbiter weights";
+    field {desc  = "External DVM-H input fifo arbiter weights";sw=rw;hw=r;} value[ARB_WEIGHT_WIDTH-1:0]     = {ARB_WEIGHT_WIDTH{1'b1}};
+  } cfg_ext_dvm_h_fifo_arb_weights[NUM_SYSTEM_DVM_H-1];
+
+  reg {
+    desc = "Request arbiter weights";
+    field {desc  = "request arb weight local tracker";             sw=rw;hw=r;} dvmop[ARB_WEIGHT_WIDTH-1:0]       = {ARB_WEIGHT_WIDTH{1'b1}};
+    field {desc  = "request arb weight RXREQ (NON-DVMOp requests)";sw=rw;hw=r;} coh_event[ARB_WEIGHT_WIDTH-1+8:8] = {ARB_WEIGHT_WIDTH{1'b1}};
+    field {desc  = "request arb weight thermal input";             sw=rw;hw=r;} thermal[ARB_WEIGHT_WIDTH-1+16:16] = {ARB_WEIGHT_WIDTH{1'b1}};
+  } cfg_rx_req_arb_weights;
+
+  reg {
+    desc = "Response channel arbiter weights";
+    field {desc  = "request response arb weight";    sw=rw;hw=r;} value[ARB_WEIGHT_WIDTH-1:0]     = {ARB_WEIGHT_WIDTH{1'b1}};
+  } cfg_tx_rsp_arb_weights_ext_dvm_h;
+
+  reg {
+    desc = "Response channel arbiter weights";
+    field {desc  = "ext tracker response arb weight";sw=rw;hw=r;} value[ARB_WEIGHT_WIDTH-1+8:8] = {ARB_WEIGHT_WIDTH{1'b1}};
+  } cfg_tx_rsp_arb_weights_ext_tracker[NUM_SYSTEM_DVM_H-1];
+
+  reg {
+    desc = "Response channel arbiter weights";
+    field {desc  = "dvmop request response arb weight";    sw=rw;hw=r;} dvmop[ARB_WEIGHT_WIDTH-1:0]             = {ARB_WEIGHT_WIDTH{1'b1}};
+    field {desc  = "non dvmop request response arb weight";sw=rw;hw=r;} non_dvmop[ARB_WEIGHT_WIDTH-1+8:8]       = {ARB_WEIGHT_WIDTH{1'b1}};
+    field {desc  = "local tracker response arb weight";sw=rw;hw=r;}     local_tracker[ARB_WEIGHT_WIDTH-1+16:16]   = {ARB_WEIGHT_WIDTH{1'b1}};
+  } cfg_tx_rsp_arb_weights;
+
+  reg {
+    desc = "Credit channel arbiter weights";
+    field {desc  = "dvmop request credit arb weight";    sw=rw;hw=r;} dvmop[ARB_WEIGHT_WIDTH-1:0]               = {ARB_WEIGHT_WIDTH{1'b1}};
+    field {desc  = "non dvmop request credit arb weight";sw=rw;hw=r;} non_dvmop[ARB_WEIGHT_WIDTH-1+8:8]   = {ARB_WEIGHT_WIDTH{1'b1}};
+  } cfg_tx_crd_arb_weights;
+
+  reg {
+    desc = "TX-DAT arbiter weights";
+    field {desc  = "data arb weight local tracker";sw=rw;hw=r;} local_tracker[ARB_WEIGHT_WIDTH-1:0]   = {ARB_WEIGHT_WIDTH{1'b1}};
+    field {desc  = "data arb weight dvmh0 tracker";sw=rw;hw=r;} ext_tracker[ARB_WEIGHT_WIDTH-1+8:8]   = {ARB_WEIGHT_WIDTH{1'b1}};
+  } cfg_tx_dat_arb_weights;
+
+  //=========================
+  //  Broadcast - bitmap
+  //==========================
+  // This register array is a splitted register of the broadcast bitmap which is greater than 32
+  reg {
+    field {
+      desc  = "Bitmap of all the DVM-Bs in the chip, each bit indicates respectively if the DVM-B target is ACTIVE.
+               The bitmap[i][j] corresponds to 32 * i + j
+               i - reg_index
+               j - bitmap_j";
+      sw    = rw;
+      hw    = r;
+     } bitmap[31:0] = 0;
+  } cfg_dvm_b_active[(NUM_DVM_B+31)/32];
+
+  reg {
+    field {
+      desc  = "Bitmap of all the DVM-Bs in the chip, each bit indicates respectively if the DVM-B target associated with SLC.
+               The bitmap[i][j] corresponds to 32 * i + j
+               i - reg_index
+               j - bitmap_j";
+      sw    = rw;
+      hw    = r;
+     } bitmap[31:0] = 0;
+  } cfg_dvm_b_slc[(NUM_DVM_B+31)/32];
+
+  reg {
+    field {
+      desc  = "DVM-H Broadcast bitmap enable - Each bit indicates respectively the DVM-H target associated to the current DVM-H.
+               The dvm_h_self_id bit needs to be 0";
+      sw    = rw;
+      hw    = r;
+     } bitmap[NUM_SYSTEM_DVM_H-1:0] = 0;
+  } cfg_dvm_h_broadcast;
+
+
+  reg {
+    desc = "Broadcast bitmap vmid LUT.
+            Every virtual machine ID (VMID) that is configured has a corresponding allocated memory entry (broadcast_bitmap_memory)";
+    field {
+      desc  = "virtual machine ID (VMID)";
+      sw    = rw;
+      hw    = r;
+    } value[15:0] = 0;
+    field {
+      desc  = "valid entry";
+      sw    = rw;
+      hw    = r;
+    } valid[16:16] = 0;
+  } cfg_broadcast_bitmap_vmid_lut[BROADCAST_BITMAP_MEM_DEPTH];
+
+  //=========================
+  //  Status
+  //==========================
+
+  reg sts_watermark {
+    desc  = "Watermark Status";
+    field {
+      sw    = r;
+      hw    = w;
+      desc  = "Watermark Value";
+    } value[15:0];
+    field {
+      sw    = w;
+      hw    = r;
+      singlepulse = true;
+      desc  = "Clear Watermark Value";
+    } clear[16:16] = 0;
+  };
+
+  sts_watermark sts_req_fifo_watermark @0x200;
+  sts_req_fifo_watermark->desc = "REQ FIFO Fullness status - indicates the max amount of requests in the Input stage from last Clear indication";
+
+
+  sts_watermark sts_pending_fifo_watermark;
+  sts_pending_fifo_watermark->desc = "Pending FIFO Fullness status - indicates the max amount of requests in QoS from last Clear indication";
+
+  sts_watermark sts_reorder_fifo_watermark;
+  sts_reorder_fifo_watermark->desc = "REORDER FIFO Fullness status - indicates the max amount of requests with active DBID and not yet processed by the DVM Tracker from last Clear indication";
+
+  sts_watermark sts_dvm_tracker_watermark[NUM_SYSTEM_DVM_H];
+  sts_dvm_tracker_watermark->desc = "DVM Tracker Fullness status - indicates the max amount of requests waiting for Completion from last Clear indication, Note: local dvm tracker status = sts_dvmh_tracker_fullness[0]";
+
+  //=========================
+  //  Indirect Access Registers
+  //==========================
+
+  //=========================
+  //  QoS Leaky Bucket - Indirect Access
+  //==========================
+
+  reg {
+    desc = "QoS Leaky Bucket Indirect Read Access - REQUEST.
+            SW issues an indirect access to rd from Leaky Bucket Counters
+            Every Indirect Access requires: Counter Index";
+    field {
+      desc  = "Indirect Access - Counter Index";
+      sw    = w;
+      hw    = r;
+    } index[NUM_CORES_CLOG2-1:0] = 0;
+  } ind_qos_leaky_bucket_cnt;
+
+  reg {
+    field {
+      sw    = r;
+      hw    = w;
+      desc  = "Indirect Access - data.
+               HW set the register on memory read operation.";
+    } value[LEAKY_BUCKET_CNT_WIDTH-1:0] = 0 ;
+  } ind_qos_leaky_bucket_cnt_data;
+
+  reg {
+    field {
+      sw    = rw;
+      hw    = r;
+      singlepulse = true; // means that it is auto HW clear
+      desc  = "Indirect Access - go.
+               SW sets the register to 1 when config is ready.
+               HW return the register to 0 when the requested operation is done";
+     } go[0:0] = 0;
+  } ind_qos_leaky_bucket;
+
+  //=========================
+  //  Internal Credits - Indirect Access
+  //==========================
+
+  reg {
+    desc = "Internal Credits Counters Read Indirect Access - REQUEST.
+            SW issues an indirect access to rd from Internal Credits Counters
+            Every Indirect Access requires: Counter Index";
+    field {
+      desc  = "Indirect Access - Counter Index";
+      sw    = rw;
+      hw    = r;
+    } index[NUM_TARGETS_CLOG2-1:0] = 0;
+  } ind_dvmdat_internal_credits_cnt;
+
+  reg {
+    field {
+      sw    = r;
+      hw    = w;
+      desc  = "Indirect Access - data.
+               SW set the register on memory write operation,
+               HW set the register on memory read operation.";
+    } value[7:0] = 0 ;
+  } ind_dvmdat_internal_credits_cnt_data;
+
+  reg {
+    field {
+      sw    = rw;
+      hw    = r;
+      singlepulse = true; // means that it is auto HW clear
+      desc  = "Indirect Access - go.
+               SW sets the register to 1 when config is ready.
+               HW return the register to 0 when the requested operation is done";
+     } go[0:0] = 0;
+  } ind_dvmdat_internal_credits;
+
+  //=========================
+  //  Broadcast - Indirect Access
+  //==========================
+
+  reg {
+    desc = "Broadcast bitmap Memory Indirect Access - REQUEST.
+            SW issues an indirect access to wr/rd to/from Broadcast bitmap Memory
+            Every Indirect Access requires:
+              1. address (0-BROADCAST_BITMAP_MEM_DEPTH-1)
+              2. Operation - read/write";
+    field {
+      sw    = w;
+      hw    = r;
+      desc  = "Indirect Access - Address";
+    } addr[BROADCAST_BITMAP_MEM_DEPTH_CLOG2-1:0] = 0;
+    field {
+      sw    = w;
+      hw    = r;
+      desc   = "Indirect Access - operation: 0-write/1-read";
+      encode = indirect_access_op_enum;
+    } op[16:16] = indirect_access_op_enum::WRITE;
+  } ind_broadcast_bitmap_memory_request;
+
+ // This register array is a splitted register of the broadcast bitmap which is greater than 32
+  reg {
+    field {
+      sw    = rw;
+      hw    = rw;
+      desc  = "Indirect Access - data.
+               SW set the register on memory write operation
+               HW set the register on memory read operation.";
+    } value[NUM_SYSTEM_DVM_H-1:0] = 0 ;
+  } ind_broadcast_bitmap_memory_data_dvm_h;
+
+  reg {
+    field {
+      sw    = rw;
+      hw    = rw;
+      desc  = "Indirect Access - data.
+               SW set the register on memory write operation
+               HW set the register on memory read operation.
+               value[i][j] corresponds to 32 * i + j
+               i - reg_index
+               j - bitmap_j";
+    } value[31:0] = 0 ;
+  } ind_broadcast_bitmap_memory_data_dvm_b[((NUM_DVM_B+31)/32)];
+
+reg {
+    field {
+      sw    = rw;
+      hw    = rw;
+      desc  = "Indirect Access - data.
+               SW set the register on memory write operation
+               HW set the register on memory read operation.
+               value[i][j] corresponds to 32 * i + j
+               i - reg_index
+               j - bitmap_j";
+    } value[31:0] = 0 ;
+  } ind_broadcast_bitmap_memory_data_mic[((NUM_CORES+31)/32)];
+
+reg {
+    field {
+      sw    = rw;
+      hw    = rw;
+      desc  = "Indirect Access - data.
+               SW set the register on memory write operation
+               HW set the register on memory read operation.
+               value[i][j] corresponds to 32 * i + j
+               i - reg_index
+               j - bitmap_j";
+    } value[31:0] = 0 ;
+  } ind_broadcast_bitmap_memory_data_mipa[((NUM_MIPA_US+31)/32)];
+
+
+  reg {
+    field {
+      sw    = rw;
+      hw    = rw;
+      desc  = "Indirect Access - go.
+               SW sets the register to 1 when config is ready.
+               HW return the register to 0 when the requested operation is done";
+     } go[0:0] = 0;
+  } ind_broadcast_bitmap_memory;
+
+
+  //=========================
+  //  Pool Manager
+  //==========================
+
+gmesh_resource_pool_manager_regfile #(.RESOURCE_WIDTH(DBID_ADDR_WIDTH), .NUM_CTX(1)) dvm_h_dbid_pool_manager;
+
+ };
+
+`endif

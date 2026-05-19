@@ -1,0 +1,58 @@
+//--------------------------
+// JINJA2 GENERATED FILE: DO NOT MANUALLY EDIT
+// This file has been automatically generated from a jinja2 template.
+// Please refer to the BUILD file for details.
+//--------------------------
+
+`include "idsProperty2a.rdl"
+
+`include "gmesh_mid_regfile.rdl"
+`include "gmesh_mixl_regfile.rdl"
+
+`ifndef _GMESH_cedar_compute_mixl_CSR_
+`define _GMESH_cedar_compute_mixl_CSR_
+
+addrmap gmesh_cedar_compute_mixl_csr {
+  name = "gmesh_cedar_compute_mixl_csr";
+  desc = "mixl Top Level CSR Address Map";
+
+`ifdef AGNISYS
+  module_name   = "gmesh_cedar_compute_mixl_csr";
+  external_ack  = "optimized";
+  auto_hdl_path = true;
+`endif
+
+// MI-D
+ gmesh_mid_regfile #(
+    .IS_CXL                 (1),
+    .NUM_OF_TZ_REGIONS      (8)
+ ) mid_regfile @0x0;
+
+// MI-XL
+ gmesh_mixl_regfile     #(
+    .NUM_PADS               (2),
+    .PAD_NUM_SETS           (32),
+    .PAD_NUM_WAYS           (32),
+    .NUM_PADS_WIDTH         (1),
+    .PAD_NUM_SETS_WIDTH     (5),
+    .PAD_NUM_WAYS_WIDTH     (5)
+ ) gmesh_mixl @0x500;
+
+
+ reg {
+   desc = "TS sync configuration";
+   field {
+     sw      = rw;
+     hw      = r;
+     desc    = "time stamp sync compensation vlue";
+   } cfg_ts_compensation[15:0] = 0;
+   field {
+     sw      = rw;
+     hw      = r;
+     desc    = "time stamp sync enable";
+   } cfg_ts_sync_en[16:16] = 0;
+  } ts_compensation;
+
+};
+
+`endif

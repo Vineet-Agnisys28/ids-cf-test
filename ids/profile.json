@@ -1,0 +1,28 @@
+{
+  "top_element" : "slc_output_stage_regfile",
+  "idsbatch_version" : "7.110.01.3015",
+  "rdlspec" : {
+    "chips" : 0,
+    "blocks" : 1,
+    "regfiles" : 3,
+    "regs" : 40,
+    "fields" : 72
+  },
+  "runtime" : {
+    "overall_csr" : "00:00:04",
+    "xml_conversion" : "00:00:02",
+    "intermediate_annotation" : "00:00:00",
+    "xrsl" : "00:00:00",
+    "verilog" : "00:00:00"
+  },
+  "memory" : {
+    "overall_csr" : "25600.00 MB",
+    "xml_conversion" : "81.4 MB",
+    "intermediate_annotation" : "193.4 MB",
+    "xrsl" : "217.4 MB",
+    "verilog" : "229.4 MB"
+  },
+  "sw_hw_access_pair" : {
+    "rw:ro" : 72
+  }
+}

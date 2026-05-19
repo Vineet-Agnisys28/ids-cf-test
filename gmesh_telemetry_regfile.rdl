@@ -1,0 +1,139 @@
+`include "gmesh_telemetry_core_regfile.rdl"
+`include "gmesh_telemetry_bw_regfile.rdl"
+`include "gmesh_telemetry_latency_regfile.rdl"
+`include "gmesh_telemetry_io_regfile.rdl"
+`include "gmesh_telemetry_debug_regfile.rdl"
+
+`ifndef _GMESH_TELEMETRY_REGFILE_
+`define _GMESH_TELEMETRY_REGFILE_
+
+regfile gmesh_telemetry_regfile #(
+  bit              HAS_CORE_AGENT             = 1,
+  bit              HAS_BW_AGENT               = 1,
+  bit              HAS_LATENCY_AGENT          = 1,
+  bit              HAS_IO_AGENT               = 1,
+  longint unsigned NUM_BW_PARTID              = 4,
+  longint unsigned NUM_BW_PARTID_CLOG2        = 2,
+  longint unsigned NUM_LATENCY_PARTID         = 4,
+  longint unsigned NUM_LATENCY_PARTID_CLOG2   = 2,
+  longint unsigned MAX_DEBUG_PACKETS          = 16,
+  longint unsigned MAX_DEBUG_PACKETS_WIDTH    = 5,
+  longint unsigned NUM_TELEMETRY_COUNTERS     = 8,
+  longint unsigned INTERVAL_WINDOW_CNT_WIDTH  = 16,
+  longint unsigned ADDR_WIDTH                 = 48,
+  longint unsigned AGENT_ID_WIDTH             = 9,
+  longint unsigned APB_ADDR_WIDTH             = 32,
+  longint unsigned APB_DATA_WIDTH             = 32,
+  longint unsigned NUM_PMU_COUNTERS           = 8,
+  longint unsigned APB_USER_REQ_WIDTH         = 8,
+  longint unsigned NUM_HISTOGRAM_BINS         = 16,
+  longint unsigned HISTOGRAM_BIN_WIDTH        = 32
+)
+  {
+  name = "gmesh_telemetry_regfile";
+  desc = "Telemetry registers to be used in different agents";
+  default sw = rw;
+  default hw = r;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "pbha field for CHI req flit";
+    } pbha[3:0] = 0;
+    field {
+      desc = "mpam field for CHI req flit";
+    } mpam[15:4] = 0;
+    field {
+      desc = "trace_tag field for CHI req flit";
+    } trace_tag[16:16] = 0;
+    field {
+      desc = "excl field for CHI req flit";
+    } excl[17:17] = 0;
+    field {
+      desc = "lpid field for CHI req flit";
+    } lpid[26:18] = 0;
+    field {
+      desc = "is_pcie field for CHI req flit";
+    } is_pcie[27:27] = 0;
+    field {
+      desc = "sec_tag field for CHI req flit";
+    } sec_tag[28:28] = 0;
+    field {
+      desc = "nse field for CHI req flit";
+    } nse[29:29] = 0;
+    field {
+      desc = "ns field for CHI req flit";
+    } ns[30:30] = 0;
+    field {
+      desc = "sam_err field for CHI req flit";
+    } sam_err[31:31] = 0;
+  } cfg_telemetry_chi;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "The value of setid for agents in SETID mode";
+    } setid_value[15:0] = 0;
+    field {
+      desc = "filtering chi req monitoring based on MPAM SP field";
+    } security_filtering[19:16] = 0;
+  } cfg_telemetry;
+
+  gmesh_telemetry_core_regfile #(
+    .ADDR_WIDTH                 (ADDR_WIDTH               ),
+    .AGENT_ID_WIDTH             (AGENT_ID_WIDTH           ),
+    .APB_ADDR_WIDTH             (APB_ADDR_WIDTH           ),
+    .APB_DATA_WIDTH             (APB_DATA_WIDTH           ),
+    .NUM_PMU_COUNTERS           (NUM_PMU_COUNTERS         ),
+    .APB_USER_REQ_WIDTH         (APB_USER_REQ_WIDTH       ),
+    .NUM_TELEMETRY_COUNTERS     (NUM_TELEMETRY_COUNTERS   ),
+    .INTERVAL_WINDOW_CNT_WIDTH  (INTERVAL_WINDOW_CNT_WIDTH))
+  gmesh_telemetry_core;
+  gmesh_telemetry_core->ispresent = HAS_CORE_AGENT;
+
+  gmesh_telemetry_bw_regfile #(
+    .ADDR_WIDTH                 (ADDR_WIDTH               ),
+    .AGENT_ID_WIDTH             (AGENT_ID_WIDTH           ),
+    .NUM_TELEMETRY_COUNTERS     (NUM_TELEMETRY_COUNTERS   ),
+    .INTERVAL_WINDOW_CNT_WIDTH  (INTERVAL_WINDOW_CNT_WIDTH))
+  gmesh_telemetry_bw;
+  gmesh_telemetry_bw->ispresent = HAS_BW_AGENT;
+
+  gmesh_telemetry_latency_regfile #(
+    .NUM_LATENCY_PARTID         (NUM_LATENCY_PARTID       ),
+    .INTERVAL_WINDOW_CNT_WIDTH  (INTERVAL_WINDOW_CNT_WIDTH),
+    .NUM_TELEMETRY_COUNTERS     (NUM_TELEMETRY_COUNTERS   ),
+    .ADDR_WIDTH                 (ADDR_WIDTH               ),
+    .AGENT_ID_WIDTH             (AGENT_ID_WIDTH           ),
+    .NUM_HISTOGRAM_BINS         (NUM_HISTOGRAM_BINS       ),
+    .HISTOGRAM_BIN_WIDTH        (HISTOGRAM_BIN_WIDTH      ))
+  gmesh_telemetry_latency;
+  gmesh_telemetry_latency->ispresent = HAS_LATENCY_AGENT;
+
+  gmesh_telemetry_io_regfile #(
+    .ADDR_WIDTH                 (ADDR_WIDTH               ),
+    .AGENT_ID_WIDTH             (AGENT_ID_WIDTH           ),
+    .NUM_TELEMETRY_COUNTERS     (NUM_TELEMETRY_COUNTERS   ),
+    .INTERVAL_WINDOW_CNT_WIDTH  (INTERVAL_WINDOW_CNT_WIDTH))
+  gmesh_telemetry_io;
+  gmesh_telemetry_io->ispresent = HAS_IO_AGENT;
+
+  gmesh_telemetry_debug_regfile #(
+    .HAS_CORE_AGENT             (HAS_CORE_AGENT           ),
+    .HAS_BW_AGENT               (HAS_BW_AGENT             ),
+    .HAS_LATENCY_AGENT          (HAS_LATENCY_AGENT        ),
+    .HAS_IO_AGENT               (HAS_IO_AGENT             ),
+    .ADDR_WIDTH                 (ADDR_WIDTH               ),
+    .NUM_BW_PARTID              (NUM_BW_PARTID            ),
+    .NUM_BW_PARTID_CLOG2        (NUM_BW_PARTID_CLOG2      ),
+    .NUM_LATENCY_PARTID         (NUM_LATENCY_PARTID       ),
+    .NUM_LATENCY_PARTID_CLOG2   (NUM_LATENCY_PARTID_CLOG2 ),
+    .MAX_DEBUG_PACKETS          (MAX_DEBUG_PACKETS        ),
+    .MAX_DEBUG_PACKETS_WIDTH    (MAX_DEBUG_PACKETS_WIDTH  ),
+    .NUM_TELEMETRY_COUNTERS     (NUM_TELEMETRY_COUNTERS   ))
+  gmesh_telemetry_debug_regfile;
+
+};
+`endif

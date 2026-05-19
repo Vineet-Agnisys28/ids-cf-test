@@ -1,0 +1,93 @@
+`ifndef _MIPA_US_AXI_TO_REQ_REGFILE_
+`define _MIPA_US_AXI_TO_REQ_REGFILE_
+
+regfile mipa_us_axi_to_req_regfile #(
+  longint unsigned MIPA_US_ID_W_WIDTH = 9,
+  longint unsigned MIPA_US_ID_R_WIDTH = 9
+)
+{
+  name = "mipa_us_axi_to_req_regfile";
+  desc = "MI-A/P AXI to Request Register File";
+
+  regfile lpid_peid_regfile #(
+    longint unsigned MIPA_US_ID_WIDTH = 9
+  )
+  {
+    desc = "Configuration registers to set LPID PEID bits";
+    reg {
+      default sw = rw;
+      default hw = r;
+      field {
+        desc = "PE ID Mask. Used to determine bits [1:0] of LPID (Logical Processor ID).
+              (aw.id & cfg_lpid_peid_mask[i]) == cfg_lpid_peid_compare_values[i] -> PE ID = i";
+      } value [MIPA_US_ID_WIDTH-1:0] = 0;
+    } cfg_mask[4];
+
+    reg {
+      default sw = rw;
+      default hw = r;
+      field {
+        desc = "PE ID Compare Values. Used to determine bits [1:0] of LPID (Logical Processor ID).
+              (aw.id & cfg_lpid_peid_mask[i]) == cfg_lpid_peid_compare_values[i] -> PE ID = i";
+      } value [MIPA_US_ID_WIDTH-1:0] = 0;
+    } cfg_compare[4];
+  };
+
+  lpid_peid_regfile #(.MIPA_US_ID_WIDTH(MIPA_US_ID_W_WIDTH)) wr_lpid_peid;
+  lpid_peid_regfile #(.MIPA_US_ID_WIDTH(MIPA_US_ID_R_WIDTH)) rd_lpid_peid;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "MIP/A ID. Determines bits [6:2] of Request LPID (Logical Processor ID)";
+    } mid[4:0] = 0;
+    field {
+      desc = "Chiplet ID. Determines bits [8:7] of Request LPID (Logical Processor ID)";
+    } cid [9:8] = 0;
+  } cfg_lpid;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "MPAM (Memory Partitioning and Monitoring) override value.
+              Request flit MPAM is set to this value when cfg_mpam_override_en is asserted. ";
+    } value [11:0] = 0;
+    field {
+      desc = "MPAM (Memory Partitioning and Monitoring) override en. Used to override MPAM value in request flit.";
+    } en [24:24] = 0;
+  } cfg_mpam_override;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+     desc = "PBHA (Page Base Hardware Attributes) value override value for request.
+              Used for general hint from SW for allocation/non allocation memory regions for all requests of this port.";
+    } value [3:0] = 0;
+    field {
+      desc = "PBHA (Page Base Hardware Attributes) value override enable for request.
+              Used for general hint from SW for allocation/non allocation memory regions for all requests of this port.
+              If deasserted passing AXI PBHA";
+    } en [8:8] = 0;
+  } cfg_pbha_override;
+
+  reg {
+    default hw=r;
+    default sw=w;
+    field {
+      desc = "ACE Read/Write to write-through memory is treated as cacheable";
+    } value = 0;
+  } cfg_treat_write_through_as_cacheable;
+
+  reg {
+    default hw=r;
+    default sw=w;
+    field {
+      desc = "ACE data target configuration (7 bits) for each cbusy (4 options)";
+    } value[6:0] = 0;
+  } cfg_data_target[4];
+
+};
+`endif

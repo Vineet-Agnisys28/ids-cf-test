@@ -1,0 +1,165 @@
+`include "idsProperty2a.rdl"
+`include "gmesh_ras_logger_regfile.rdl"
+
+
+`ifndef _GMESH_XP_RAS_LOGGER_REGFILE_
+`define _GMESH_XP_RAS_LOGGER_REGFILE_
+
+regfile gmesh_xp_ras_logger_regfile #(
+  bit HAS_ADDR_REG = 0
+) {
+
+  name = "gmesh_ras_logger_regfile";
+  desc = "gMesh RAS logger regfile";
+  enum gmesh_xp_block_id_enum {
+    // Start | Auto generated code - DO NOT EDIT/DELETE
+    // End   | Auto generated code - DO NOT EDIT/DELETE
+    // TODO(dorsha): complete all ids, must be ordered according to connectivity (starting with lsb).
+    Req0WestRxParityErr     {desc = " Req0 West Rx Parity error";};
+    Req0WestRxDataCheckErr  {desc = " Req0 West Rx Data Check error";};
+    Req0Mi0TxParityErr     {desc = " Req0 Mi0 Tx Parity error";};
+    Req0Mi0TxDataCheckErr  {desc = " Req0 Mi0 Tx Data Check error";};
+    Req0NorthRxParityErr     {desc = " Req0 North Rx Parity error";};
+    Req0NorthRxDataCheckErr  {desc = " Req0 North Rx Data Check error";};
+    Req0Mi1TxParityErr     {desc = " Req0 Mi1 Tx Parity error";};
+    Req0Mi1TxDataCheckErr  {desc = " Req0 Mi1 Tx Data Check error";};
+    Req0EastRxParityErr     {desc = " Req0 East Rx Parity error";};
+    Req0EastRxDataCheckErr  {desc = " Req0 East Rx Data Check error";};
+    Req0Mi2TxParityErr     {desc = " Req0 Mi2 Tx Parity error";};
+    Req0Mi2TxDataCheckErr  {desc = " Req0 Mi2 Tx Data Check error";};
+    Req0SouthRxParityErr     {desc = " Req0 South Rx Parity error";};
+    Req0SouthRxDataCheckErr  {desc = " Req0 South Rx Data Check error";};
+    Req0Mi3TxParityErr     {desc = " Req0 Mi3 Tx Parity error";};
+    Req0Mi3TxDataCheckErr  {desc = " Req0 Mi3 Tx Data Check error";};
+    Req1WestRxParityErr     {desc = " Req1 West Rx Parity error";};
+    Req1WestRxDataCheckErr  {desc = " Req1 West Rx Data Check error";};
+    Req1Mi0TxParityErr     {desc = " Req1 Mi0 Tx Parity error";};
+    Req1Mi0TxDataCheckErr  {desc = " Req1 Mi0 Tx Data Check error";};
+    Req1NorthRxParityErr     {desc = " Req1 North Rx Parity error";};
+    Req1NorthRxDataCheckErr  {desc = " Req1 North Rx Data Check error";};
+    Req1Mi1TxParityErr     {desc = " Req1 Mi1 Tx Parity error";};
+    Req1Mi1TxDataCheckErr  {desc = " Req1 Mi1 Tx Data Check error";};
+    Req1EastRxParityErr     {desc = " Req1 East Rx Parity error";};
+    Req1EastRxDataCheckErr  {desc = " Req1 East Rx Data Check error";};
+    Req1Mi2TxParityErr     {desc = " Req1 Mi2 Tx Parity error";};
+    Req1Mi2TxDataCheckErr  {desc = " Req1 Mi2 Tx Data Check error";};
+    Req1SouthRxParityErr     {desc = " Req1 South Rx Parity error";};
+    Req1SouthRxDataCheckErr  {desc = " Req1 South Rx Data Check error";};
+    Req1Mi3TxParityErr     {desc = " Req1 Mi3 Tx Parity error";};
+    Req1Mi3TxDataCheckErr  {desc = " Req1 Mi3 Tx Data Check error";};
+
+    Rsp0WestRxParityErr     {desc = " Rsp0 West Rx Parity error";};
+    Rsp0WestRxDataCheckErr  {desc = " Rsp0 West Rx Data Check error";};
+    Rsp0Mi0TxParityErr     {desc = " Rsp0 Mi0 Tx Parity error";};
+    Rsp0Mi0TxDataCheckErr  {desc = " Rsp0 Mi0 Tx Data Check error";};
+    Rsp0NorthRxParityErr     {desc = " Rsp0 North Rx Parity error";};
+    Rsp0NorthRxDataCheckErr  {desc = " Rsp0 North Rx Data Check error";};
+    Rsp0Mi1TxParityErr     {desc = " Rsp0 Mi1 Tx Parity error";};
+    Rsp0Mi1TxDataCheckErr  {desc = " Rsp0 Mi1 Tx Data Check error";};
+    Rsp0EastRxParityErr     {desc = " Rsp0 East Rx Parity error";};
+    Rsp0EastRxDataCheckErr  {desc = " Rsp0 East Rx Data Check error";};
+    Rsp0Mi2TxParityErr     {desc = " Rsp0 Mi2 Tx Parity error";};
+    Rsp0Mi2TxDataCheckErr  {desc = " Rsp0 Mi2 Tx Data Check error";};
+    Rsp0SouthRxParityErr     {desc = " Rsp0 South Rx Parity error";};
+    Rsp0SouthRxDataCheckErr  {desc = " Rsp0 South Rx Data Check error";};
+    Rsp0Mi3TxParityErr     {desc = " Rsp0 Mi3 Tx Parity error";};
+    Rsp0Mi3TxDataCheckErr  {desc = " Rsp0 Mi3 Tx Data Check error";};
+    Rsp1WestRxParityErr     {desc = " Rsp1 West Rx Parity error";};
+    Rsp1WestRxDataCheckErr  {desc = " Rsp1 West Rx Data Check error";};
+    Rsp1Mi0TxParityErr     {desc = " Rsp1 Mi0 Tx Parity error";};
+    Rsp1Mi0TxDataCheckErr  {desc = " Rsp1 Mi0 Tx Data Check error";};
+    Rsp1NorthRxParityErr     {desc = " Rsp1 North Rx Parity error";};
+    Rsp1NorthRxDataCheckErr  {desc = " Rsp1 North Rx Data Check error";};
+    Rsp1Mi1TxParityErr     {desc = " Rsp1 Mi1 Tx Parity error";};
+    Rsp1Mi1TxDataCheckErr  {desc = " Rsp1 Mi1 Tx Data Check error";};
+    Rsp1EastRxParityErr     {desc = " Rsp1 East Rx Parity error";};
+    Rsp1EastRxDataCheckErr  {desc = " Rsp1 East Rx Data Check error";};
+    Rsp1Mi2TxParityErr     {desc = " Rsp1 Mi2 Tx Parity error";};
+    Rsp1Mi2TxDataCheckErr  {desc = " Rsp1 Mi2 Tx Data Check error";};
+    Rsp1SouthRxParityErr     {desc = " Rsp1 South Rx Parity error";};
+    Rsp1SouthRxDataCheckErr  {desc = " Rsp1 South Rx Data Check error";};
+    Rsp1Mi3TxParityErr     {desc = " Rsp1 Mi3 Tx Parity error";};
+    Rsp1Mi3TxDataCheckErr  {desc = " Rsp1 Mi3 Tx Data Check error";};
+
+    DatWestRxParityErr     {desc = " Dat West Rx Parity error";};
+    DatWestRxDataCheckErr  {desc = " Dat West Rx Data Check error";};
+    DatMi0TxParityErr     {desc = " Dat Mi0 Tx Parity error";};
+    DatMi0TxDataCheckErr  {desc = " Dat Mi0 Tx Data Check error";};
+    DatNorthRxParityErr     {desc = " Dat North Rx Parity error";};
+    DatNorthRxDataCheckErr  {desc = " Dat North Rx Data Check error";};
+    DatMi1TxParityErr     {desc = " Dat Mi1 Tx Parity error";};
+    DatMi1TxDataCheckErr  {desc = " Dat Mi1 Tx Data Check error";};
+    DatEastRxParityErr     {desc = " Dat East Rx Parity error";};
+    DatEastRxDataCheckErr  {desc = " Dat East Rx Data Check error";};
+    DatMi2TxParityErr     {desc = " Dat Mi2 Tx Parity error";};
+    DatMi2TxDataCheckErr  {desc = " Dat Mi2 Tx Data Check error";};
+    DatSouthRxParityErr     {desc = " Dat South Rx Parity error";};
+    DatSouthRxDataCheckErr  {desc = " Dat South Rx Data Check error";};
+    DatMi3TxParityErr     {desc = " Dat Mi3 Tx Parity error";};
+    DatMi3TxDataCheckErr  {desc = " Dat Mi3 Tx Data Check error";};
+
+    SnpWestRxParityErr     {desc = " Snp West Rx Parity error";};
+    SnpWestRxDataCheckErr  {desc = " Snp West Rx Data Check error";};
+    SnpMi0TxParityErr     {desc = " Snp Mi0 Tx Parity error";};
+    SnpMi0TxDataCheckErr  {desc = " Snp Mi0 Tx Data Check error";};
+    SnpNorthRxParityErr     {desc = " Snp North Rx Parity error";};
+    SnpNorthRxDataCheckErr  {desc = " Snp North Rx Data Check error";};
+    SnpMi1TxParityErr     {desc = " Snp Mi1 Tx Parity error";};
+    SnpMi1TxDataCheckErr  {desc = " Snp Mi1 Tx Data Check error";};
+    SnpEastRxParityErr     {desc = " Snp East Rx Parity error";};
+    SnpEastRxDataCheckErr  {desc = " Snp East Rx Data Check error";};
+    SnpMi2TxParityErr     {desc = " Snp Mi2 Tx Parity error";};
+    SnpMi2TxDataCheckErr  {desc = " Snp Mi2 Tx Data Check error";};
+    SnpSouthRxParityErr     {desc = " Snp South Rx Parity error";};
+    SnpSouthRxDataCheckErr  {desc = " Snp South Rx Data Check error";};
+    SnpMi3TxParityErr     {desc = " Snp Mi3 Tx Parity error";};
+    SnpMi3TxDataCheckErr  {desc = " Snp Mi3 Tx Data Check error";};
+
+    Crd0WestRxParityErr     {desc = " Crd0 West Rx Parity error";};
+    Crd0WestRxDataCheckErr  {desc = " Crd0 West Rx Data Check error";};
+    Crd0Mi0TxParityErr     {desc = " Crd0 Mi0 Tx Parity error";};
+    Crd0Mi0TxDataCheckErr  {desc = " Crd0 Mi0 Tx Data Check error";};
+    Crd0NorthRxParityErr     {desc = " Crd0 North Rx Parity error";};
+    Crd0NorthRxDataCheckErr  {desc = " Crd0 North Rx Data Check error";};
+    Crd0Mi1TxParityErr     {desc = " Crd0 Mi1 Tx Parity error";};
+    Crd0Mi1TxDataCheckErr  {desc = " Crd0 Mi1 Tx Data Check error";};
+    Crd0EastRxParityErr     {desc = " Crd0 East Rx Parity error";};
+    Crd0EastRxDataCheckErr  {desc = " Crd0 East Rx Data Check error";};
+    Crd0Mi2TxParityErr     {desc = " Crd0 Mi2 Tx Parity error";};
+    Crd0Mi2TxDataCheckErr  {desc = " Crd0 Mi2 Tx Data Check error";};
+    Crd0SouthRxParityErr     {desc = " Crd0 South Rx Parity error";};
+    Crd0SouthRxDataCheckErr  {desc = " Crd0 South Rx Data Check error";};
+    Crd0Mi3TxParityErr     {desc = " Crd0 Mi3 Tx Parity error";};
+    Crd0Mi3TxDataCheckErr  {desc = " Crd0 Mi3 Tx Data Check error";};
+    Crd1WestRxParityErr     {desc = " Crd1 West Rx Parity error";};
+    Crd1WestRxDataCheckErr  {desc = " Crd1 West Rx Data Check error";};
+    Crd1Mi0TxParityErr     {desc = " Crd1 Mi0 Tx Parity error";};
+    Crd1Mi0TxDataCheckErr  {desc = " Crd1 Mi0 Tx Data Check error";};
+    Crd1NorthRxParityErr     {desc = " Crd1 North Rx Parity error";};
+    Crd1NorthRxDataCheckErr  {desc = " Crd1 North Rx Data Check error";};
+    Crd1Mi1TxParityErr     {desc = " Crd1 Mi1 Tx Parity error";};
+    Crd1Mi1TxDataCheckErr  {desc = " Crd1 Mi1 Tx Data Check error";};
+    Crd1EastRxParityErr     {desc = " Crd1 East Rx Parity error";};
+    Crd1EastRxDataCheckErr  {desc = " Crd1 East Rx Data Check error";};
+    Crd1Mi2TxParityErr     {desc = " Crd1 Mi2 Tx Parity error";};
+    Crd1Mi2TxDataCheckErr  {desc = " Crd1 Mi2 Tx Data Check error";};
+    Crd1SouthRxParityErr     {desc = " Crd1 South Rx Parity error";};
+    Crd1SouthRxDataCheckErr  {desc = " Crd1 South Rx Data Check error";};
+    Crd1Mi3TxParityErr     {desc = " Crd1 Mi3 Tx Parity error";};
+    Crd1Mi3TxDataCheckErr  {desc = " Crd1 Mi3 Tx Data Check error";};
+
+  // TODO(dorsha): add fifo overflow intr
+
+  };
+
+
+  gmesh_ras_logger_regfile #(
+    // Start | Auto generated code - DO NOT EDIT/DELETE
+    .NUM_PRODUCERS(128)
+    // End   | Auto generated code - DO NOT EDIT/DELETE
+  ) logger;
+
+  logger.logger.sts_ras_logger_err_misc_0_1.block_id->encode = gmesh_xp_block_id_enum;
+
+};
+`endif

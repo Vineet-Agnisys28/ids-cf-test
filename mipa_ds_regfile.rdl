@@ -1,0 +1,772 @@
+`include "idsProperty2a.rdl"
+
+`ifndef _MIPA_DS_REGFILE_
+`define _MIPA_DS_REGFILE_
+
+regfile mipa_ds_regfile #(
+  bit HAS_AXI_M_0                    = 1, // AXI_M_0 is active
+  bit HAS_AXI_M_1                    = 1, // AXI_M_1 is active
+  bit HAS_AXIS_M                     = 1, // AXI Stream is active
+  bit HAS_DEFAULT_RESPONDER          = 1, // DS instance acts as default error responder for entire gMesh
+  bit AXI_M_0_DST_IS_PCIE            = 0, // if 1, then AXI-0 is connected to PCIe controller.
+  bit AXI_M_1_DST_IS_PCIE            = 1, // if 1, then AXI-1 is connected to PCIe controller.
+  bit DS_IS_MIP                      = ((HAS_AXI_M_0 && AXI_M_0_DST_IS_PCIE) || (HAS_AXI_M_1 && AXI_M_1_DST_IS_PCIE)), // DO NOT OVERRIDE
+  longint unsigned WRR_WEIGHT_WIDTH  = 8, // Default width for each WRR weight
+  longint unsigned NUM_DAM_REGIONS   = 16, // Number of address regions in the Downstream Address Map
+  longint unsigned NUM_DEFAULT_RESPONDER_UNSUPPORTED_REQ_REGIONS = 4 // Number of address regions for unsupported request in the default responder
+){
+  name = "mipa_ds_regfile";
+  desc = "MI-A/P Downstream CSR Register File";
+
+// TODO(omerzi): review all default values
+/////////////////////////////////////// Input stage ///////////////////////////////////////
+  reg {
+   default sw = rw;
+   default hw = r;
+    field {
+      desc = "WRR arbiter weights for INP_STG CSU queue";
+    } weight[WRR_WEIGHT_WIDTH-1:0] = {{WRR_WEIGHT_WIDTH}{1'b1}};
+  } csr_cfg_inp_stg_arb_wrr_csu;
+
+  reg {
+   default sw = rw;
+   default hw = r;
+    field {
+      desc = "WRR arbiter weights for INP_STG non_p2p_to_non_pcie queue";
+    } weight[WRR_WEIGHT_WIDTH-1:0] = {{WRR_WEIGHT_WIDTH}{1'b1}};
+  } csr_cfg_inp_stg_arb_wrr_non_p2p_to_non_pcie;
+
+  reg {
+   default sw = rw;
+   default hw = r;
+    field {
+      desc = "WRR arbiter weights for INP_STG non_p2p_to_pcie queue";
+    } weight[WRR_WEIGHT_WIDTH-1:0] = {{WRR_WEIGHT_WIDTH}{1'b1}};
+  } csr_cfg_inp_stg_arb_wrr_non_p2p_to_pcie;
+  csr_cfg_inp_stg_arb_wrr_non_p2p_to_pcie->ispresent = DS_IS_MIP;
+
+  reg {
+   default sw = rw;
+   default hw = r;
+    field {
+      desc = "WRR arbiter weights for INP_STG p2p_pw queue";
+    } weight[WRR_WEIGHT_WIDTH-1:0] = {{WRR_WEIGHT_WIDTH}{1'b1}};
+  } csr_cfg_inp_stg_arb_wrr_p2p_pw;
+  csr_cfg_inp_stg_arb_wrr_p2p_pw->ispresent = DS_IS_MIP;
+
+  reg {
+   default sw = rw;
+   default hw = r;
+    field {
+      desc = "WRR arbiter weights for INP_STG p2p_np queue";
+    } weight[WRR_WEIGHT_WIDTH-1:0] = {{WRR_WEIGHT_WIDTH}{1'b1}};
+  } csr_cfg_inp_stg_arb_wrr_p2p_np;
+  csr_cfg_inp_stg_arb_wrr_p2p_np->ispresent = DS_IS_MIP;
+
+  reg {
+    field {
+      desc = "Tracks LL credits (chi_tx_crd_flitv) that are waiting to be sent from MIPA through CHI TX CRD Channel. For debug usage";
+      sw = r;
+      hw = w;
+    } count[7:0];
+  } csr_sts_inp_stg_e2e_crd_lcrd;
+
+  reg {
+    field {
+      desc = "Number of CHI requests that have entered the input stage and are waiting to be dequeued from CSU queue";
+      sw = r;
+      hw = w;
+    } occupancy[15:0];
+  } csr_sts_inp_stg_queue_csu;
+
+  reg {
+    field {
+      desc = "Number of CHI requests that have entered the input stage and are waiting to be dequeued from non_p2p_to_non_pcie queue";
+      sw = r;
+      hw = w;
+    } occupancy[15:0];
+  } csr_sts_inp_stg_queue_non_p2p_to_non_pcie;
+
+  reg {
+    field {
+      desc = "Number of CHI requests that have entered the input stage and are waiting to be dequeued from non_p2p_to_pcie queue";
+      sw = r;
+      hw = w;
+    } occupancy[15:0];
+  } csr_sts_inp_stg_queue_non_p2p_to_pcie;
+  csr_sts_inp_stg_queue_non_p2p_to_pcie->ispresent = DS_IS_MIP;
+
+  reg {
+    field {
+      desc = "Number of CHI requests that have entered the input stage and are waiting to be dequeued from p2p_pw queue";
+      sw = r;
+      hw = w;
+    } occupancy[15:0];
+  } csr_sts_inp_stg_queue_p2p_pw;
+  csr_sts_inp_stg_queue_p2p_pw->ispresent = DS_IS_MIP;
+
+  reg {
+    field {
+      desc = "Number of CHI requests that have entered the input stage and are waiting to be dequeued from p2p_np queue";
+      sw = r;
+      hw = w;
+    } occupancy[15:0];
+  } csr_sts_inp_stg_queue_p2p_np;
+  csr_sts_inp_stg_queue_p2p_np->ispresent = DS_IS_MIP;
+
+/////////////////////////////////////// END Input stage ///////////////////////////////////////
+
+////////////////////////////////////// non-PCIe AXI I/F regfile definition /////////////////////////////////////////////////
+  regfile non_pcie_axi_if_regfile #(
+    longint unsigned WRR_WEIGHT_WIDTH_EDIT = 8  // Default width for each WRR weight
+  ){
+    reg {
+      default sw = rw;
+      default hw = r;
+
+      field {
+        desc = "non-p2p ord weight for WRR AXI I/F arbitration";
+      } non_p2p_ord_weight[1*WRR_WEIGHT_WIDTH_EDIT-1:0] = {{WRR_WEIGHT_WIDTH_EDIT}{1'b1}};
+      field {
+        desc = "non-p2p unord weight for WRR AXI I/F arbitration";
+      } non_p2p_unord_weight[2*WRR_WEIGHT_WIDTH_EDIT-1:1*WRR_WEIGHT_WIDTH_EDIT] = {{WRR_WEIGHT_WIDTH_EDIT}{1'b1}};
+    } csr_cfg_axi_arb_wrr;
+
+    reg {
+      default sw = rw;
+      default hw = r;
+
+      field {
+        desc = "Value to use for ARQOS field";
+      } arqos[3:0] = 0;
+      field {
+        desc = "Value to use for AWQOS field";
+      } awqos[11:8] = 0;
+    } csr_cfg_axi_fields;
+
+    reg {
+      default sw = rw;
+      default hw = r;
+
+      field {
+        desc = "Limit the maximal number allowed for outstanding write transactions. 0 means unlimited";
+      } max_outstanding[15:0] = 0;
+    } csr_cfg_axi_wr;
+
+    reg {
+      default sw = rw;
+      default hw = r;
+
+      field {
+        desc = "Limit the maximal number allowed for outstanding read transactions. 0 means unlimited";
+      } max_outstanding[15:0] = 0;
+    } csr_cfg_axi_rd;
+
+    reg {
+      default sw = rw;
+      default hw = r;
+
+      field {
+        desc = "Force failure for all exclusive accesses";
+      } force_fail = 0;
+    } csr_cfg_exclusive_access;
+
+    reg {
+      default sw = rw;
+      default hw = r;
+
+      field {
+        desc = "AXI I/F supports DATACHK";
+      } datachk[0:0] = 0; // TODO(omerzi): consider changing to 1
+      field {
+        desc = "AXI I/F supports POISON";
+      } poison[8:8] = 1;
+    } csr_cfg_supports;
+
+    reg {
+      default sw = r;
+      default hw = w;
+      field {
+        desc = "indication that the unordered request & response handler is idle.";
+      } non_p2p_unord[0:0];
+      field {
+        desc = "indication that the ordered request & response handler is idle.";
+      } non_p2p_ord[1:1];
+    } csr_sts_handler_idle;
+
+    reg {
+      field {
+        desc = "Number of transactions currently outstanding in AXI read I/F";
+        sw = r;
+        hw = w;
+      } cnt[15:0];
+    } csr_sts_rd_axi_outstanding;
+
+    reg {
+      field {
+        desc = "Number of transactions currently outstanding in AXI write I/F";
+        sw = r;
+        hw = w;
+      } cnt[15:0];
+    } csr_sts_wr_axi_outstanding;
+
+    reg {
+      field {
+        desc = "Number of CHI requests that arrived to the unordered request & response handler that have not yet been answered with a CHI respone (either because they were not yet pushed to AXI I/F, or because they were pushed to AXI I/F but were not yet responded, or because AXI response have arrived but CHI response was not yet released";
+        sw = r;
+        hw = w;
+      } count[15:0];
+    } csr_sts_non_p2p_unord_handler_pending_requests;
+
+    reg {
+      field {
+        desc = "Number of CHI requests that arrived to the ordered request & response handler that have not yet been answered with a CHI respone (either because they were not yet pushed to AXI I/F, or because they were pushed to AXI I/F but were not yet responded, or because AXI response have arrived but CHI response was not yet released";
+        sw = r;
+        hw = w;
+      } count[15:0];
+    } csr_sts_non_p2p_ord_handler_pending_requests;
+  };
+////////////////////////////////////// END non-PCIe AXI I/F /////////////////////////////////////////////////
+
+////////////////////////////////////// PCIe AXI I/F regfile definition /////////////////////////////////////////////////
+  regfile pcie_axi_if_regfile #(
+    longint unsigned WRR_WEIGHT_WIDTH_EDIT1 = 8  // Default width for each WRR weight
+  ){
+    reg {
+      default sw = rw;
+      default hw = r;
+
+      field {
+        desc = "non-p2p ord weight for WRR AXI I/F arbitration";
+      } non_p2p_ord_weight[1*WRR_WEIGHT_WIDTH_EDIT1-1:0] = {{WRR_WEIGHT_WIDTH_EDIT1}{1'b1}};
+      field {
+        desc = "non-p2p unord weight for WRR AXI I/F arbitration";
+      } non_p2p_unord_weight[2*WRR_WEIGHT_WIDTH_EDIT1-1:1*WRR_WEIGHT_WIDTH_EDIT1] = {{WRR_WEIGHT_WIDTH_EDIT1}{1'b1}};
+      field {
+        desc = "p2p pw weight for WRR AXI I/F arbitration";
+      } p2p_pw_weight[3*WRR_WEIGHT_WIDTH_EDIT1-1:2*WRR_WEIGHT_WIDTH_EDIT1] = {{WRR_WEIGHT_WIDTH_EDIT1}{1'b1}};
+      field {
+        desc = "p2p np weight for WRR AXI I/F arbitration";
+      } p2p_np_weight[4*WRR_WEIGHT_WIDTH_EDIT1-1:3*WRR_WEIGHT_WIDTH_EDIT1] = {{WRR_WEIGHT_WIDTH_EDIT1}{1'b1}};
+    } csr_cfg_axi_arb_wrr;
+
+    reg {
+      default sw = rw;
+      default hw = r;
+
+      field {
+        desc = "Value to use for ARQOS field";
+      } arqos[3:0] = 0;
+      field {
+        desc = "Value to use for AWQOS field";
+      } awqos[11:8] = 0;
+    } csr_cfg_axi_fields;
+
+    reg {
+      default sw = rw;
+      default hw = r;
+
+      field {
+        desc = "Limit the maximal number allowed for outstanding write transactions. 0 means unlimited";
+      } max_outstanding[15:0] = 0;
+    } csr_cfg_axi_wr;
+
+    reg {
+      default sw = rw;
+      default hw = r;
+
+      field {
+        desc = "Limit the maximal number allowed for outstanding read transactions. 0 means unlimited";
+      } max_outstanding[15:0] = 0;
+    } csr_cfg_axi_rd;
+
+    reg {
+      default sw = rw;
+      default hw = r;
+
+      field {
+        desc = "AXI I/F supports DATACHK";
+      } datachk[0:0] = 0; // TODO(omerzi): consider changing to 1
+      field {
+        desc = "AXI I/F supports POISON";
+      } poison[8:8] = 1;
+    } csr_cfg_supports;
+
+    reg {
+      default sw = rw;
+      default hw = r;
+
+      field {
+        desc = "Maximal number of ouststanding writes to PCIe config space. Must be aligned with PCIe controller buffer depth, which absorbs PCIe cfg writes without backpressuring the entire AXI write channel";
+      } writes[7:0] = 32;
+    } csr_cfg_max_os_pcie_config;
+
+    reg {
+      default sw = rw;
+      default hw = r;
+
+      field {
+        desc = "Maximal AXI burst length for P2P-NP. This defines the maximal beats (transfers) in an AXI burst. compatible with ARLEN";
+      } len[2:0] = 7;
+    } csr_cfg_p2p_np_max_burst;
+
+    reg {
+      default sw = rw;
+      default hw = r;
+      field {
+        desc = "Maximal AXI burst length for P2P-PW. This defines the maximal beats (transfers) in an AXI burst. compatible with AWLEN";
+      } len[2:0] = 7;
+    } csr_cfg_p2p_pw_max_burst;
+
+    reg {
+      default sw = r;
+      default hw = w;
+      field {
+        desc = "indication that the non-p2p unordered request & response handler is idle.";
+      } non_p2p_unord[0:0];
+      field {
+        desc = "indication that the non-p2p ordered request & response handler is idle.";
+      } non_p2p_ord[1:1];
+      field {
+        desc = "indication that the p2p PW request & response handler is idle.";
+      } p2p_pw[2:2];
+      field {
+        desc = "indication that the p2p NP request & response handler is idle.";
+      } p2p_np[3:3];
+    } csr_sts_handler_idle;
+
+    reg {
+      field {
+        desc = "Number of transactions currently outstanding in AXI read I/F";
+        sw = r;
+        hw = w;
+      } cnt[15:0];
+    } csr_sts_rd_axi_outstanding;
+
+    reg {
+      field {
+        desc = "Number of transactions currently outstanding in AXI write I/F";
+        sw = r;
+        hw = w;
+      } cnt[15:0];
+    } csr_sts_wr_axi_outstanding;
+
+    reg {
+      field {
+        desc = "Number of CHI requests that arrived to the non-p2p unordered request & response handler that have not yet been answered with a CHI respone (either because they were not yet pushed to AXI I/F, or because they were pushed to AXI I/F but were not yet responded, or because AXI response have arrived but CHI response was not yet released";
+        sw = r;
+        hw = w;
+      } count[15:0];
+    } csr_sts_non_p2p_unord_handler_pending_requests;
+
+    reg {
+      field {
+        desc = "Number of CHI requests that arrived to the non-p2p ordered request & response handler that have not yet been answered with a CHI respone (either because they were not yet pushed to AXI I/F, or because they were pushed to AXI I/F but were not yet responded, or because AXI response have arrived but CHI response was not yet released";
+        sw = r;
+        hw = w;
+      } count[15:0];
+    } csr_sts_non_p2p_ord_handler_pending_requests;
+
+    reg {
+      field {
+        desc = "Number of CHI requests that arrived to the p2p PW request & response handler that have not yet been answered with a CHI respone (either because they were not yet pushed to AXI I/F, or because they were pushed to AXI I/F but were not yet responded, or because AXI response have arrived but CHI response was not yet released";
+        sw = r;
+        hw = w;
+      } count[15:0];
+    } csr_sts_p2p_pw_handler_pending_requests;
+
+    reg {
+      field {
+        desc = "Number of CHI requests that arrived to the p2p NP request & response handler that have not yet been answered with a CHI respone (either because they were not yet pushed to AXI I/F, or because they were pushed to AXI I/F but were not yet responded, or because AXI response have arrived but CHI response was not yet released";
+        sw = r;
+        hw = w;
+      } count[15:0];
+    } csr_sts_p2p_np_handler_pending_requests;
+
+  };
+////////////////////////////////////// END PCIe AXI I/F /////////////////////////////////////////////////
+
+  non_pcie_axi_if_regfile #(
+    .WRR_WEIGHT_WIDTH (WRR_WEIGHT_WIDTH))
+  non_pcie_axi_0_if;
+  non_pcie_axi_0_if->ispresent = HAS_AXI_M_0 && ~AXI_M_0_DST_IS_PCIE;
+
+  pcie_axi_if_regfile #(
+    .WRR_WEIGHT_WIDTH (WRR_WEIGHT_WIDTH))
+  pcie_axi_0_if;
+  pcie_axi_0_if->ispresent = HAS_AXI_M_0 && AXI_M_0_DST_IS_PCIE;
+
+  non_pcie_axi_if_regfile #(
+    .WRR_WEIGHT_WIDTH (WRR_WEIGHT_WIDTH))
+  non_pcie_axi_1_if;
+  non_pcie_axi_1_if->ispresent = (HAS_AXI_M_1 && ~AXI_M_1_DST_IS_PCIE);
+
+  pcie_axi_if_regfile #(
+    .WRR_WEIGHT_WIDTH (WRR_WEIGHT_WIDTH))
+  pcie_axi_1_if;
+  pcie_axi_1_if->ispresent = (HAS_AXI_M_1 && AXI_M_1_DST_IS_PCIE);
+
+////////////////////////////////////// DAM //////////////////////////////////////
+  regfile dam_region_cfg_regfile {
+    enum dam_mem_type_enum {
+      DS_DAM_DEVICE        = 2'd0 {desc = "Mem type = device"; };
+      DS_DAM_NORMAL_MEMORY = 2'd1 {desc = "Mem type = Normal Memory"; };
+      DS_DAM_PCIE_CFG      = 2'd2 {desc = "Mem type = PCIE CFG"; };
+      DS_DAM_PCIE_MEMORY   = 2'd3 {desc = "Mem type = PCIE Memory"; };
+    };
+
+    enum dam_order_enum {
+      DS_DAM_NON_RELAXED_ORDER    = 1'd0 {desc = "order = Non-Relaxed (nR)"; };
+      DS_DAM_RELAXED_ORDER        = 1'd1 {desc = "order = Relaxed (R)"; };
+    };
+
+    enum dam_dst_enum {
+      DS_DAM_DST_AXI0      = 2'd0 {desc = "Destination is AXI0 I/F"; };
+      DS_DAM_DST_AXI1      = 2'd1 {desc = "Destination is AXI1 I/F"; };
+      DS_DAM_DST_RSVD1     = 2'd2 {desc = "Reserved, do not use, exists for future generations"; };
+      DS_DAM_DST_RSVD2     = 2'd3 {desc = "Reserved, do not use, exists for future generations"; };
+    };
+
+    reg {
+      default sw = rw;
+      default hw = r;
+      field {
+        desc = "MSB of Start address per DAM region. The region total start address (As seen by HW) will be {addr[31:0], 16'b0}.
+        DAM region is defined by csr_cfg_dam_start[31:0] <= chi_req.addr[47:16] <= csr_cfg_dam_end[31:0]";
+      } addr[31:0] = 0;
+    } csr_cfg_dam_start;
+
+    reg {
+      default sw = rw;
+      default hw = r;
+      field {
+        desc = "MSB of End address per DAM region. The region total end address (As seen by HW) will be {addr[31:0], 16'b0}.
+        DAM region is defined by csr_cfg_dam_start[31:0] <= chi_req.addr[47:16] <= csr_cfg_dam_end[31:0]";
+      } addr[31:0] = 0;
+    } csr_cfg_dam_end;
+
+    reg {
+      default sw = rw;
+      default hw = r;
+      field {
+        desc = "Enable bit per DAM region. '1' means region is enable";
+      } en = 0;
+    } csr_cfg_dam_region;
+
+    reg {
+      default sw = rw;
+      default hw = r;
+      field {
+        desc = "DAM region is configured to be Early Write Acknowledge. '1' means region is EWA, '0' means region is not EWA";
+      } ewa[0:0] = 0;
+      field {
+        desc = "DAM region memory type attribute. See enum for description.";
+        encode = dam_mem_type_enum;
+      } mem_type[9:8] = dam_mem_type_enum::DS_DAM_DEVICE;
+      field {
+        desc = "DAM order attribute. See enum for description.";
+        encode = dam_order_enum;
+      } order[16:16] = dam_order_enum::DS_DAM_NON_RELAXED_ORDER;
+      field {
+        desc = "DAM destination attribute. See enum for description.";
+        encode = dam_dst_enum;
+      } dst[25:24] = dam_dst_enum::DS_DAM_DST_AXI0;
+    } csr_cfg_dam_ctrl;
+  };
+
+  dam_region_cfg_regfile dam_region_cfg[NUM_DAM_REGIONS];
+////////////////////////////////////// END DAM //////////////////////////////////////
+
+////////////////////////////////////// Default responder unsupported request config //////////////////////////////////////
+  regfile default_responder_unsupported_req_cfg_regfile {
+
+    ispresent = HAS_DEFAULT_RESPONDER;
+
+    enum ds_resp_err_enum {
+      DS_NORMAL_OK      = 2'd0 {desc = "CHI resp_err is NORMAL_OK"; };
+      DS_EXCLUSIVE_OK   = 2'd1 {desc = "CHI resp_err is EXCLUSIVE_OK"; };
+      DS_DATA_ERROR     = 2'd2 {desc = "CHI resp_err is DATA_ERROR"; };
+      DS_NON_DATA_ERROR = 2'd3 {desc = "CHI resp_err is NON_DATA_ERROR"; };
+    };
+
+    reg {
+      default sw = rw;
+      default hw = r;
+      field {
+        desc = "MSB of Start address per region. The region total start address (As seen by HW) will be {addr[31:0], 16'b0}.
+        region is defined by csr_cfg_default_responder_unsupported_req_start_addr[31:0] <= chi_req.addr[47:16] <= csr_cfg_default_responder_unsupported_req_end_addr[31:0]";
+      } addr[31:0] = 0;
+    } csr_cfg_default_responder_unsupported_req_start;
+
+    reg {
+      default sw = rw;
+      default hw = r;
+      field {
+        desc = "MSB of End address per region. The region total end address (As seen by HW) will be {addr[31:0], 16'b0}.
+        region is defined by csr_cfg_default_responder_unsupported_req_start_addr[31:0] <= chi_req.addr[47:16] <= csr_cfg_default_responder_unsupported_req_end_addr[31:0]";
+      } addr[31:0] = 0;
+    } csr_cfg_default_responder_unsupported_req_end;
+
+    reg {
+      default sw = rw;
+      default hw = r;
+      field {
+        desc = "Enable bit per region. '1' means region is enable";
+      } en = 0;
+    } csr_cfg_default_responder_unsupported_req_region;
+
+    reg {
+      default sw = rw;
+      default hw = r;
+      field {
+        desc = "This field specifies the resp_err that will be used to respond to requests made to this region";
+        encode = ds_resp_err_enum;
+      } resp_err[1:0] = ds_resp_err_enum::DS_NORMAL_OK;
+      field {
+        desc = "When this field is '1', all bits of CompData.data will be set to '1'. Otherwise, they will be set to '0'";
+      } data_all_ones[2:2] = 1;
+    } csr_cfg_default_responder_unsupported_req;
+  };
+
+  default_responder_unsupported_req_cfg_regfile   default_responder_unsupported_req_cfg[NUM_DEFAULT_RESPONDER_UNSUPPORTED_REQ_REGIONS];
+////////////////////////////////////// END Default responder unsupported request config //////////////////////////////////////
+
+/////////////////////////////////////// TXRSP ///////////////////////////////////////
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "AXI M 0 non-p2p ord tx rsp (ReadReceipt, DBIDResp, CompDBIDResp, Comp) weight for WRR CHI TX RSP I/F arbitration";
+    } weight[WRR_WEIGHT_WIDTH-1:0] = {{WRR_WEIGHT_WIDTH}{1'b1}};
+  } csr_cfg_tx_rsp_arb_wrr_axi_m_0_non_p2p_ord;
+  csr_cfg_tx_rsp_arb_wrr_axi_m_0_non_p2p_ord->ispresent = HAS_AXI_M_0;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "AXI M 0 non-p2p unord tx rsp (ReadReceipt, DBIDResp, CompDBIDResp, Comp) weight for WRR CHI TX RSP I/F arbitration";
+    } weight[WRR_WEIGHT_WIDTH-1:0] = {{WRR_WEIGHT_WIDTH}{1'b1}};
+  } csr_cfg_tx_rsp_arb_wrr_axi_m_0_non_p2p_unord;
+  csr_cfg_tx_rsp_arb_wrr_axi_m_0_non_p2p_unord->ispresent = HAS_AXI_M_0;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "AXI M 0 p2p PW tx rsp (DBIDResp, CompDBIDResp, Comp) weight for WRR CHI TX RSP I/F arbitration";
+    } weight[WRR_WEIGHT_WIDTH-1:0] = {{WRR_WEIGHT_WIDTH}{1'b1}};
+  } csr_cfg_tx_rsp_arb_wrr_axi_m_0_p2p_pw;
+  csr_cfg_tx_rsp_arb_wrr_axi_m_0_p2p_pw->ispresent = (HAS_AXI_M_0 && AXI_M_0_DST_IS_PCIE);
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "AXI M 0 p2p NP tx rsp (ReadReceipt) weight for WRR CHI TX RSP I/F arbitration";
+    } weight[WRR_WEIGHT_WIDTH-1:0] = {{WRR_WEIGHT_WIDTH}{1'b1}};
+  } csr_cfg_tx_rsp_arb_wrr_axi_m_0_p2p_np;
+  csr_cfg_tx_rsp_arb_wrr_axi_m_0_p2p_np->ispresent = (HAS_AXI_M_0 && AXI_M_0_DST_IS_PCIE);
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "AXI M 1 non-p2p ord tx rsp (ReadReceipt, DBIDResp, CompDBIDResp, Comp) weight for WRR CHI TX RSP I/F arbitration";
+    } weight[WRR_WEIGHT_WIDTH-1:0] = {{WRR_WEIGHT_WIDTH}{1'b1}};
+  } csr_cfg_tx_rsp_arb_wrr_axi_m_1_non_p2p_ord;
+  csr_cfg_tx_rsp_arb_wrr_axi_m_1_non_p2p_ord->ispresent = HAS_AXI_M_1;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "AXI M 1 non-p2p unord tx rsp (ReadReceipt, DBIDResp, CompDBIDResp, Comp) weight for WRR CHI TX RSP I/F arbitration";
+    } weight[WRR_WEIGHT_WIDTH-1:0] = {{WRR_WEIGHT_WIDTH}{1'b1}};
+  } csr_cfg_tx_rsp_arb_wrr_axi_m_1_non_p2p_unord;
+  csr_cfg_tx_rsp_arb_wrr_axi_m_1_non_p2p_unord->ispresent = HAS_AXI_M_1;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "AXI M 1 p2p PW tx rsp (DBIDResp, CompDBIDResp, Comp) weight for WRR CHI TX RSP I/F arbitration";
+    } weight[WRR_WEIGHT_WIDTH-1:0] = {{WRR_WEIGHT_WIDTH}{1'b1}};
+  } csr_cfg_tx_rsp_arb_wrr_axi_m_1_p2p_pw;
+  csr_cfg_tx_rsp_arb_wrr_axi_m_1_p2p_pw->ispresent = (HAS_AXI_M_1 && AXI_M_1_DST_IS_PCIE);
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "AXI M 1 p2p NP tx rsp (ReadReceipt) weight for WRR CHI TX RSP I/F arbitration";
+    } weight[WRR_WEIGHT_WIDTH-1:0] = {{WRR_WEIGHT_WIDTH}{1'b1}};
+  } csr_cfg_tx_rsp_arb_wrr_axi_m_1_p2p_np;
+  csr_cfg_tx_rsp_arb_wrr_axi_m_1_p2p_np->ispresent = (HAS_AXI_M_1 && AXI_M_1_DST_IS_PCIE);
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "CSU weight for WRR CHI TX RSP I/F arbitration";
+    } weight[WRR_WEIGHT_WIDTH-1:0] = {{WRR_WEIGHT_WIDTH}{1'b1}};
+  } csr_cfg_tx_rsp_arb_wrr_csu;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "AXI-Stream weight for WRR CHI TX RSP I/F arbitration";
+    } weight[WRR_WEIGHT_WIDTH-1:0] = {{WRR_WEIGHT_WIDTH}{1'b1}};
+  } csr_cfg_tx_rsp_arb_wrr_axis_m;
+  csr_cfg_tx_rsp_arb_wrr_axis_m->ispresent = HAS_AXIS_M;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "Default responder weight for WRR CHI TX RSP I/F arbitration";
+    } weight[WRR_WEIGHT_WIDTH-1:0] = {{WRR_WEIGHT_WIDTH}{1'b1}};
+  } csr_cfg_tx_rsp_arb_wrr_default_responder;
+  csr_cfg_tx_rsp_arb_wrr_default_responder->ispresent = HAS_DEFAULT_RESPONDER;
+
+  reg {
+    field {
+      desc = "Number of link-level credits MIPA currently has to send TXRSP messages";
+      sw = r;
+      hw = w;
+    } count[15:0];
+  } csr_sts_tx_rsp_link_level_credit;
+/////////////////////////////////////// END TXRSP ///////////////////////////////////////
+
+/////////////////////////////////////// TXDAT ///////////////////////////////////////
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "AXI M 0 non-p2p ord weight for WRR CHI TX DAT I/F arbitration";
+    } weight[WRR_WEIGHT_WIDTH-1:0] = {{WRR_WEIGHT_WIDTH}{1'b1}};
+  } csr_cfg_tx_dat_arb_wrr_axi_m_0_non_p2p_ord;
+  csr_cfg_tx_dat_arb_wrr_axi_m_0_non_p2p_ord->ispresent = HAS_AXI_M_0;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "AXI M 0 non-p2p unord weight for WRR CHI TX DAT I/F arbitration";
+    } weight[WRR_WEIGHT_WIDTH-1:0] = {{WRR_WEIGHT_WIDTH}{1'b1}};
+  } csr_cfg_tx_dat_arb_wrr_axi_m_0_non_p2p_unord;
+  csr_cfg_tx_dat_arb_wrr_axi_m_0_non_p2p_unord->ispresent = HAS_AXI_M_0;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "AXI M 0 p2p NP weight for WRR CHI TX DAT I/F arbitration";
+    } weight[WRR_WEIGHT_WIDTH-1:0] = {{WRR_WEIGHT_WIDTH}{1'b1}};
+  } csr_cfg_tx_dat_arb_wrr_axi_m_0_p2p_np;
+  csr_cfg_tx_dat_arb_wrr_axi_m_0_p2p_np->ispresent = (HAS_AXI_M_0 && AXI_M_0_DST_IS_PCIE);
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "AXI M 1 non-p2p ord weight for WRR CHI TX DAT I/F arbitration";
+    } weight[WRR_WEIGHT_WIDTH-1:0] = {{WRR_WEIGHT_WIDTH}{1'b1}};
+  } csr_cfg_tx_dat_arb_wrr_axi_m_1_non_p2p_ord;
+  csr_cfg_tx_dat_arb_wrr_axi_m_1_non_p2p_ord->ispresent = HAS_AXI_M_1;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "AXI M 1 non-p2p unord weight for WRR CHI TX DAT I/F arbitration";
+    } weight[WRR_WEIGHT_WIDTH-1:0] = {{WRR_WEIGHT_WIDTH}{1'b1}};
+  } csr_cfg_tx_dat_arb_wrr_axi_m_1_non_p2p_unord;
+  csr_cfg_tx_dat_arb_wrr_axi_m_1_non_p2p_unord->ispresent = HAS_AXI_M_1;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "AXI M 1 p2p NP weight for WRR CHI TX DAT I/F arbitration";
+    } weight[WRR_WEIGHT_WIDTH-1:0] = {{WRR_WEIGHT_WIDTH}{1'b1}};
+  } csr_cfg_tx_dat_arb_wrr_axi_m_1_p2p_np;
+  csr_cfg_tx_dat_arb_wrr_axi_m_1_p2p_np->ispresent = (HAS_AXI_M_1 && AXI_M_1_DST_IS_PCIE);
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "CSU weight for WRR CHI TX DAT I/F arbitration";
+    } weight[WRR_WEIGHT_WIDTH-1:0] = {{WRR_WEIGHT_WIDTH}{1'b1}};
+  } csr_cfg_tx_dat_arb_wrr_csu;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "Default responder weight for WRR CHI TX DAT I/F arbitration";
+    } weight[WRR_WEIGHT_WIDTH-1:0] = {{WRR_WEIGHT_WIDTH}{1'b1}};
+  } csr_cfg_tx_dat_arb_wrr_default_responder;
+  csr_cfg_tx_dat_arb_wrr_default_responder->ispresent = HAS_DEFAULT_RESPONDER;
+
+  reg {
+    field {
+      desc = "Number of link-level credits MIPA currently has to send TXDAT messages";
+      sw = r;
+      hw = w;
+    } count[15:0];
+  } csr_sts_tx_dat_link_level_credit;
+/////////////////////////////////////// END TXDAT ///////////////////////////////////////
+
+/////////////////////////////////////// General ///////////////////////////////////////
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "Enable generation of read receipt CHI response";
+    } en = 0;
+  } csr_cfg_read_receipt;
+/////////////////////////////////////// END General ///////////////////////////////////////
+
+/////////////////////////////////////// RAS ///////////////////////////////////////
+  enum ras_err_type_enum {
+    DS_RAS_ERR_TYPE_NO_ERROR        = 2'd0 {desc = "No error"; };
+    DS_RAS_ERR_TYPE_CORRECTABLE     = 2'd1 {desc = "Correctable error"; };
+    DS_RAS_ERR_TYPE_DEFERRED        = 2'd2 {desc = "Deferred error"; };
+    DS_RAS_ERR_TYPE_UNCORRECTABLE   = 2'd3 {desc = "Uncorrectable error"; };
+  };
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      encode = ras_err_type_enum;
+      desc = "Error type to generate for write datacheck errors to an AXI I/F that does not support poison";
+    } wr_datachk_err_interface_not_supporting_poison[1:0] = ras_err_type_enum::DS_RAS_ERR_TYPE_UNCORRECTABLE;
+
+    field {
+      encode = ras_err_type_enum;
+      desc = "Error type to generate for write datacheck errors to an AXI I/F that supports poison";
+    } wr_datachk_err_interface_supporting_poison[3:2] = ras_err_type_enum::DS_RAS_ERR_TYPE_DEFERRED;
+
+    field {
+      encode = ras_err_type_enum;
+      desc = "Error type to generate for poisoned write data to an AXI I/F that does not support poison";
+    } wr_poison_err_interface_not_supporting_poison[5:4] = ras_err_type_enum::DS_RAS_ERR_TYPE_UNCORRECTABLE;
+  } csr_cfg_ras_err_type;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "1 - CHI_RXDAT.resp_err == DERR will set all CHI_RXDAT.Poison bits to 1.
+              0 - CHI_RXDAT.resp_err is ignored ";
+    } en = 1;
+  } csr_cfg_resp_err_to_poison;
+/////////////////////////////////////// END RAS ///////////////////////////////////////
+
+};
+
+`endif

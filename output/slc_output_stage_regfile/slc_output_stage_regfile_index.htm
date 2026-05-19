@@ -1,0 +1,466 @@
+<!DOCTYPE html><html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+ <link rel="stylesheet" type="text/css" href="html2.css">
+<script src="html_img/jquery-3.1.1.min.js">
+</script>
+<script src="html_img/searchingChoice.js"></script><script src="html_img/ids.js"></script></head>
+<body>
+      <div class="container">         <div id="index">    
+                            <br/>
+<!-- Progress bar element -->
+                            <div id="progressBarContainer">
+                               <div id="progressBar">
+                                </div>
+                            </div><br><input type="text" oninput="onInput()" id="input" list="dlist" title="search ids element here"><label title="search instace by address" id="addressSearchContainer">
+<input type="checkbox" id="addressSearch" onchange="handleCheckboxChange()" >address search
+
+</label><div id="listDiv">
+                            <br/>
+                            <br/>
+                            <h3 class="index_heading">
+                                <u>INDEX</u>
+                            </h3>
+                            <br/>
+                           <div style=" position:fixed;margin-left:18%">
+                               <a  title="Collapse all Topics" onclick="hideAll()" href="javascript:void(0);"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA6klEQVR4Xq2TTYqDQBCF30ArLt0pepn2Mh7EY7hzPWt3AXOSgIsWXcW1f508QjEMBNNiPqiWhlePLqvqx1qLMygeZVny0yiltO/7kHjeQZZlwTRNErxfAWR5nr8Mtm1r0jTVSZLAha7rtDGmoQkN6KijKMK6rnCB2rZttZTARJrAFckRA8zzzMARRC8l0ADjOH408jwPYRj+vZhtLIrC1nVtq6qyn6CGWuY8+V8CXW937EKN6IkYsL8gl98SeyilqH3/D4IggAPy2vNd+N4ccLaNMTqOY7jQ973sA2QXMs72MAyHlom5p9f5Abs97D+FdaFVAAAAAElFTkSuQmCC" ></img></a>
+                               <a  title="Expand all Topics" onclick="expandAll()" href="javascript:void(0);"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABNklEQVR4Xq1TvWqEQBBeQUWsrPVlvDopgk24JqX4Gj5BCiutQjg40oiBYGtaH0TBzkrBv819e+yibIQLl4FhZnfmG78ZZxVKKblHVJgkSWAKVVVdXdcJ18uZAaZpIsMwcMX5+xI4+L5/LbAsS+E4jmvb9k0E6rp2q6oqUISghSiKaFmWG83znGZZBoUvxYEBljGY55nRXEvf98TzPOanaSrFgREzGMeR6VoAmBfhS3F+VtcJbdtuEsdFfA19M1/TNGJZFjBbBphu13Xk6flFFBjmq33wjuIu+3gnpmkCI7eAqgDti2ALlRlA0lMiAI9Hn9mvs7jDbiD39xkYhiHAbB6rIaJvLpztf/yF/T1QFIV8vr1y2rt7wDYxCIIiDEMax/FNilxggOVv4YDdbprmT48Jsbuf8w8MP0OmQcG1yQAAAABJRU5ErkJggg=="></img></a>
+                            </div>
+                            <br/>
+<ul class="show nav">
+ <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x000&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000&$pEndA=0x3FF&$pBaseN=slc_output_stage_regfile title="0x000" class="decorateHref">slc_output_stage_regfile</a><ul class="expandCollapse show"> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x000&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000&$pEndA=0x3FF&$pBaseN=slc_output_stage_regfile#1.1" title="0x0" class="decorateHref">os_data_gen</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x000&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000&$pEndA=0x3FF&$pBaseN=slc_output_stage_regfile#1.2" title="0x4" class="decorateHref">os_credit_gen</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x000&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000&$pEndA=0x3FF&$pBaseN=slc_output_stage_regfile#1.3" title="0x8" class="decorateHref">os_response_gen</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x000&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000&$pEndA=0x3FF&$pBaseN=slc_output_stage_regfile#1.4" title="0xC" class="decorateHref">os_request_gen</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x000&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000&$pEndA=0x3FF&$pBaseN=slc_output_stage_regfile#1.5" title="0x10" class="decorateHref">os_snoop_gen_bmp</a><ul class="expandCollapse hide"></ul></li> <li class="collapsed"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=csr_slc_rqm&$pBaseA=0x000&$pEndA=0x3FF&$pBaseN=slc_output_stage_regfile#1.6" title="0x014" class="decorateHref">csr_slc_rqm</a><ul class="expandCollapse hide"> <li class="collapsed"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=rqm_sam_region_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.1" title="0x014" class="decorateHref">rqm_sam_region_regfile</a><ul class="expandCollapse hide"> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x93&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014,0x014&$pEndA=0x3FF,0x3FF,0x93&$pBaseN=slc_output_stage_regfile,csr_slc_rqm,rqm_sam_region_regfile#1.6.1.1" title="0x0" class="decorateHref">cfg_rqm_region_start</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x93&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014,0x014&$pEndA=0x3FF,0x3FF,0x93&$pBaseN=slc_output_stage_regfile,csr_slc_rqm,rqm_sam_region_regfile#1.6.1.2" title="0x4" class="decorateHref">cfg_rqm_region_end</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x93&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014,0x014&$pEndA=0x3FF,0x3FF,0x93&$pBaseN=slc_output_stage_regfile,csr_slc_rqm,rqm_sam_region_regfile#1.6.1.3" title="0x8" class="decorateHref">cfg_rqm_region</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x93&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014,0x014&$pEndA=0x3FF,0x3FF,0x93&$pBaseN=slc_output_stage_regfile,csr_slc_rqm,rqm_sam_region_regfile#1.6.1.4" title="0xC" class="decorateHref">cfg_rqm_region_pcie</a><ul class="expandCollapse hide"></ul></li></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.2" title="0x80" class="decorateHref">cfg_rqm_numa</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.3" title="0x90" class="decorateHref">cfg_rqm_mid_index</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.4" title="0xA0" class="decorateHref">cfg_rqm_slc_hashing_override</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.5" title="0xA4" class="decorateHref">cfg_rqm_mid_hashing_override</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.6" title="0xA8" class="decorateHref">cfg_rqm_initial_e2e_credits_np</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.7" title="0xAC" class="decorateHref">cfg_rqm_initial_e2e_credits_p0</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.8" title="0xB0" class="decorateHref">cfg_rqm_initial_e2e_credits_p1</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.9" title="0xB4" class="decorateHref">cfg_rqm_initial_e2e_credits_pw</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.10" title="0xB8" class="decorateHref">cfg_rqm_initial_e2e_credits_hr</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.11" title="0xBC" class="decorateHref">cfg_rqm_initial_e2e_credits_sn</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.12" title="0xC0" class="decorateHref">cfg_rqm_max_p0_p1</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.13" title="0xC4" class="decorateHref">cfg_rqm_cbusy_slc</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.14" title="0xC8" class="decorateHref">cfg_rqm_cbusy_mif</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.15" title="0xCC" class="decorateHref">cfg_rqm_cbusy_use_mif</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.16" title="0xD0" class="decorateHref">cfg_rqm_pcie_peer_to_peer</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.17" title="0x310" class="decorateHref">cfg_rqm_target_mif_table_index</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.18" title="0x330" class="decorateHref">cfg_rqm_table_index_to_mif</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.19" title="0x354" class="decorateHref">cfg_rqm_mif_hashing</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.20" title="0x358" class="decorateHref">cfg_rqm_cbusy_drop_prefetch_tgt</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.21" title="0x35C" class="decorateHref">cfg_rqm_src_numa_id_override</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.22" title="0x360" class="decorateHref">cfg_rqm_eid</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.23" title="0x364" class="decorateHref">cfg_rqm_arb_wrr</a><ul class="expandCollapse hide"></ul></li> <li class="collapsed"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x394&$endA=0x3FF&$baseN=cfg_rate_limiter_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.24" title="0x394" class="decorateHref">cfg_rate_limiter_regfile</a><ul class="expandCollapse hide"> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x394&$endA=0x3B3&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014,0x394&$pEndA=0x3FF,0x3FF,0x3B3&$pBaseN=slc_output_stage_regfile,csr_slc_rqm,cfg_rate_limiter_regfile#1.6.24.1" title="0x0" class="decorateHref">cfg_rqm_rate_limiter</a><ul class="expandCollapse hide"></ul></li></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.25" title="0x3A0" class="decorateHref">cfg_rqm_core_p1_opcodes</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.26" title="0x3B0" class="decorateHref">cfg_rqm_core_p0_p1_expected_opcodes</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.27" title="0x3C0" class="decorateHref">cfg_rqm_miphb_read_opcodes</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.28" title="0x3D0" class="decorateHref">cfg_rqm_color_override</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.29" title="0x3D4" class="decorateHref">cfg_rqm_fabric_config_space</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.30" title="0x3D8" class="decorateHref">cfg_rqm_ccr</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.31" title="0x3E4" class="decorateHref">cfg_rqm_core_config_space</a><ul class="expandCollapse hide"></ul></li> <li class="expanded"><a data-addr="slc_output_stage_regfile.htm?$baseA=0x014&$endA=0x3FF&$baseN=slc_output_stage_regfile&$pBaseA=0x000,0x014&$pEndA=0x3FF,0x3FF&$pBaseN=slc_output_stage_regfile,csr_slc_rqm#1.6.32" title="0x3E8" class="decorateHref">cfg_rqm_chiplet</a><ul class="expandCollapse hide"></ul></li></ul></li></ul>
+</li>
+</ul>
+</br>
+</br>
+</div>
+</div>
+ <div id="html2" style=" height:100%;" class="svg-container"><div id="blockDiv"><iframe id="iframeContainer" src="slc_output_stage_regfile.htm">
+</iframe>
+</div>
+</div>
+</tbody>
+</table>
+</div><Style>#addressSearchContainer {
+ left:190px;
+ position:relative;
+ 
+ font-size: 13px;
+ vertical-align:bottom;
+
+}
+
+#progressBarContainer {
+
+  width: 53%;
+  height: 5px;
+  background-color: #f0f0f0;
+  border-radius: 14px;
+  overflow: hidden;
+  left: 10px;
+  position: relative; /* Add position: relative to make absolute positioning work */
+}
+#input {
+    left: 10px;
+}
+#progressBar {
+  height: 80%;
+  width: 0%;
+  background-color: #05e82e; /* Change this color to your preferred color */
+  transition: width 0.2s ease-in-out; /* Add smooth transition animation */
+}
+
+#progressText {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #000; /* Change this color to your preferred color */
+  font-size: 2px; /* Adjust font size as needed */
+}</Style><script type="text/javascript">
+                   window.onload = function () {
+            var url = document.location.href,
+                params = url.split("?")[1].split("&"),
+                data = {}, tmp;
+for (var i = 0; i < params.length; i++) {
+  if (params[i].includes("#")) {
+    params[i] = params[i].split("#")[0];
+  }
+}            for (var i = 0, l = params.length; i < l; i++) {
+                tmp = params[i].split("=");
+                data[tmp[0]] = tmp[1];
+            }
+            var blockList = document.getElementsByClassName("baseName");
+            for (var i = 0; i < blockList.length; i++) {
+                blockList[i].innerHTML = blockList[i].innerHTML.replace('$baseN', data.$baseN).replace('%20', ' ');
+            }
+            var hPathList = document.getElementsByClassName("hPath");
+            for (var i = 0; i < hPathList.length; i++) {
+                var pBaseA = data.$pBaseA.split(",");
+                var pEndA = data.$pEndA.split(",");
+                var pBaseN = data.$pBaseN.split(",");
+                var baseA = '$baseA';
+                var endA = '$endA';
+                var baseN = '$baseN';
+                var valid = '$baseA=$baseA';
+
+                if (i < hPathList.length - 1) {
+                    var baseAValue = pBaseA[i];
+                    var endValue = pEndA[i];
+                    var baseNValue = pBaseN[i];
+                    
+                    var check = hPathList[i].innerHTML.lastIndexOf(valid);
+                    if (check > 0) {
+                        var baseAIndex = hPathList[i].innerHTML.lastIndexOf(baseA);
+                        if (baseAIndex > 0) {
+                            var ptone1 = hPathList[i].innerHTML.substring(0, baseAIndex);
+                            var pttwo1 = hPathList[i].innerHTML.substring(baseAIndex + (baseA.length));
+                            hPathList[i].innerHTML = ptone1 + baseAValue + pttwo1;
+                        }
+                        var endAIndex = hPathList[i].innerHTML.lastIndexOf(endA);
+                        if (endAIndex > 0) {
+                            var ptone1 = hPathList[i].innerHTML.substring(0, endAIndex);
+                            var pttwo1 = hPathList[i].innerHTML.substring(endAIndex + (endA.length));
+                            hPathList[i].innerHTML = ptone1 + endValue + pttwo1;
+                        }
+                        var baseNIndex = hPathList[i].innerHTML.lastIndexOf(baseN);
+                        if (baseNIndex > 0) {
+                            var ptone1 = hPathList[i].innerHTML.substring(0, baseNIndex);
+                            var pttwo1 = hPathList[i].innerHTML.substring(baseNIndex + (baseN.length));
+                            hPathList[i].innerHTML = ptone1 + baseNValue + pttwo1;
+                        }
+                        hPathList[i].getElementsByClassName("hPathName")[0].innerHTML = baseNValue;
+                    }
+                    
+                    var pBaseAName = '$pBaseA';
+                    var pEndName = '$pEndA';
+                    var pBaseName = '$pBaseN';
+                    var pBaseAV = '';
+                    var pEndAV = '';
+                    var pBaseNV = '';
+                    if ( i == 0 ) { 
+                        pBaseAV = pBaseA[i];
+                        pEndAV = pEndA[i];
+                        pBaseNV = pBaseN[i];
+                    } else {
+                        for (var j = 0; j < i; j++) {
+                            if (j == 0) {
+                                pBaseAV = pBaseA[j];
+                                pEndAV = pEndA[j];
+                                pBaseNV = pBaseN[j];
+                            } else {
+                                pBaseAV = pBaseAV + "," + pBaseA[j];
+                                pEndAV = pEndAV + "," + pEndA[j];
+                                pBaseNV = pBaseNV + "," + pBaseN[j];
+                            }
+    
+                        }
+                    }
+
+                    var pBaseANameIndex = hPathList[i].innerHTML.lastIndexOf(pBaseAName);
+                    if (pBaseANameIndex > 0) {
+                        var ptone1 = hPathList[i].innerHTML.substring(0, pBaseANameIndex);
+                        var pttwo1 = hPathList[i].innerHTML.substring(pBaseANameIndex + (pBaseAName.length));
+                        hPathList[i].innerHTML = ptone1 + pBaseAV + pttwo1;
+                    }
+                    var pEndNameIndex = hPathList[i].innerHTML.lastIndexOf(pEndName);
+                    if (pEndNameIndex > 0) {
+                        var ptone1 = hPathList[i].innerHTML.substring(0, pEndNameIndex);
+                        var pttwo1 = hPathList[i].innerHTML.substring(pEndNameIndex + (pEndName.length));
+                        hPathList[i].innerHTML = ptone1 + pEndAV + pttwo1;
+                    }
+                    var pBaseNameIndex = hPathList[i].innerHTML.lastIndexOf(pBaseName);
+                    if (pBaseNameIndex > 0) {
+                        var ptone1 = hPathList[i].innerHTML.substring(0, pBaseNameIndex);
+                        var pttwo1 = hPathList[i].innerHTML.substring(pBaseNameIndex + (pBaseName.length));
+                        hPathList[i].innerHTML = ptone1 + pBaseNV + pttwo1;
+                    }
+                } else {
+                    var baseAValue = data.$baseA;
+                    var endValue = data.$endA;
+                    var baseNValue = data.$baseN;
+                    var check = hPathList[i].innerHTML.lastIndexOf(valid);
+                    if (check > 0) {
+                        var baseAIndex = hPathList[i].innerHTML.lastIndexOf(baseA);
+                        if (baseAIndex > 0) {
+                            var ptone1 = hPathList[i].innerHTML.substring(0, baseAIndex);
+                            var pttwo1 = hPathList[i].innerHTML.substring(baseAIndex + (baseA.length));
+                            hPathList[i].innerHTML = ptone1 + baseAValue + pttwo1;
+                        }
+                        var endAIndex = hPathList[i].innerHTML.lastIndexOf(endA);
+                        if (endAIndex > 0) {
+                            var ptone1 = hPathList[i].innerHTML.substring(0, endAIndex);
+                            var pttwo1 = hPathList[i].innerHTML.substring(endAIndex + (endA.length));
+                            hPathList[i].innerHTML = ptone1 + endValue + pttwo1;
+                        }
+                        var baseNIndex = hPathList[i].innerHTML.lastIndexOf(baseN);
+                        if (baseNIndex > 0) {
+                            var ptone1 = hPathList[i].innerHTML.substring(0, baseNIndex);
+                            var pttwo1 = hPathList[i].innerHTML.substring(baseNIndex + (baseN.length));
+                            hPathList[i].innerHTML = ptone1 + baseNValue + pttwo1;
+                        }
+                        hPathList[i].getElementsByClassName("hPathName")[0].innerHTML = baseNValue;
+                    }
+                    
+                    var pBaseAName = '$pBaseA';
+                    var pEndName = '$pEndA';
+                    var pBaseName = '$pBaseN';
+                    var pBaseAV = data.$pBaseA;
+                    var pEndAV = data.$pEndA;
+                    var pBaseNV = data.$pBaseN;
+
+                    var pBaseANameIndex = hPathList[i].innerHTML.lastIndexOf(pBaseAName);
+                    if (pBaseANameIndex > 0) {
+                        var ptone1 = hPathList[i].innerHTML.substring(0, pBaseANameIndex);
+                        var pttwo1 = hPathList[i].innerHTML.substring(pBaseANameIndex + (pBaseAName.length));
+                        hPathList[i].innerHTML = ptone1 + pBaseAV + pttwo1;
+                    }
+                    var pEndNameIndex = hPathList[i].innerHTML.lastIndexOf(pEndName);
+                    if (pEndNameIndex > 0) {
+                        var ptone1 = hPathList[i].innerHTML.substring(0, pEndNameIndex);
+                        var pttwo1 = hPathList[i].innerHTML.substring(pEndNameIndex + (pEndName.length));
+                        hPathList[i].innerHTML = ptone1 + pEndAV + pttwo1;
+                    }
+                    var pBaseNameIndex = hPathList[i].innerHTML.lastIndexOf(pBaseName);
+                    if (pBaseNameIndex > 0) {
+                        var ptone1 = hPathList[i].innerHTML.substring(0, pBaseNameIndex);
+                        var pttwo1 = hPathList[i].innerHTML.substring(pBaseNameIndex + (pBaseName.length));
+                        hPathList[i].innerHTML = ptone1 + pBaseNV + pttwo1;
+                    }
+                    hPathList[i].getElementsByClassName("hPathName")[0].innerHTML = data.$baseN;
+                }
+            }
+
+
+
+
+            var reg_grop_list = document.getElementsByClassName("address");
+            for (var i = 0; i < reg_grop_list.length; i++) {
+                var offset = $(reg_grop_list[i]).attr('offset');
+                offset = parseInt(offset);
+                var baseAddr = parseInt(data.$baseA, 16);
+                try {
+                                       var totalAddr = BigInt(offset) + BigInt(baseAddr);
+                                       totalAddr = totalAddr.toString(16);
+                                   } catch (error) {
+                                       totalAddr = "..."; // Set value as "..." if BigInt conversion fails
+                                   }                var baseValue = '0x' + totalAddr.toUpperCase();
+                var endValue = data.$endA.toUpperCase();
+                var baseName = '$baseA';
+                var endName = '$endA';
+                var pBaseA = '$pBaseA';
+                var pBaseAValue = data.$pBaseA + ',' + data.$baseA;
+                var pEnd = '$pEndA';
+                var pEndValue = data.$pEndA + ',' + data.$endA;
+                var pBaseName = '$pBaseN';
+                var pBaseValue = data.$pBaseN + ',' + data.$baseN;
+                var baseLastIndex = reg_grop_list[i].innerHTML.lastIndexOf(baseName);
+                var ptone = reg_grop_list[i].innerHTML.substring(0, baseLastIndex);
+                var pttwo = reg_grop_list[i].innerHTML.substring(baseLastIndex + (baseName.length));
+                reg_grop_list[i].innerHTML = ptone + baseValue + pttwo;
+
+                var endLastIndex = reg_grop_list[i].innerHTML.lastIndexOf(endName);
+                if (endLastIndex > 0) {
+                    var ptone1 = reg_grop_list[i].innerHTML.substring(0, endLastIndex);
+                    var pttwo1 = reg_grop_list[i].innerHTML.substring(endLastIndex + (endName.length));
+                    reg_grop_list[i].innerHTML = ptone1 + endValue + pttwo1;
+                }
+                var pBaseAIndex = reg_grop_list[i].innerHTML.lastIndexOf(pBaseA);
+                if (pBaseAIndex > 0) {
+                    var ptone1 = reg_grop_list[i].innerHTML.substring(0, pBaseAIndex);
+                    var pttwo1 = reg_grop_list[i].innerHTML.substring(pBaseAIndex + (pBaseA.length));
+                    reg_grop_list[i].innerHTML = ptone1 + pBaseAValue + pttwo1;
+                }
+                var pEndAIndex = reg_grop_list[i].innerHTML.lastIndexOf(pEnd);
+                if (pEndAIndex > 0) {
+                    var ptone1 = reg_grop_list[i].innerHTML.substring(0, pEndAIndex);
+                    var pttwo1 = reg_grop_list[i].innerHTML.substring(pEndAIndex + (pEnd.length));
+                    reg_grop_list[i].innerHTML = ptone1 + pEndValue + pttwo1;
+                }
+
+                var pBaseNameIndex = reg_grop_list[i].innerHTML.lastIndexOf(pBaseName);
+                if (pBaseNameIndex > 0) {
+                    var ptone1 = reg_grop_list[i].innerHTML.substring(0, pBaseNameIndex);
+                    var pttwo1 = reg_grop_list[i].innerHTML.substring(pBaseNameIndex + (pBaseName.length));
+                    reg_grop_list[i].innerHTML = ptone1 + pBaseValue + pttwo1;
+                }
+            }
+
+        }
+                var text = $("#filePath").text();
+                if(text.length > 50)
+                {
+                    var path = text.slice(0,20);
+                    var dot = ".....".fontcolor("blue");
+                    var regSlash = /\s*\/|\\\s*/;
+                    var pathList = text.split(regSlash);
+                    path = path + dot + pathList[pathList.length-1];
+                    var replaced = $("#filePath").html().replace(text,path);
+                    $("#filePath").html(replaced);
+                }
+                    
+                 // when INDEX's li(element) is clicked, expand, collapse and reach to the url specified in li in anchor tag
+                 $('li').on('click', function(event) 
+                 {
+                    if($(this).children().length >1)
+                    {                        
+                         if($(this).hasClass('expanded')) 
+						{
+						   $(this).removeClass('expanded');
+						   $(this).addClass('collapsed');
+						   $(this).children('ul').removeClass('show');//remove with class show of child of current li having tag, ul
+						   $(this).children('ul').addClass('hide');
+						}
+						else if($(this).hasClass('collapsed'))
+						{
+						   $(this).removeClass('collapsed');
+						   $(this).addClass('expanded');
+						   $(this).children('ul').removeClass('hide');//remove with class show of child of current li having tag, ul
+						   $(this).children('ul').addClass('show');
+						}
+                        //$(this).children('ul').slideToggle(50);//do it when not applied to children 'ul' tag to remove or add class
+                    }
+                    event.stopPropagation();
+                });
+                
+                /*function hideAll()
+                {
+                    $('#listDiv').find('ul:not(:first)').each(function(){//do not consider root child, else it will collapse too
+                        if($(this).hasClass('show'))//if ul has show class
+                        {
+                            $(this).removeClass('show');
+                            $(this).addClass('hide');//add hide clas
+                            $(this).children().each(function(){//iterate through each li tag
+                            if($(this).find('li:not(:last)').hasClass("expanded"))//if li has expanded class, make it collapsed
+                                    {
+                                        $(this).removeClass('expanded');
+                                        $(this).addClass('collapsed');
+                                    }
+                                });
+                         }
+                     });
+                     $('#listDiv').find('ul').each(function(){//root node is collapsed
+                        //console.log("i am first");
+                        if($(this).hasClass('show')){//don't add hide class to ul
+                            $(this).children().each(function(){
+                                if($(this).hasClass("expanded"))
+                                {
+                                    $(this).removeClass('expanded');
+                                    $(this).addClass('collapsed');
+                                }
+                            });
+                        }
+                    });
+                }*/
+                function hideAll()
+                {
+                //$('#listDiv').find('ul:not(:first)').each(function(){//do not consider root child, else it will collapse too
+                     $('#listDiv').find('ul').each(function(){
+                     if(!($(this).hasClass("nav")))
+                        if(($(this).hasClass("show"))){
+                     /*do not consider root child with class nav, else it will collapse too*/
+                                $(this).removeClass("show");
+                                $(this).addClass("hide");
+                                //$(this).addClass("u saw");
+                            }
+                            $(this).children().each(function(){//iterate through li as children of ul
+                                {
+                                    if($(this).children().length > 1)//if ul has children more than one
+                                    {
+                                        if($(this).hasClass("expanded")){
+                                            $(this).removeClass("expanded");
+                                            $(this).addClass("collapsed");
+                                        }
+                                    }else
+                                    {
+                                        if($(this).hasClass("collapsed"))
+                                        {
+                                            $(this).removeClass("collapsed");
+                                            $(this).addClass("expanded");
+                                        }
+                                    }
+                                }
+                            });
+                     });
+                }
+                function expandAll()
+                {
+                    $('#listDiv').find('ul').each(function(){
+                         if($(this).hasClass('hide'))//if ul tag has class hide
+                         {
+                         $(this).removeClass('hide');
+                         $(this).addClass('show');
+                            $(this).children().each(function(){//iterate through each child
+                                if($(this).hasClass("collapsed"))//if child has collapsed class
+                                {
+                                    $(this).removeClass('collapsed');
+                                    $(this).addClass('expanded');
+                                }
+                            });
+                            }
+                            if($(this).hasClass('show')){//if ul tag has class show
+                                 $(this).children().each(function(){//iterate through each child
+                                      if($(this).hasClass("collapsed"))//if child has collapsed class
+                                      {
+                                           $(this).removeClass('collapsed');
+                                           $(this).addClass('expanded');
+                                      }
+                                 });
+                            }                            
+                    });
+                }
+                
+                function expandedLi(ex)
+                {
+                    console.log("i am in expandedLi");
+                    ex.children().each(function(){
+                        console.log("i am having children");
+                        if(ex.hasClass("collapsed"))
+                        {
+                            console.log("I am collapsed");
+                            ex.removeClass('collapsed');
+                            ex.addClass('expanded');
+                        }
+                        else
+                        {
+                            console.log("I am not getting collapsed");
+                        }
+                        if(ex.hasClass("expanded"))
+                        {
+                            console.log("I am exposed");
+                        }
+                        if(ex.hasClass("show"))
+                        {
+                            console.log("I am shown");
+                        }
+                        if(ex.hasClass("hide"))
+                        {
+                            console.log("I am hidden");
+                        }
+                    });
+                }
+                
+                // apply to printer image to print
+                function print_me()
+                {
+                    var content = document.getElementById('html2').innerHTML;
+                    var win = window.open();
+                    win.document.write(content);
+                    win.print();
+                    win.close();
+                }
+                
+// Add event listener for window.onload to handle the unchecked condition
+window.onload = function() {
+    try {
+        // Assuming 'addressSearch' is the ID of your checkbox
+        var checkbox = document.getElementById('addressSearch');
+        if (checkbox && checkbox!=null && !checkbox.checked) {
+            handleCheckboxChange();
+        }
+    } catch (error) {
+        // If there's an error (element doesn't exist or any other error), do nothing
+        console.error('An error occurred:', error);
+    }
+};                </script></body>
+</html>

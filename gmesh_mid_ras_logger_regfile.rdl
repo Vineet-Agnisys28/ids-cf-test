@@ -1,0 +1,42 @@
+`include "idsProperty2a.rdl"
+`include "gmesh_ras_logger_regfile.rdl"
+
+
+`ifndef _GMESH_MID_RAS_LOGGER_REGFILE_
+`define _GMESH_MID_RAS_LOGGER_REGFILE_
+
+regfile gmesh_mid_ras_logger_regfile #(
+  bit HAS_ADDR_REG = 0
+) {
+
+  name = "gmesh_ras_logger_regfile";
+  desc = "gMesh RAS logger regfile";
+  enum gmesh_mid_block_id_enum {
+    // Start | Auto generated code - DO NOT EDIT/DELETE
+    kBlockMemMidInputQueueHpr {desc = "mid block id of mem_mid_input_queue_hpr memory - ECC Mode: Normal";};
+    kBlockMemMidInputQueueLpr {desc = "mid block id of mem_mid_input_queue_lpr memory - ECC Mode: Normal";};
+    kBlockMemMidInputQueueWr {desc = "mid block id of mem_mid_input_queue_wr memory - ECC Mode: Normal";};
+    kBlockMemMidWrDataBuffer {desc = "mid block id of mem_mid_wr_data_buffer memory - ECC Mode: Normal";};
+    kBlockMemMidRdCompBuffer {desc = "mid block id of mem_mid_rd_comp_buffer memory - ECC Mode: Normal";};
+    kBlockMemMidWrCompBuffer {desc = "mid block id of mem_mid_wr_comp_buffer memory - ECC Mode: Normal";};
+    // End   | Auto generated code - DO NOT EDIT/DELETE
+    kMidRasInvalidOpcode    {desc = "MID input Stage recieved Invalid OpCode - flit was ignored";};
+    kMidRasInvalidQos       {desc = "MID input Stage recieved Invalid Qos - flit was ignored";};
+    kMidRasInvalidTgtType   {desc = "MID cfg recieved Invalid TgtType - PSLVERR was responded";};
+    kMidRasWrTzViolation    {desc = "Write Request was initiated to UnTrusted Zone.";};
+    kMidRasRdTzLprViolation {desc = "Read LPR Request was initiated to UnTrusted Zone.";};
+    kMidRasRdTzHprViolation {desc = "Read HPR Request was initiated to UnTrusted Zone.";};
+    kMidRasSysCrdOverflow   {desc = "MID Input Request count overflow max End2End Credit allocation.";};
+  };
+
+
+  gmesh_ras_logger_regfile #(
+    // Start | Auto generated code - DO NOT EDIT/DELETE
+    .NUM_PRODUCERS(13)
+    // End   | Auto generated code - DO NOT EDIT/DELETE
+  ) logger;
+
+  logger.logger.sts_ras_logger_err_misc_0_1.block_id->encode = gmesh_mid_block_id_enum;
+
+};
+`endif

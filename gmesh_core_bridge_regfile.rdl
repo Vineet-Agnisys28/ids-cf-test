@@ -1,0 +1,182 @@
+`include "idsProperty2a.rdl"
+`include "gmesh_rqm_regfile.rdl"
+
+`ifndef _GMESH_CORE_BRIDGE_REGFILE_
+`define _GMESH_CORE_BRIDGE_REGFILE_
+
+regfile gmesh_core_bridge_regfile #(
+  longint unsigned MPAM_WIDTH = 12 // TODO(omered) : remove?
+){
+  name = "gmesh_core_bridge_regfile";
+  desc = "Core Bridge CSR Register File";
+
+  default sw = rw;
+  default hw = r;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "If set, the MI-C will override the input flit's MPAM
+             and will assign a new MPAM based on cfg_mpam_override_value register";
+    } en[0:0] = 0;
+    field {
+      desc = "The value of the MPAM to use in case cfg_mpam_override_en is set";
+    } value[19:8] = 0;
+  } cfg_mpam_override;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "If set, the MI-C will override ActiveMPAM
+             and will assign a new ActiveMPAM based on cfg_active_mpam_override_value register";
+    } en[0:0] = 0;
+    field {
+      desc = "The value of the ActiveMPAM to use in case cfg_active_mpam_override_en is set";
+    } value[19:8] = 0;
+  } cfg_active_mpam_override;
+
+  //TODO(omered) : remove when MIPA implement
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "If set, the MI-C will override the core's coherent state
+             and will assign a new coherent state based on cfg_coherent_state_override_value register";
+    } en[0:0] = 0;
+    field {
+      desc = "The value of the SYSCOREQ signal (coherent state) to use in case cfg_coherent_state_override_en is set";
+    } value[4:4] = 0;
+  } cfg_coherent_state_override;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "The value of LPID field to use in case cfg_lpid_override_en is set.
+              The LPID must be programmed to a unique value";
+    } value[8:0] = 0;
+    field {
+      desc = "If set, the MI-C will overrdie the core's LPID value";
+    } en[12:12] = 1'b1;
+  } cfg_lpid_override;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      // TODO(omered) : change move_to_act, move_to_deact to be cleared by HW
+      desc = "Force the tx link to move to ACTIVATE state.
+              When set, and if both rx link and tx link are in STOP state, the
+              tx link will move to ACTIVATE";
+    } move_to_act[0:0] = 0;
+    field {
+      desc = "Force the tx link to move to DEACTIVATE state.
+              Shall be set when the MI-C have no more flits to
+              send to the core";
+    } move_to_deact[4:4] = 0;
+    field {
+      desc = "Delay the transtion from RUN state to DEACTIVATE state
+              by deactivation_delay_cycles.
+              Moving to DEACT state shall be done only when the MI-C
+              have no more flits to send to the core";
+     } deactivation_delay_cycles[14:8] = 7'b1;
+  } cfg_tx_link;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "Set the core_TXSACTIVE signal";
+    } set[0:0] = 0;
+    field {
+      desc = "Clear the core_TXSACTIVE signal
+      (will clear only if core_RXSACTIVE is deasserted)";
+    } clear[8:8] = 0;
+  } cfg_tx_s_active;
+
+  reg  {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "gMesh CHI c_busy is 2 bits, native CHI.F c_busy is 3 bits. The translation is done using this register";
+    } cbusy[2:0] = 0; // NATIVE_CHI_CBUSY_WIDTH
+  } cfg_gmesh_chi_cbusy_to_native_chi[4]; // RQM_NUM_CBUSY
+
+`ifndef IGNORE_HETEROGENEOUS_ARRAY_ASSIGNMENT
+  cfg_gmesh_chi_cbusy_to_native_chi[0].cbusy-> reset = 3'd0;
+  cfg_gmesh_chi_cbusy_to_native_chi[1].cbusy-> reset = 3'd1;
+  cfg_gmesh_chi_cbusy_to_native_chi[2].cbusy-> reset = 3'd2;
+  cfg_gmesh_chi_cbusy_to_native_chi[3].cbusy-> reset = 3'd3;
+`endif
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "The translation between gCHI data_source and native CHI.F data_source";
+    } data_source[4:0] = 0; // NATIVE_CHI_DATA_SOURCE_WIDTH
+  } cfg_gmesh_chi_data_source_to_native_chi[32];
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "The NumaID the MI-C belongs to";
+    } id[1:0] = 0; // RQM_NUM_NUMA_WIDTH
+  } cfg_self_numa;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "If set, the MI-C will generate read receipt responses when core
+              send read requests with special order requirements (order != 2’b00)";
+    } en[0:0] = 1'b1;
+  } cfg_generate_read_receipt;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "If set, the Core Bridge will send Snp Invalid response when getting snp and SYSCOREQ is 0
+             (even if SYSCOACK is 1)";
+    } in_disconnect[0:0] = 1'b1;
+    field {
+      desc = "If set, the Core Bridge will send Snp Invalid response when getting snp and
+              both SYSCOREQ and SYSCOACK are 0";
+     } in_disabled[8:8] = 1'b1;
+  } cfg_send_snp_invalid;
+
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "If set, poison towards the core will not take into account data check errors,
+              and data check will be calculated";
+    } data_check[0:0] = 0;
+  } cfg_native_chi_support;
+
+  gmesh_rqm_regfile #(
+    .IS_SLC (0),
+    .IS_MIC (1),
+    .HAS_NP (1),
+    .HAS_P0 (1),
+    .HAS_P1 (1),
+    .HAS_PW (0),
+    .HAS_HR (0),
+    .HAS_SN (0),
+    .E2E_CREDIT_WIDTH (4)
+  ) csr_core_bridge_rqm;
+
+  // TODO(omered) : Add chicken of not override SNP when core is not in coherent.
+
+  // TODO(omered) : Add Debug/Status registers
+
+
+
+};
+
+`endif

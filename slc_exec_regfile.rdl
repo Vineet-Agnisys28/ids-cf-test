@@ -1,0 +1,465 @@
+`include "idsProperty2a.rdl"
+
+`ifndef _SLC_EXEC_REGFILE_
+`define _SLC_EXEC_REGFILE_
+
+regfile slc_exec_regfile #(
+  longint unsigned NUM_CAID_BITMAPS = 4,
+  longint unsigned SLC_DATA_MEM_ADDR_WIDTH = 14,
+  longint unsigned SLC_TAG_WIDTH = 34,
+  longint unsigned SLC_TAG_MEM_ADDR_WIDTH = 10,
+  longint unsigned SLC_TAG_MEM_NUM_WAYS_WIDTH = 4,
+  longint unsigned SF_TAG_WIDTH = 33,
+  longint unsigned SF_LINE_WIDTH = 38,
+  longint unsigned SF_NUMA_BITMAP_WIDTH = 4,
+  longint unsigned SF_MEM_ADDR_WIDTH = 11,
+  longint unsigned SF_MEM_NUM_WAYS_WIDTH = 5
+){
+  name = "slc_exec_regfile";
+  desc = "SLC Execution Stage CSR Register File";
+
+  // Numa Configuration
+  // ==================
+  // TODO(ddayan): remove all of these once the RQM supports SLC type
+  reg {
+    field {
+      desc = "Numa ID settings";
+      sw = rw;
+      hw = r;
+    } numa_id[1:0] = 0;
+  } numa_cluster_ctrl;
+
+  reg numa_cluster_caid_list_reg {
+    field {
+      desc = "Bitmaps of Caching Agent ID associated with the SLC
+      Array of bitmaps, each corresponds to 32 CAIDs
+      bitmap[i][j] corresponds to CAID 32 * i + j
+      ";
+      sw = rw;
+      hw = r;
+    } bitmap[31:0] = 0;
+  };
+  numa_cluster_caid_list_reg numa_cluster_caid[NUM_CAID_BITMAPS];
+
+  // Cache Quota Configuration
+  // =========================
+
+
+  reg {
+    desc = "Hint Map Table.
+        maps {
+          history_bit[0:0],
+          pbha_sel[1:0],
+          slc_rep_hint[1:0],
+          likely_shared[0:0],
+          allocate_attr[0:0]
+        } into a 3b hint for allocation
+    ";
+    field {
+      sw = rw;
+      hw = r;
+    } value[2:0] = 0;
+  } hint_map_table[128];
+
+  reg {
+    field {
+      desc = "PBHA selector. 0 = [1:0], 1 = [2:1], 2 = [3:2]";
+      sw = rw;
+      hw = r;
+    } value [1:0] = 0;
+  } pbha_selector;
+
+  reg {
+    desc = "Priority Map Table.
+        maps {profile[3:0], hint[2:0]} to a priority of 0 to 7.
+    ";
+    field {
+      sw = rw;
+      hw = r;
+    } value[2:0] = 3'd7;
+  } priority_map_table[128];
+
+  reg {
+    desc = "Profile Way Mask Table.
+        Limits the SLC way associativity for allocation of jobs by providing
+        a way masking vector per profile.
+        Every bit corresponds to a way, and by asserting it is considered
+        invalid for allocation.
+    ";
+    field {
+      sw = rw;
+      hw = r;
+    } mask[15:0] = 15'd0;
+  } profile_way_mask_table[16];
+
+
+  reg {
+    desc = "SLC Replacement Control";
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "Replacement Policy
+          0 = LRU
+          1 = Pseudo Random
+      ";
+    } policy[0:0] = 0;
+    field {
+      desc = "Enable priority override for aging.
+          Setting this will enable changing the priority of a line with some
+          probability and acts as an aging mechanism.
+          Applicapable only for LRU mode.
+      ";
+    } priority_override_en[4:4] = 0;
+    field {
+      desc = "Priority override probability configuration.
+          Sets a threshold which is compared agaist a Pseudo-Random 10b LFSR
+          number. In case the number is bigger than the threshold, the priority
+          of the allocating line is overriden to the highest value.
+          I.e. setting the threshold to 768 gives a 25% chance for overriding
+          the priority.
+          Applicapable only for LRU mode and when override is enabled.
+      ";
+    } priority_override_probability[17:8] = 0;
+    field {
+      desc = "Configures the sharing pattern threshold for allocating reads.
+          Setting this to N means that once a line is shared between N CAIDs and
+          a new shared read request is received, the line becomes eligible for
+          allocation.
+      ";
+    } read_sharing_pattern_threshold[26:24] = 3'd2;
+  } slc_replacement_ctrl;
+
+  reg {
+    desc = "SF Replacement Control";
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "Replacement Policy
+          0 = PLRU
+          1 = Pseudo Random
+      ";
+    } policy[0:0] = 0;
+    field {
+      desc = "Prefer Local Victim
+          set to enable replacement that prioritize local lines.
+      ";
+    } prefer_local_victim[4:4] = 0;
+  } sf_replacement_ctrl;
+
+  // Misc
+  // =======
+  reg {
+    desc = "On Chip Memory Control - set the SLC to act as on chip memory";
+    field {
+      sw = rw;
+      hw = r;
+    } active[0:0] = 0;
+  } on_chip_memory_ctrl;
+
+  reg {
+    desc = "PrefetchTgt transaction filter
+        Set to drop all PrefetchTgt requests
+    ";
+    field {
+      sw = rw;
+      hw = r;
+    } drop_all[0:0] = 0;
+  } prefetch_tgt_ctrl;
+
+  reg {
+    field {
+      desc = "Done status indication
+        asserts after all init procedures of the memories complete";
+      sw = r;
+      hw = w;
+    } done[0:0];
+  } slc_exec_init_status;
+
+  // Debug
+  // ========
+  reg {
+    field {
+      sw = r;
+      hw = w;
+      desc = "Workbench occupancy watermark.";
+    } wbn_occupancy_watermark[7:0];
+    field {
+      sw = r;
+      hw = w;
+      desc = "Atomic Buffers occupancy watermark.";
+    } atomic_buff_occupancy_watermark[12:8];
+    field {
+      sw = rw;
+      hw = r;
+      singlepulse;
+    } clear_watermarks[31:31] = 0;
+  } sts_watermarks;
+
+  reg {
+    field {
+      desc = "Counts SF capacity eviction events";
+      // TODO(b/286794682): Compilation flow with hw_if is broken
+      `ifdef AGNISYS_RTL_ONLY
+      counter;
+      incrsaturate;
+      `endif
+      woclr;
+      sw = rw;
+      hw = na; // TODO(ddayan) this is a bug by Agnisys that some reason require it
+    } value[31:0] = 0;
+  } cnt_sf_capacity_evictions;
+
+  reg {
+    desc = "WriteUniqueFullStash allocation hint";
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "For WriteUniqueFullStash:
+                1. Overrides the Priority to the Max valuse (7).
+                2. Bypass QGL limitations while checking the SLC allocation conditions
+      ";
+    } override_high_prio[0:0] = 1;
+  } write_unique_stash_ctrl;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "When asserted, disables the generation of ReadReceipt back to the Requester";
+    } valid[0:0] = 0;
+  } disable_read_receipt;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "When asserted, disables DMT towards SN-F when the requester is PCIe";
+    } valid[0:0] = 0;
+  } disable_pcie_dmt;
+
+  // TODO(ddayan): add other counters for internal events
+
+  // Indirect access to memories
+  // ===========================
+  // SLC Data mem
+  reg {
+    field {
+      sw = rw;
+      hw = rw;
+      desc = "SLC Data cache memory indirect access.
+          Holds the 64B data of the cache line.
+          Register 0 - bits [31:0]
+          Register 1 - bits [63:32]
+          etc.
+      ";
+    } value[31:0] = 0;
+  } slc_data_mem_indirect_data[16];
+
+  reg {
+    field {
+      sw = rw;
+      hw = rw;
+      desc = "SLC Data cache memory indirect access.
+          Holds the 8b poison of the cache line.
+      ";
+    } value[7:0] = 0;
+  } slc_data_mem_indirect_poison;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      hw = rw;
+      swmod;
+      desc = "Initiate an indirect access (R/W) to the SLC data cache memory
+          SW should set this bit to 1 to trigger an access.
+          HW clears once it is done.
+          When writing the data+poison CSRs should be set before triggering.
+          When reading, HW will fill these CSRs upon completion.
+      ";
+    } indirect_trigger[0:0] = 0;
+    field {
+      desc = "Indirect mode: operate write (1) or read (0).";
+    } mode[1:1] = 0;
+    field {
+      desc = "Indirect address to access";
+    } address[SLC_DATA_MEM_ADDR_WIDTH+2-1:2] = 0;
+  } slc_data_mem_indirect_access;
+
+  // SLC Tag mem
+  reg {
+    desc = "SLC tag memory indirect access lower data.";
+    default sw = rw;
+    default hw = rw;
+    field {
+      desc = "Holds the lower tag bits of the cache line.";
+    } lower_tag[31:0] = 0;
+  } slc_tag_mem_indirect_data_lower;
+
+  reg {
+    desc = "SLC tag memory indirect access upper data.";
+    default sw = rw;
+    default hw = rw;
+    field {
+      desc = "Holds the upper tag bits of the cache line.";
+    } upper_tag[SLC_TAG_WIDTH-32-1:0] = 0;
+    field {
+      desc = "Holds the QGL of the cache line.";
+    } qgl[24:16] = 0;
+    field {
+      desc = "Holds the dirty indication of the cache line.";
+    } dirty[25:25] = 0;
+    field {
+      desc = "Holds the valid indication of the cache line.";
+    } valid[26:26] = 0;
+  } slc_tag_mem_indirect_data_upper;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      hw = rw;
+      swmod;
+      desc = "Initiate an indirect access (R/W) to the SLC tag memory
+          SW should set this bit to 1 to trigger an access.
+          HW clears once it is done.
+          When writing the data CSRs should be set before triggering.
+          When reading, HW will fill these CSRs upon completion.
+      ";
+    } indirect_trigger[0:0] = 0;
+    field {
+      desc = "Indirect mode: operate write (1) or read (0).";
+    } mode[1:1] = 0;
+    field {
+      desc = "Indirect address to access";
+    } address[SLC_TAG_MEM_ADDR_WIDTH+2-1:2] = 0;
+    field {
+      desc = "Indirect way to access";
+    } way[SLC_TAG_MEM_ADDR_WIDTH+2+SLC_TAG_MEM_NUM_WAYS_WIDTH-1:SLC_TAG_MEM_ADDR_WIDTH+2] = 0;
+  } slc_tag_mem_indirect_access;
+
+  // SF mem
+  reg {
+    desc = "SF memory indirect access lower data of the tag.";
+    default sw = rw;
+    default hw = rw;
+    field {
+      desc = "Holds the lower tag bits of the cache line.";
+    } lower_tag[31:0] = 0;
+  } sf_mem_indirect_data_lower_tag;
+
+  reg {
+    desc = "SF memory indirect access upper data of the tag.";
+    default sw = rw;
+    default hw = rw;
+    field {
+      desc = "Holds the upper tag bits of the cache line.";
+    } upper_tag[SF_TAG_WIDTH-32-1:0] = 0;
+    field {
+      desc = "Holds the valid indication of the cache line.";
+    } valid[16:16] = 0;
+  } sf_mem_indirect_data_upper_tag;
+
+  reg {
+    desc = "SF memory indirect access lower data of the SF line.";
+    default sw = rw;
+    default hw = rw;
+    field {
+      desc = "Holds the lower line bits of the SF entry.";
+    } lower_line[31:0] = 0;
+  } sf_mem_indirect_data_lower_line;
+
+  reg {
+    desc = "SF memory indirect access lower data of the SF line.";
+    default sw = rw;
+    default hw = rw;
+    field {
+      desc = "Holds the upper line bits of the SF entry.";
+    } lower_line[SF_LINE_WIDTH-32-1:0] = 0;
+    field {
+      desc = "Holds the encode bit of the SF entry.";
+    } enc[16:16] = 0;
+    field {
+      desc = "Holds the state bit of the SF entry.";
+    } state[17:17] = 0;
+    field {
+      desc = "Holds the history hint bit of the SF entry.";
+    } hist[18:18] = 0;
+    field {
+      desc = "Holds the exclusive bit of the SF entry.";
+    } excl[19:19] = 0;
+    field {
+      desc = "Holds the Numa clusters bitmap of the SF entry.";
+    } numa_cluster[SF_NUMA_BITMAP_WIDTH+20-1:20] = 0;
+  } sf_mem_indirect_data_upper_line;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      hw = rw;
+      swmod;
+      desc = "Initiate an indirect access (R/W) to the SF memory
+          SW should set this bit to 1 to trigger an access.
+          HW clears once it is done.
+          When writing the data CSRs should be set before triggering.
+          When reading, HW will fill these CSRs upon completion.
+      ";
+    } indirect_trigger[0:0] = 0;
+    field {
+      desc = "Indirect mode: operate write (1) or read (0).";
+    } mode[1:1] = 0;
+    field {
+      desc = "Indirect address to access";
+    } address[SF_MEM_ADDR_WIDTH+2-1:2] = 0;
+    field {
+      desc = "Indirect way to access";
+    } way[SF_MEM_ADDR_WIDTH+2+SF_MEM_NUM_WAYS_WIDTH-1:SF_MEM_ADDR_WIDTH+2] = 0;
+  } sf_mem_indirect_access;
+
+  reg {
+    ext_decode_lines = true;
+    desc = "MPAM Map Table.
+        Maps MPAM PARTID to Task Profile and Quota Group Limit (QGL)
+    ";
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "Task profile (0..15) per PARTID";
+    } task_profile[3:0] = 0;
+    field {
+      desc = "Quota Group Limit (0..511) per PARTID";
+    } qgl[12:4] = 0;
+  } external mpam_map_table[512] @0x800;
+
+  reg {
+    ext_decode_lines = true;
+    desc = "QGL Configuration Table.
+        Configuration per Quota Group Limit (QGL)
+    ";
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "QGL Usage Threshold";
+    } threshold[14:0] = 0;
+    field {
+      desc = "QGL setting to enable usage based allocation limiting";
+    } limit_en[15:15] = 0;
+    field {
+      desc = "QGL setting to enable oversubscription of allocation";
+    } oversub_en[16:16] = 0;
+  } external qgl_configuration_table[512] @0x1000;
+
+  reg {
+    ext_decode_lines = true;
+    desc = "QGL Usage Counters - number of allocated cache lines per QGL";
+    field {
+      sw = rw;
+      hw = w;
+    } value[14:0];
+  } external qgl_usage_counter[512] @0x1800;
+
+
+};
+
+`endif

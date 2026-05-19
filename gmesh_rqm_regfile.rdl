@@ -1,0 +1,641 @@
+`include "idsProperty2a.rdl"
+
+`ifndef _GMESH_RQM_REGFILE_
+`define _GMESH_RQM_REGFILE_
+
+regfile gmesh_rqm_regfile #(
+  longint unsigned NUM_SAM_REGIONS = 128,
+  longint unsigned EID_WIDTH = 10,
+  longint unsigned NUM_RATE_LIMITER_VECTORS = 12,
+  longint unsigned E2E_CREDIT_WIDTH = 6,
+  bit IS_SLC = 0,
+  bit IS_MIC = 0,
+  bit IS_MIF = 0,
+  bit HAS_NP = 1,
+  bit HAS_P0 = 1,
+  bit HAS_P1 = 1,
+  bit HAS_PW = 0,
+  bit HAS_HR = 0,
+  bit HAS_SN = 0,
+  bit HAS_PCIE_LUT = 0,
+  bit HAS_MIF_HASH = 0
+){
+  name = "gmesh_rqm_regfile";
+  desc = "RQM CSR Register File";
+
+  default sw = rw;
+  default hw = r;
+
+  // SAM Configuration
+  // ==================
+
+  enum sam_memory_type_enum {
+    MI       = 4'h0 {desc = "Memory Type Is Mi";};
+    SLC      = 4'h1 {desc = "Memory Type Is Slc";};
+    RMEM     = 4'h2 {desc = "Memory Type Is RMem";};
+    PCONFIG  = 4'h3 {desc = "Memory Type Is PConfig";};
+    PMEM     = 4'h4 {desc = "Memory Type Is PMem";};
+    CONFIG   = 4'h5 {desc = "Memory Type Is Config";};
+    CCR0     = 4'h6 {desc = "Memory Type Is Ccr0";};
+    CCR1     = 4'h7 {desc = "Memory Type Is Ccr1";};
+    CCR2     = 4'h8 {desc = "Memory Type Is Ccr2";};
+  };
+
+  regfile rqm_sam_region_regfile {
+    default sw = rw;
+    default hw = r;
+    desc = "The RQM SAM region configuration.
+            For the RQM to be functional, the SAM must be configured.
+            The SAM can be configured even during ACTIVE state, after config_done has been asserted.
+            To configure the SAM after config_done has been asserted, SW needs to:
+             1.Ensure there are no more transactions to this region.
+             2.Disable the region.
+             3.Config the region
+             4.Enable the region";
+    reg {
+      default sw = rw;
+      default hw = r;
+      field {
+        desc = "SAM Region Start Address, 1MB granule (bits [47:20])
+                In the design, the 20 LSBs of the request address are asssumed to be 0x7FFFF.
+                SAM region is defined by cfg_sam_region_start[27:0] <= chi_req.addr[47:20] <= cfg_sam_region_end[27:0]";
+      } address[27:0] = 0;
+    } cfg_rqm_region_start;
+
+    reg {
+      default sw = rw;
+      default hw = r;
+      field {
+        desc = "SAM Region End Address, 1MB granule (bits [47:20])
+                In the design, the 20 LSBs of the request address are asssumed to be 0x7FFFF.
+                SAM region is defined by cfg_sam_region_start[27:0] <= chi_req.addr[47:20] <= cfg_sam_region_end[27:0]";
+      } address[27:0] = 0;
+    } cfg_rqm_region_end;
+
+    reg {
+      default sw = rw;
+      default hw = r;
+      field {
+        desc = "SAM Region Memory Type.";
+        encode = sam_memory_type_enum ;
+      } memory_type[3:0] = sam_memory_type_enum::MI;
+      memory_type->ispresent = ~IS_SLC;
+      field {
+        desc = "The NUMA ID of a region";
+      } numa_id[5:4] = 0;
+      field {
+        desc = "The target is High Bandwidth MI-P";
+      } is_miphb[8:8] = 0;
+      field {
+        desc = "SAM Region Enumerate ID. Applicable only if target type is set to MI, RMem, PConfig or PMem.
+                Otherwise the target EID will be calculated by the hashing function or
+                configuration logic.";
+      } direct_eid[(16+EID_WIDTH-1):16] = 0;
+      field {
+        desc = "The target is CXL.mem device (no need to hash over MI-Ds).
+                Relevant only in SLC System Address Mapping";
+      } cxl[28:28] = 0;
+      cxl->ispresent = IS_SLC;
+      field {
+        desc = "SAM Region Valid";
+      } en[31:31] = 0;
+    } cfg_rqm_region;
+
+    reg {
+      default sw = rw;
+      default hw = r;
+      field {
+        desc = "The target PCIe id.
+                To allow the reordering at the destination each PCIe
+                peer-to-peer request is assigned with PCIe ID.
+                For PCIe located in chiplet 0, pcie_id MSB shall be 0.
+                For PCIe located in chiplet 1, pcie_id MSB shall be 1";
+      } id[4:0] = 0;
+    } cfg_rqm_region_pcie;
+
+    cfg_rqm_region_pcie->ispresent = HAS_PCIE_LUT;
+  };
+
+  rqm_sam_region_regfile rqm_sam_region_regfile[NUM_SAM_REGIONS];
+
+  // Numa Configuration
+  // =========================
+  enum numa_size_enum {
+    FULL     = 2'h0 {desc = "The NUMA ID represents F cluster";};
+    HALF     = 2'h1 {desc = "The NUMA ID represents H cluster";};
+    NONE     = 2'h2 {desc = "The NUMA ID is not used";};
+  };
+
+  enum numa_location_enum {
+    LOCAL     = 2'h0 {desc = "The SLC is part of this NUMA ID";};
+    PEER      = 2'h1 {desc = "The NUMA ID is at the same fabric as the SLC";};
+    REMOTE    = 2'h2 {desc = "The NUMA ID is at a remote fabric.
+                             SLC to SLC requests and snoops goes through MI-F";};
+  };
+
+  reg {
+   default sw = rw;
+   default hw = r;
+    desc = "Numa cluster attributes, Relevant only in SLC System Address Mapping";
+      field {
+        desc = "The NUMA cluster size";
+        encode = numa_size_enum;
+     } size[1:0] = numa_size_enum::FULL;
+    field {
+        desc = "The location of the NUMA cluster with respect to the SLC";
+        encode = numa_location_enum;
+    } location[5:4] = numa_location_enum::LOCAL;
+  } cfg_rqm_numa[4]; // RQM_NUM_NUMA
+
+  cfg_rqm_numa->ispresent = IS_SLC | IS_MIF;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "The MI-D hashing function outputs 2 bits index, this is the EID of
+             the MI-D that corresponds to the index.";
+    } to_eid[(EID_WIDTH-1):0] = 0;
+  } cfg_rqm_mid_index[4]; // RQM_NUM_MID_IN_QUADRANT
+
+  cfg_rqm_mid_index->ispresent = IS_SLC;
+
+  // Hashing Override
+  // =========================
+
+  reg {
+    desc = "the SLC hashing can be overridden by configuration.
+            The SAM of the source MI can be set to targets a single SLC";
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "If set, the RQM will override the SLC Hashing EID
+              and will assign a new EID based on slc_hashing_override_value register";
+    } en[0:0] = 0;
+    field {
+      desc = "The value of the EID to use in case slc_hashing_override_en is set";
+    } value[(4+EID_WIDTH-1):4] = 0;
+  } cfg_rqm_slc_hashing_override;
+
+  reg {
+    desc = "the MI-D hashing can be overridden by configuration.
+            The SAM of the source MI can be set to targets a single MI-D";
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "If set, the RQM will override the MI-D Hashing EID
+              and will assign a new EID based on mid_hashing_override_value register";
+    } en[0:0] = 0;
+    field {
+      desc = "The value of the EID to use in case mid_hashing_override_en is set";
+    } value[(4+EID_WIDTH-1):4] = 0;
+  } cfg_rqm_mid_hashing_override;
+
+  cfg_rqm_mid_hashing_override->ispresent = IS_SLC;
+
+  // Credits Configuration
+  // =========================
+
+  reg cfg_rqm_initial_e2e_credits{
+    default sw = rw;
+    default hw = r;
+    desc = "End to End credit initialization register";
+    field {
+      desc = "The E2E credits amount to load for EID = cfg_rqm_initial_e2e_credits_eid";
+    } value[E2E_CREDIT_WIDTH-1:0] = 0; //TODO(omered) : update the number after talking with Liran
+    field {
+      desc = "The EID that will be loaded with the cfg_rqm_initial_e2e_credits_value.";
+      swmod;
+    } eid[(6+EID_WIDTH-1):6] = 0;
+    field {
+      desc = "Set if the RQM can send flits to this EID on this VC.
+              e.g. If the RQM is in MI-C, en shall be 0 for all SLCs that are not
+              in the same NUMA cluster as this MI-C";
+    } en[31:31] = 0;
+  };
+
+  cfg_rqm_initial_e2e_credits cfg_rqm_initial_e2e_credits_np;
+  cfg_rqm_initial_e2e_credits_np->ispresent = HAS_NP;
+
+  cfg_rqm_initial_e2e_credits cfg_rqm_initial_e2e_credits_p0;
+  cfg_rqm_initial_e2e_credits_p0->ispresent = HAS_P0;
+
+  cfg_rqm_initial_e2e_credits cfg_rqm_initial_e2e_credits_p1;
+  cfg_rqm_initial_e2e_credits_p1->ispresent = HAS_P1;
+
+  cfg_rqm_initial_e2e_credits cfg_rqm_initial_e2e_credits_pw;
+  cfg_rqm_initial_e2e_credits_pw->ispresent = HAS_PW;
+
+  cfg_rqm_initial_e2e_credits cfg_rqm_initial_e2e_credits_hr;
+  cfg_rqm_initial_e2e_credits_hr->ispresent = HAS_HR;
+
+  cfg_rqm_initial_e2e_credits cfg_rqm_initial_e2e_credits_sn;
+  cfg_rqm_initial_e2e_credits_sn->ispresent = HAS_SN;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "Maximum credits that P0+P1 VC can consume together";
+      // [E2E_CREDIT_WIDTH:0] and not [E2E_CREDIT_WIDTH-1:0] because we need 1 more bit
+    } total_credits[E2E_CREDIT_WIDTH:0] = 4'b1010; // TODO(omered): check if we can do it parametric
+  } cfg_rqm_max_p0_p1;
+
+  // CBusy Configuration
+  // =========================
+  reg cfg_rqm_cbusy{
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "If set, CBusy is based on the maximum CBusy in the sliding window.
+              Otherwise CBusy is based on a factored average of the sliding window";
+    } max_out[0:0] = 0;
+    field {
+      desc = "Set to value between 3 and 7.
+              WinSize sets the size of the sliding window to 2^WinSize entries.";
+    } window_size[3:1] = 3'd3;
+    field {
+      desc = "Average factor for the CBusy. BusyFactor is set in U1.7 fixed point.";
+    } busy_factor[11:4] = 8'd1;
+    field {
+      desc = "Aging interval of the sliding window. If set to 0, the aging mechanism is disabled";
+    } aging_period[31:12] = 20'd0;
+  };
+
+  cfg_rqm_cbusy cfg_rqm_cbusy_slc;
+  cfg_rqm_cbusy cfg_rqm_cbusy_mif;
+
+  cfg_rqm_cbusy_slc->ispresent = ~IS_SLC;
+  cfg_rqm_cbusy_mif->ispresent = ~IS_SLC;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "If set, the RQM uses indications from the MI-F for CBusy calculation.
+              Should be disabled in MIs connected to a specific NUMA domain. (e.g. MI-C)";
+    } window[0:0] = 0;
+  } cfg_rqm_cbusy_use_mif;
+
+  cfg_rqm_cbusy_use_mif->ispresent = ~IS_SLC;
+
+  // PCIe Look Up Table
+  // =========================
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "To allow the reordering at the destination each PCIe peer-to-peer request is assigned with PCIe ID
+              noting the source of the request and a sequence number for each request.
+              The target MI-F of each flits is set by this lookup table, the input of the table is
+              {SQN, TargetPCIe_id[3:0]} and the output is the EID of the target.
+              If the PCIe target is in a remote die, the LUT is used and the output of the
+              LUT is the EID of the target MI-F";
+    } lut[(EID_WIDTH-1):0] = 0;
+  } cfg_rqm_pcie_peer_to_peer[144]; // 16 TargetPCIe_id * 9 SQN = 144
+
+  cfg_rqm_pcie_peer_to_peer->ispresent = HAS_PCIE_LUT;
+
+
+  // MI-F hashing
+  // =========================
+    reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "The threshold that determines the TableIndex which is used as an
+              index to a lookup table of the target MI-F EID.
+              The table index is calulated as follows (A = {SLC[0],SLC[6:2]}) :
+              if A<TH0: TableIndex = 0
+                elif A<TH1: TableIndex =1
+                elif A<TH2: TableIndex = 2
+                elif A<TH3: TableIndex = 3
+                elif A<TH4: TableIndex = 4
+                elif A<TH5: TableIndex = 5
+                elif A<TH6: TableIndex = 6
+                elif A<TH7: TableIndex = 7
+                else: TableIndex = 8
+
+              The thresholds TH0-TH7 shall be set according to the following table and the number of
+              active MI-Fs:
+
+                TH Idx   Eight Active MI-Fs      Nine Active MI-Fs
+                0                 7                    6
+                1                 14                   12
+                2                 21                   19
+                3                 28                   25
+                4                 39                   35
+                5                 46                   41
+                6                 53                   48
+                7                 60                   54";
+    } threshold[5:0] = 0;
+  } cfg_rqm_target_mif_table_index[8];
+
+  cfg_rqm_target_mif_table_index->ispresent = HAS_MIF_HASH;
+
+`ifndef IGNORE_HETEROGENEOUS_ARRAY_ASSIGNMENT
+  cfg_rqm_target_mif_table_index[0].threshold-> reset = 6'd7;
+  cfg_rqm_target_mif_table_index[1].threshold-> reset = 6'd14;
+  cfg_rqm_target_mif_table_index[2].threshold-> reset = 6'd21;
+  cfg_rqm_target_mif_table_index[3].threshold-> reset = 6'd28;
+  cfg_rqm_target_mif_table_index[4].threshold-> reset = 6'd39;
+  cfg_rqm_target_mif_table_index[5].threshold-> reset = 6'd46;
+  cfg_rqm_target_mif_table_index[6].threshold-> reset = 6'd53;
+  cfg_rqm_target_mif_table_index[7].threshold-> reset = 6'd60;
+`endif
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "A lookup table of the target MI-F EID, the index to the lookup table
+              is the table index calculated based on cfg_rqm_target_mif_table_index_threshold.
+              The lookup table should be configured with the active MI-F EID in order from left
+              to right. The EID of the leftmost active MI-F should be written to the first entry
+              of the table (MI-F0 EID). If there are 9 active MI-Fs then the EID of the
+              rightmost active MI-F is written to the last entry (MI-F8 EID) and if there are 8
+              active MI-F the EID of the rightmost active MI-F is written to the MI-F7 EID entry.";
+    } eid[(EID_WIDTH-1):0] = 0;
+  } cfg_rqm_table_index_to_mif[9]; // RQM_NUM_MIF_LUT_ENTRIES
+
+  cfg_rqm_table_index_to_mif->ispresent = HAS_MIF_HASH;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "If enabled, target EID of PCIe remote memory access is calculated by MI-F hashing.
+              If not enabled, the EID is taken from the Direct EID of the SAM region";
+    } en = 1'b1;
+  } cfg_rqm_mif_hashing;
+
+  cfg_rqm_mif_hashing->ispresent = HAS_MIF_HASH;
+
+  // Drop Prefetch
+  // =========================
+
+ reg {
+    desc = "The RQM can optionally drop PrefetchTgt requests according to the CBusy state.
+            The RQM holds a configurable CBusy threshold and if this option is enabled by
+            software PrefetchTgt requests are dropped by the RQM if the CBusy value is
+            equal to or greater than the CBusy threshold";
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "If set, the RQM drops PrefetchTgt requests if the CBusy value is
+              equal to or greater than cfg_rqm_cbusy_drop_prefetch_tgt.value";
+    } en[0:0] = 0;
+    field {
+      desc = "The CBusy threshold, if the CBusy value is equal to or greater than this threshold
+              and cfg_rqm_cbusy_drop_prefetch_tgt_en, The RQM drops PrefetchTgt requests";
+    } value[5:4] = 0;
+  } cfg_rqm_cbusy_drop_prefetch_tgt;
+
+  cfg_rqm_cbusy_drop_prefetch_tgt->ispresent = ~IS_SLC;
+
+  // General Configuration
+  // =========================
+
+  reg {
+    desc = "Option to override the request src_numa_id";
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "If set, the RQM will override the src_numa_id and will assign
+              the src_numa_id field based on cfg_rqm_src_numa_id_override.value register";
+    } en[0:0] = 0;
+    field {
+      desc = "The value of the src_numa_id to use in case
+             cfg_rqm_src_numa_id_override.en is set";
+    } value[5:4] = 0;
+  } cfg_rqm_src_numa_id_override;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "The enumerate ID of the Default MI-A that serves as the completer for unmapped transactions";
+    } default_mia[(EID_WIDTH-1):0] = 0;
+    field {
+      desc = "The enumerate ID of the DVM hub";
+    } dvm_hub[(16+EID_WIDTH-1):16] = 0;
+  } cfg_rqm_eid;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "Weight of each VC in the VC weighted round robin arbiter.";
+    } weight[7:0] = 8'hff;
+  } cfg_rqm_arb_wrr[7]; // GMESH_NUM_VCS
+
+  regfile cfg_rate_limiter_regfile {
+    default sw = rw;
+    default hw = r;
+     //TODO(omered) : fix desc for SLC
+    desc = "For SLC :
+            We have 2 vectors, cfg_rate_limiter_regfile[0] is used when throttling_bit = 0,
+            cfg_rate_limiter_regfile[1] is used when throttling_bit = 1.
+            For Non SLC :
+            We have 12 vectors, and the vector we use is based on the CBusy and the req color.
+            Vectors mapping :
+            4'd0 - CBusy 00, Green Rate limiter vector.
+            4'd1 - CBusy 00, Yellow Rate limiter vector.
+            4'd2 - CBusy 00, Red Rate limiter vector.
+            4'd3 - CBusy 01, Green Rate limiter vector.
+            4'd4 - CBusy 01, Yellow Rate limiter vector.
+            4'd5 - CBusy 01, Red Rate limiter vector.
+            4'd6 - CBusy 10, Green Rate limiter vector.
+            4'd7 - CBusy 10, Yellow Rate limiter vector.
+            4'd8 - CBusy 10, Red Rate limiter vector.
+            4'd9 - CBusy 11, Green Rate limiter vector.
+            4'd10 - CBusy 11, Yellow Rate limiter vector.
+            4'd11 - CBusy 11, Red Rate limiter vector.";
+    reg {
+      default sw = rw;
+      default hw = r;
+      field {
+        desc = "Rate limiter bit map.
+               the limiter runs over these bits in a cycle,
+               enabling a request only when a bit is set (e.g. if we want a 50% rate limiter,
+               we will set only the even bits).
+               The bitmap[reg_index][bitmap_j] corresponds to 32 * reg_index + bitmap_j";
+      } vector[31:0] = {32{1'b1}};
+    } cfg_rqm_rate_limiter[4]; // (128+31)/32 (128 = RATE_LIMITER_BITS)
+  };
+
+
+  cfg_rate_limiter_regfile cfg_rate_limiter_regfile[NUM_RATE_LIMITER_VECTORS]; // NUM_RATE_LIMITER_VECTORS
+
+  //`ifndef IGNORE_HETEROGENEOUS_ARRAY_ASSIGNMENT
+  //  `ifdef IS_SLC
+  //    cfg_rate_limiter_regfile[0]-> desc = "Used when throttling_bit == 0";
+  //    cfg_rate_limiter_regfile[1]-> desc = "Used when throttling_bit == 1";
+  //  `else
+  //    cfg_rate_limiter_regfile[0]-> desc = "CBusy 00, Green Rate limiter vector";
+  //    cfg_rate_limiter_regfile[1]-> desc = "CBusy 00, Yellow Rate limiter vector";
+  //    cfg_rate_limiter_regfile[2]-> desc = "CBusy 00, Red Rate limiter vector";
+  //    cfg_rate_limiter_regfile[3]-> desc = "CBusy 01, Green Rate limiter vector";
+  //    cfg_rate_limiter_regfile[4]-> desc = "CBusy 01, Yellow Rate limiter vector";
+  //    cfg_rate_limiter_regfile[5]-> desc = "CBusy 01, Red Rate limiter vector";
+  //    cfg_rate_limiter_regfile[6]-> desc = "CBusy 10, Green Rate limiter vector";
+  //    cfg_rate_limiter_regfile[7]-> desc = "CBusy 10, Yellow Rate limiter vector";
+  //    cfg_rate_limiter_regfile[8]-> desc = "CBusy 10, Red Rate limiter vector";
+  //    cfg_rate_limiter_regfile[9]-> desc = "CBusy 11, Green Rate limiter vector";
+  //    cfg_rate_limiter_regfile[10] -> desc = "CBusy 11, Yellow Rate limiter vector";
+  //    cfg_rate_limiter_regfile[11] -> desc = "CBusy 11, Red Rate limiter vector";
+  //  `endif
+  //`endif
+
+ // This register array is a splitted register of the core p1 opcodes bitmap which is greater than 32
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+       desc  = "If a bit is set, a core request to SLC is transmitted with P1 VC.
+                The MSB of the opcode is not used by
+                the core so we need only NUM_REQ_OPCODES/2 (128) bits.
+                By default the opcodes that are p1 are :
+                ReadShared
+                ReadClean
+                ReadOnce
+                ReadNoSnp
+                ReadUnique
+                ReadNoSnpSep
+                ReadOnceCleanInvalid
+                ReadOnceMakeInvalid
+                ReadNotSharedDirty
+                CleanUnique
+                MakeUnique
+                MakeReadUnique
+                The bitmap[reg_index][bitmap_j] corresponds to 32 * reg_index + bitmap_j";
+    } bitmap[31:0] = 0;
+  } cfg_rqm_core_p1_opcodes[4]; //(128+31)/32
+
+  cfg_rqm_core_p1_opcodes->ispresent = IS_MIC;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+       desc  = "Bitmap of the opcodes that expected to be transmitted with p0 or p1 VC.
+                In case we get an expected p0/p1 opcode not to SLC, SAM error will be asserted";
+    } bitmap[31:0] = 0; // TODO(omered): change default value
+  } cfg_rqm_core_p0_p1_expected_opcodes[4]; //(128+31)/32
+
+  cfg_rqm_core_p0_p1_expected_opcodes->ispresent = IS_MIC;
+
+
+ // This register array is a splitted register of the core p1 opcodes bitmap which is greater than 32
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+       desc  = "Each bit corresponds to the request opcode enum.
+                If a bit is set, request to High Bandwidth MI-P will be directed to
+                EID = direct_eid (as configured in the relevant sam region).
+                If a bit is 0, request to High Bandwidth MI-P will be directed
+                to EID = (direct_eid + 1)
+                The bitmap[reg_index][bitmap_j] corresponds to 32 * reg_index + bitmap_j";
+    } bitmap[31:0] = 0;
+  } cfg_rqm_miphb_read_opcodes[4]; //(128+31)/32
+
+`ifndef IGNORE_HETEROGENEOUS_ARRAY_ASSIGNMENT
+  cfg_rqm_core_p1_opcodes[0].bitmap-> reset = 32'd8650764; // 32'h0084000C
+  cfg_rqm_core_p1_opcodes[1].bitmap-> reset = 0;
+  cfg_rqm_core_p1_opcodes[2].bitmap-> reset = 0;
+  cfg_rqm_core_p1_opcodes[3].bitmap-> reset = 0;
+
+  cfg_rqm_miphb_read_opcodes[0].bitmap-> reset = 32'd16; // Only ReadNoSnp (bit 4)
+  cfg_rqm_miphb_read_opcodes[1].bitmap-> reset = 0;
+  cfg_rqm_miphb_read_opcodes[2].bitmap-> reset = 0;
+  cfg_rqm_miphb_read_opcodes[3].bitmap-> reset = 0;
+`endif
+
+  enum color_enum {
+    GREEN       = 2'h0 {desc = "Green Color";};
+    YELLOW      = 2'h1 {desc = "Yellow Color";};
+    RED         = 2'h2 {desc = "Red Color";};
+  };
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "If set, the RQM will override the input flit's color
+              and will assign a new color based on override_color_value register";
+    } en[0:0] = 0;
+    field {
+      desc = "The value of the color to use in case override_color_en is set";
+      encode = color_enum;
+    } value[5:4] = color_enum::GREEN;
+  } cfg_rqm_color_override;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "The base address of the fabric config space. 1MB granule (bits [47:20])
+             Shall match the SAM configurtion - base address for config region";
+    } base_address[27:0] = 0;
+  } cfg_rqm_fabric_config_space;
+
+  cfg_rqm_fabric_config_space->ispresent = ~IS_SLC;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "The CCR is set with base EID pointing to the EID of the first agent in the CCR and is incremented with the
+             address offset. 1MB granule (bits [47:20]).
+             Base address of a CCR region must be aligned with the size of the CCR region.
+             Shall match the SAM configurtion - start address for the corresponding CCR region.
+             CCR0 supports up to 128 agents of 1MiB each. CCR0 address range is 128MiB.
+             CCR1 supports up to 16 agents of 1MiB each. CCR1 address range is 16MiB.
+             CCR2 supports up to 32 agents of 16MiB each. CCR2 address range is 512MiB.";
+    } base_address[27:0] = 0;
+  } cfg_rqm_ccr[3];
+  cfg_rqm_ccr->ispresent = ~IS_SLC;
+
+  reg { // TODO(omered): remove when returning to gmesh_rqm
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "The base address of the core config space. 1MB granule (bits [47:20])
+             Shall be aligned to 128MiB.
+             Shall match the SAM configurtion - base address for CCR region";
+    } base_address[27:0] = 0;
+  } cfg_rqm_core_config_space;
+
+
+  enum numa_domain_enum {
+    FULL_CLUSTER  = 1'b0 {desc = "The RQM is in a chiplet that has a single NUMA domain. (F cluster)";};
+    HALF_CLUSTER  = 1'b1 {desc = "The RQM is in a chiplet that has two NUMA domains. (H cluster)";};
+  };
+
+  enum chiplet_rotation_enum {
+    NOT_ROTATED  = 1'b0 {desc = "The RQM is not in a rotated die";};
+    ROTATED      = 1'b1 {desc = "The RQM is in a rotated die";};
+  };
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "The Numa domain topology of the chiplet the RQM reside in";
+      encode = numa_domain_enum;
+    } is_half_numa[0:0] = numa_domain_enum::FULL_CLUSTER;
+    field {
+      desc = "The indication regarding the die rotation";
+      encode = chiplet_rotation_enum;
+    } is_rotated[4:4] = chiplet_rotation_enum::NOT_ROTATED;
+    field {
+      desc = "The chiplet ID the RQM reside in. chiplet 0 contains
+              Numas 0 & 1 (if exist) and chiplet 1 contains Numas 2 & 3 (if exist)";
+    } id[8:8] = 1'b0;
+      id->ispresent = HAS_PCIE_LUT;
+  } cfg_rqm_chiplet;
+};
+
+`endif

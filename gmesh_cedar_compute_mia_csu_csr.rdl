@@ -1,0 +1,98 @@
+//--------------------------
+// JINJA2 GENERATED FILE: DO NOT MANUALLY EDIT
+// This file has been automatically generated from a jinja2 template.
+// Please refer to the BUILD file for details.
+//--------------------------
+
+`include "idsProperty2a.rdl"
+
+
+`include "mipa_ds_regfile.rdl"
+
+
+
+
+
+
+`include "gmesh_telemetry_regfile.rdl"
+
+`include "gmesh_mi_sub_port_regfile.rdl"
+`include "gmesh_mipa_ras_logger_regfile.rdl"
+
+`ifndef _GMESH_CEDAR_COMPUTE_MIA_CSU_CSR_
+`define _GMESH_CEDAR_COMPUTE_MIA_CSU_CSR_
+
+addrmap gmesh_cedar_compute_mia_csu_csr {
+  name = "gmesh_cedar_compute_mia_csu_csr";
+  desc = "MIPA Top Level CSR Address Map";
+
+`ifdef AGNISYS
+  module_name = "gmesh_cedar_compute_mia_csu_csr";
+  auto_hdl_path=true;
+`endif
+
+
+mipa_ds_regfile  #(
+      .HAS_AXI_M_0(0),
+      .HAS_AXI_M_1(0),
+      .HAS_AXIS_M(0),
+      .HAS_DEFAULT_RESPONDER(0),
+      .AXI_M_0_DST_IS_PCIE(0),
+      .AXI_M_1_DST_IS_PCIE(0),
+      .DS_IS_MIP(0),
+      .WRR_WEIGHT_WIDTH(8),
+      .NUM_DAM_REGIONS(2),
+      .NUM_DEFAULT_RESPONDER_UNSUPPORTED_REQ_REGIONS(4)
+  )  mipa_ds_regfile @0x0;
+
+
+
+
+
+gmesh_mi_sub_port_regfile gmesh_mi_sub_port_regfile @0x6000;
+// TODO(b/283180295): eranweil - turn into parameters in next integration CL
+
+gmesh_telemetry_regfile  #(
+    .HAS_CORE_AGENT             (1),
+    .HAS_BW_AGENT               (1),
+    .HAS_LATENCY_AGENT          (1),
+    .HAS_IO_AGENT               (1),
+    .NUM_BW_PARTID              (4),
+    .NUM_BW_PARTID_CLOG2        (2),
+    .NUM_LATENCY_PARTID         (4),
+    .NUM_LATENCY_PARTID_CLOG2   (2),
+    .MAX_DEBUG_PACKETS          (16),
+    .MAX_DEBUG_PACKETS_WIDTH    (5),
+    .NUM_TELEMETRY_COUNTERS     (8),
+    .INTERVAL_WINDOW_CNT_WIDTH  (16),
+    .ADDR_WIDTH                 (48),
+    .AGENT_ID_WIDTH             (9),
+    .NUM_PMU_COUNTERS           (8),
+    .APB_ADDR_WIDTH             (32),
+    .APB_DATA_WIDTH             (32),
+    .APB_USER_REQ_WIDTH         (1),
+    .NUM_HISTOGRAM_BINS         (16),
+    .HISTOGRAM_BIN_WIDTH        (32)
+  )  gmesh_telemetry_regfile @0x7000;
+
+
+reg {
+  desc = "TS sync configuration";
+  field {
+    sw      = rw;
+    hw      = r;
+    desc    = "time stamp sync compensation vlue";
+  } cfg_ts_compensation[15:0] = 0;
+  field {
+    sw      = rw;
+    hw      = r;
+    desc    = "time stamp sync enable";
+  } cfg_ts_sync_en[16:16] = 0;
+} ts_compensation;
+gmesh_mipa_ras_logger_regfile gmesh_ras_logger_regfile @0x8000;
+
+
+
+};
+
+`endif

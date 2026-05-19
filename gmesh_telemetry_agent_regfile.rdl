@@ -1,0 +1,150 @@
+`ifndef _GMESH_TELEMETRY_AGENT_REGFILE_
+`define _GMESH_TELEMETRY_AGENT_REGFILE_
+
+regfile gmesh_telemetry_agent_regfile #(
+  longint unsigned INTERVAL_WINDOW_CNT_WIDTH      = 16,
+  longint unsigned NUM_TELEMETRY_COUNTERS         = 8,
+  longint unsigned ADDR_WIDTH                     = 48,
+  longint unsigned AGENT_ID_WIDTH                 = 9,
+  bit              HAS_COUNTER_FILTER             = 1'b0,
+  bit              HAS_RATIO_CALCULATION          = 1'b0,
+  bit              HAS_APB_INTERFACE              = 1'b0,
+  bit              HAS_ATTRIBUTE_FILTERING        = 1'b0
+)
+  {
+  name = "gmesh_telemetry_agent_regfile";
+  desc = "Telemetry registers to be used in the different agents";
+  default sw = rw;
+  default hw = r;
+
+  enum data_attributes_mapping_enum {
+    kDemand              = 2'd0 {desc = "attribute is demand";};
+    kPrefetch            = 2'd1 {desc = "attribute is prefetch";};
+    kInstruction         = 2'd2 {desc = "attribute is instruction";};
+    kData                = 2'd3 {desc = "attribute is data";};
+  };
+
+  enum data_rd_wr_mapping_enum {
+    kRd                  = 1'd0 {desc = "transaction is read";};
+    kWr                  = 1'd1 {desc = "transaction is write";};
+  };
+
+  enum data_source_mapping_enum {
+    kSlc                 = 5'd0 {desc = "source Is slc";};
+    kDdr                 = 5'd1 {desc = "source Is ddr";};
+    kCxl                 = 5'd2 {desc = "source Is cxl";};
+    kPcie                = 5'd3 {desc = "source Is pcie";};
+    kPeerNumaSlc         = 5'd4 {desc = "source Is peer numa slc";};
+    kPeerNumaDdr         = 5'd5 {desc = "source Is peer numa ddr";};
+    kRemoteSlc           = 5'd6 {desc = "source Is remote slc";};
+    kRemoteDdr           = 5'd7 {desc = "source Is remote ddr";};
+  };
+
+  enum counter_div_by_last_sel_enum {
+    kNextCounter         = 1'd0 {desc = "divide by the next counter";};
+    kLastCounter         = 1'd1 {desc = "divide by the last counter";};
+  };
+
+  reg {
+    desc = "Basic configuration register for telemetry agent";
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "scaling for agent dividend";
+    } dividend_scaling[3:0] = 0;
+    dividend_scaling->ispresent = HAS_RATIO_CALCULATION;
+    field {
+      desc = "scaling for agent divisor";
+    } divisor_scaling[7:4] = 0;
+    field {
+      desc = "select if agent is in setid mode";
+    } setid_mode[8:8] = 0;
+    field {
+      desc = "enable agent";
+    } enable[9:9] = 0;
+    field {
+      desc = "9-bit hardcoded agent id";
+    } id[AGENT_ID_WIDTH+10:11] = 0; //[19:11]
+    field {
+      desc = "decide if ratio is calculated by next counter or last counter";
+      encode = counter_div_by_last_sel_enum;
+    } div_by_last_sel [NUM_TELEMETRY_COUNTERS/2] = counter_div_by_last_sel_enum::kNextCounter; //[23:20]
+    div_by_last_sel->ispresent = HAS_RATIO_CALCULATION;
+    field {
+      desc = "choose if counter counts diff or ratio";
+    } diff[NUM_TELEMETRY_COUNTERS] = 0; //[31:24]
+    diff->ispresent = HAS_RATIO_CALCULATION;
+  } agent_cfg;
+
+  reg {
+    desc = "Basic configuration register for telemetry agent";
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "select attribute filter";
+      encode = data_attributes_mapping_enum;
+    } attributes[3:0] = data_attributes_mapping_enum::kDemand;
+    attributes->ispresent = HAS_ATTRIBUTE_FILTERING;
+    field {
+      desc = "select read and write filter";
+      encode = data_rd_wr_mapping_enum;
+    } rd_wr[5:4] = data_rd_wr_mapping_enum::kRd;
+    field {
+      desc = "select target and source destination filter";
+      encode = data_source_mapping_enum;
+    } data_source[15:8] = data_source_mapping_enum::kSlc;
+  } filtering[NUM_TELEMETRY_COUNTERS];
+  filtering->ispresent = HAS_COUNTER_FILTER;
+
+  reg {
+    desc = "telemetry subsystem address for agent LSB";
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "telemetry subsystem address for agent LSB";
+    } value[32-1:0] = 0;
+  } subsystem_addr_lsb;
+
+  reg {
+    desc = "telemetry subsystem address for agent MSB";
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "telemetry subsystem address for agent MSB";
+    } value[ADDR_WIDTH-32-1:0] = 0;
+  } subsystem_addr_msb;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "FW configured telemetry interval window";
+    } window[1*INTERVAL_WINDOW_CNT_WIDTH-1:0*INTERVAL_WINDOW_CNT_WIDTH] = 0;
+    field {
+      desc = "FW configured telemetry interval window offset";
+    } window_offset[2*INTERVAL_WINDOW_CNT_WIDTH-1:1*INTERVAL_WINDOW_CNT_WIDTH] = 0;
+  } interval;
+
+  reg {
+    desc = "Basic configuration register for telemetry agent";
+    default sw = r;
+    default hw = w;
+    field {
+      desc = "agent signals it is in idle and can be configured";
+    } in_idle[0:0] = 0;
+    field {
+      desc = "Error indication telemetry not calculated in FW defined window";
+    } err_window_too_small[1:1] = 0;
+    field {
+      desc = "Error indication division by 0 in telemetry calculation";
+    } err_divide_by_zero[2:2] = 0;
+    err_divide_by_zero->ispresent = HAS_RATIO_CALCULATION;
+    field {
+      desc = "Error indication for APB PSLVERR";
+    } err_apb_slverr[3:3] = 0;
+    err_apb_slverr->ispresent = HAS_APB_INTERFACE;
+  } agent_sts;
+
+
+};
+`endif

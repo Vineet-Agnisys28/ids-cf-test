@@ -1,0 +1,221 @@
+`include "idsProperty2a.rdl"
+`include "gmesh_mixl_telemtry_pad_regfile.rdl"
+
+`ifndef _GMESH_MIXL_REGFILE_
+`define _GMESH_MIXL_REGFILE_
+
+regfile gmesh_mixl_regfile #(
+  longint unsigned NUM_PADS = 2,
+  longint unsigned PAD_NUM_SETS = 32,
+  longint unsigned PAD_NUM_WAYS = 32,
+  longint unsigned NUM_PADS_WIDTH = 1,
+  longint unsigned PAD_NUM_SETS_WIDTH = 5,
+  longint unsigned PAD_NUM_WAYS_WIDTH = 5
+){
+  name = "gmesh_mixl_regfile";
+  desc = "MI-XL (CXL) CSR Registers";
+
+  default sw = rw;
+  default hw = r;
+
+  //////////////////////////////////////////////////////////////////////////
+  // -+- CXL Protocol Bridge (PB)
+  //////////////////////////////////////////////////////////////////////////
+
+  //========================
+  // Shared ENUM
+  //========================
+
+  // Meta Field
+  enum enum_cxl_metafield {
+    kMetaNoOp  = 2'b11 {desc = "No meta data operation. The MetaValue field is Reserved.            "; };
+    kRsvd_10   = 2'b10 {desc = "Reserved                                                            "; };
+    kRsvd_01   = 2'b01 {desc = "Reserved                                                            "; };
+    kMetaState = 2'b00 {desc = "Update the Metadata bits with the value in the Meta Data Value field"; };
+  };
+
+  // SnpType
+  enum enum_cxl_snptype {
+    kSnpNoOp     = 3'b000 {desc = "snoop needs to be performed"; };
+    kSnpData     = 3'b001 {desc = "Snoop may be required - see spec"; };
+    kSnpCur      = 3'b010 {desc = "Snoop may be required - see spec"; };
+    kSnpInv      = 3'b011 {desc = "Snoop may be required - the requestor needs an exclusive copy of the line."; };
+    kSnpRsvd_100 = 3'b100 {desc = "Reserved"; };
+    kSnpRsvd_101 = 3'b101 {desc = "Reserved"; };
+    kSnpRsvd_110 = 3'b110 {desc = "Reserved"; };
+    kSnpRsvd_111 = 3'b111 {desc = "Reserved"; };
+  } ;
+
+  // MetaValue
+  enum enum_cxl_metavalue {
+    kInvalid     = 2'b00 {desc = "(I) Indicates the Host does not have a cacheable copy of the line"; };
+    kMetaRsvd_01 = 2'b01 {desc = "Reserved"; };
+    kAny         = 2'b10 {desc = "(A) Indicates the Host may have an shared, exclusive, or modified copy of the line"; };
+    kShared      = 2'b11 {desc = "(S) Indicates the Host may have at most a shared copy of the line"; };
+  } ;
+
+  //========================
+  // M2S RwD Consts
+  //========================
+
+  // MemOpcode RwD
+  enum enum_cxl_m2s_rwd_memopcode {
+    kRwdMemOpcodeRsvd_0000 = 4'b0000 {desc = "Reserved"; };
+    kMemWr                 = 4'b0001 {desc = "Memory write command. Used for full line writes"; };
+    kMemWrPtl              = 4'b0010 {desc = "Memory Write Partial."; };
+    kRwdMemOpcodeRsvd_0011 = 4'b0011 {desc = "Reserved"; };
+    kRwdMemOpcodeRsvd_0100 = 4'b0100 {desc = "Reserved"; };
+    kRwdMemOpcodeRsvd_0101 = 4'b0101 {desc = "Reserved"; };
+    kRwdMemOpcodeRsvd_0110 = 4'b0110 {desc = "Reserved"; };
+    kRwdMemOpcodeRsvd_0111 = 4'b0111 {desc = "Reserved"; };
+    kRwdMemOpcodeRsvd_1000 = 4'b1000 {desc = "Reserved"; };
+    kRwdMemOpcodeRsvd_1001 = 4'b1001 {desc = "Reserved"; };
+    kRwdMemOpcodeRsvd_1010 = 4'b1010 {desc = "Reserved"; };
+    kRwdMemOpcodeRsvd_1011 = 4'b1011 {desc = "Reserved"; };
+    kRwdMemOpcodeRsvd_1100 = 4'b1100 {desc = "Reserved"; };
+    kRwdMemOpcodeRsvd_1101 = 4'b1101 {desc = "Reserved"; };
+    kRwdMemOpcodeRsvd_1110 = 4'b1110 {desc = "Reserved"; };
+    kRwdMemOpcodeRsvd_1111 = 4'b1111 {desc = "Reserved"; };
+  } ;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+
+    desc = "NO Need to configure this Register -- mitigation only purposes";
+
+    field {                                      desc = "Reserved";                    } reserved  [21:16] = 0;
+    field {                                      desc = "Logical Device ID: Not Used"; } ldid      [15:12] = 0;
+    field { encode = enum_cxl_metavalue;         desc = "CXL.cache: do not change";    } metavalue [11:10] = enum_cxl_metavalue::kInvalid;
+    field { encode = enum_cxl_metafield;         desc = "CXL.cache: do not change";    } metafield [ 9: 8] = enum_cxl_metafield::kMetaNoOp;
+    field { encode = enum_cxl_snptype;           desc = "CXL.cache: do not change";    } snptype   [ 7: 4] = enum_cxl_snptype::kSnpNoOp;
+    field { encode = enum_cxl_m2s_rwd_memopcode; desc = "only FullWr: do not change";  } opcode    [ 3: 0] = enum_cxl_m2s_rwd_memopcode::kMemWr;
+  } cfg_m2s_rwd ;
+
+  //========================
+  // M2S Req Consts
+  //========================
+
+  // MemOpcode Req
+  enum enum_cxl_m2s_req_memopcode {
+    kMemInv                = 4'b0000 {desc = "Invalidation request from the Master."; };
+    kMemRd                 = 4'b0001 {desc = "Normal memory data read operation. If MetaField contains valid commands, perform Meta Data updates."; };
+    kMemRdData             = 4'b0010 {desc = "Normal Memory data read operation. MetaField & MetaValue to be ignored."; };
+    kMemRdFwd              = 4'b0011 {desc = "This is an indication from the Host that data can be directly forwarded from deviceattached memory to the device without any completion to the Host."; };
+    kMemWrFwd              = 4'b0100 {desc = "This is an indication from the Host to the device that it owns the line and can update it without any completion to the Host."; };
+    kReqMemOpcodeRsvd_0101 = 4'b0101 {desc = "Reserved"; };
+    kReqMemOpcodeRsvd_0110 = 4'b0110 {desc = "Reserved"; };
+    kReqMemOpcodeRsvd_0111 = 4'b0111 {desc = "Reserved"; };
+    kMemSpecRd             = 4'b1000 {desc = "Memory Speculative Read is issued to start a memory access before the home agent has resolved coherence to reduce access latency."; };
+    kMemInvNT              = 4'b1001 {desc = "This is similar to the MemInv command except that the NT is a hint that indicates the invalidation is non-temporal and the writeback is expected soon."; };
+    kMemClnEvct            = 4'b1010 {desc = "Memory Clean Evict is a message that is similar to MemInv"; };
+    kReqMemOpcodeRsvd_1011 = 4'b1011 {desc = "Reserved"; };
+    kReqMemOpcodeRsvd_1100 = 4'b1100 {desc = "Reserved"; };
+    kReqMemOpcodeRsvd_1101 = 4'b1101 {desc = "Reserved"; };
+    kReqMemOpcodeRsvd_1110 = 4'b1110 {desc = "Reserved"; };
+    kReqMemOpcodeRsvd_1111 = 4'b1111 {desc = "Reserved"; };
+  };
+
+  reg {
+    default sw = rw;
+    default hw = r;
+
+    desc = "NO Need to configure this Register -- mitigation only purposes";
+
+    field {                                      desc = "Reserved";                      } reserved  [17:12] = 0;
+    field { encode = enum_cxl_metavalue;         desc = "CXL.cache: do not change";      } metavalue [11:10] = enum_cxl_metavalue::kInvalid;
+    field { encode = enum_cxl_metafield;         desc = "CXL.cache: do not change";      } metafield [ 9: 8] = enum_cxl_metafield::kMetaNoOp;
+    field { encode = enum_cxl_snptype;           desc = "CXL.cache: do not change";      } snptype   [ 7: 4] = enum_cxl_snptype::kSnpNoOp;
+    field { encode = enum_cxl_m2s_req_memopcode; desc = "only MemRdData: do not change"; } memopcode [ 3: 0] = enum_cxl_m2s_req_memopcode::kMemRdData;
+  } cfg_m2s_req ;
+
+   //========================
+   // MCE Src/Dst_ID
+   //========================
+
+  // Client IDs
+  enum enum_mce_client_id {
+    kMidId      = 3'd0 {desc = "SRC/DST is MI-D"; };
+    kScrbrId    = 3'd1 {desc = "SRC/DST is Scraber - Not Used"; };
+    kUeRetryId  = 3'd2 {desc = "SRC/DST is URetry  - Not Used"; };
+    kTgenId     = 3'd3 {desc = "SRC/DST is TGEN (TestGenerator)"; };
+    kRmwId      = 3'd4 {desc = "SRC/DST is RMW (ReadModifyWrite)"; };
+    kRsvd5Id    = 3'd5 {desc = "Reserved"; };
+    kRsvd6Id    = 3'd6 {desc = "Reserved"; };
+    kRsvd7Id    = 3'd7 {desc = "Reserved"; };
+  } ;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+
+    desc = "TGEN Mode only Usage";
+
+    field { encode = enum_mce_client_id;} src_id [6:4] = enum_mce_client_id::kMidId ;
+    field { encode = enum_mce_client_id;} dst_id [2:0] = enum_mce_client_id::kMidId ;
+  } cfg_mce_client ;
+
+
+  //////////////////////////////////////////////////////////////////////////
+  // -+- CXL Telemetry PAD's
+  //////////////////////////////////////////////////////////////////////////
+
+  //========================
+  // PAD Config
+  //========================
+
+  gmesh_mixl_telemetry_pad_regfile #(
+    .PAD_NUM_SETS (PAD_NUM_SETS),
+    .PAD_NUM_WAYS (PAD_NUM_WAYS)
+  ) telemetry_pad [NUM_PADS] @50;
+
+  // Indirect Access
+
+  //========================
+  // Inndirect - Control
+  //========================
+  reg {
+    default sw = rw;
+    default hw = rw;
+
+    desc = "for Performing Indirect Read from PAD:
+    (1) Disable Accesses PAD by lowring the telemetry_pad.cfg_pad_general.enable=0
+    (2) Configure initial PAD/SET/WAY
+    (3) Read from ind_rd_counter AND ind_rd_tag (Reading from TAG will AutoInc WAY/SET";
+
+    field { hw = r; desc = "'PAD' address to access";   } pad  [NUM_PADS_WIDTH]     = 0;
+    field { desc = "'set' address to access - AutoInc"; } set  [PAD_NUM_SETS_WIDTH] = 0;
+    field { desc = "'way' address to access - AutoInc"; } way  [PAD_NUM_WAYS_WIDTH] = 0;
+  } cfg_ind_rd_addr ;
+
+  //========================
+  // Indirect - Way Counter
+  //========================
+  reg sts_ind_rd_counter {
+    default sw = r;
+    default hw = w;
+
+    field {  desc = "counter was over threshold"; } over_th [31:31];
+    field {  desc = "counter value";              } value   [30: 0];
+  } ;
+
+  external sts_ind_rd_counter sts_ind_rd_counter;
+
+  //========================
+  // Indirect - Way TAG
+  //========================
+  reg sts_ind_rd_tag {
+    default sw = r;
+    default hw = w;
+
+    desc = "Reading From this Address will AutoIncrement cfg_ind_rd_addr.way/cfg_ind_rd_addr.set";
+
+    field {  desc = "tag is valud"; } valid [31:31];
+    field {  desc = "tag valude";   } value [30: 0];
+  } ;
+
+  external sts_ind_rd_tag sts_ind_rd_tag;
+
+};
+
+`endif

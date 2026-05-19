@@ -1,0 +1,75 @@
+`include "idsProperty2a.rdl"
+
+`ifndef _GMESH_RPM_REGFILE_
+`define _GMESH_RPM_REGFILE_
+
+
+
+
+regfile gmesh_resource_pool_manager_regfile #(
+    longint unsigned RESOURCE_WIDTH = 16,
+    longint unsigned NUM_CTX = 2,
+    longint unsigned STS_CSR_IS_PRESENT = 0
+) {
+  name = "gmesh_resource_pool_manager_regfile";
+  desc = "Resource Pool Manager register file";
+
+ reg gmesh_rpm_counter_limit #(
+   longint unsigned RESOURCE_WIDTH_LIMIT = 16,
+   bit IS_SHARED = 1
+   ) {
+   field {
+     sw = rw;
+     hw = r;
+     desc = "usage counter limit";
+   } limit[RESOURCE_WIDTH_LIMIT-1:0] = IS_SHARED ? {RESOURCE_WIDTH_LIMIT{1'b1}} :  {RESOURCE_WIDTH_LIMIT{1'b0}};
+ };
+
+ gmesh_rpm_counter_limit #(
+  .RESOURCE_WIDTH_LIMIT(RESOURCE_WIDTH),
+  .IS_SHARED(1)
+ ) cfg_rpm_shared[NUM_CTX];
+
+ gmesh_rpm_counter_limit #(
+  .RESOURCE_WIDTH_LIMIT(RESOURCE_WIDTH),
+  .IS_SHARED(0)
+ ) cfg_rpm_reserved[NUM_CTX];
+
+ gmesh_rpm_counter_limit #(
+  .RESOURCE_WIDTH_LIMIT(RESOURCE_WIDTH),
+  .IS_SHARED(1)
+ ) cfg_rpm_shared_total;
+
+  reg gmesh_rpm_usage_counter_sts #(
+   longint unsigned RESOURCE_WIDTH_LIMIT_EDIT = 16
+   ) {
+   field {
+     sw = r;
+     hw = rw;
+     desc = "usage counter reflection";
+   } usage[RESOURCE_WIDTH_LIMIT_EDIT-1:0] = {RESOURCE_WIDTH_LIMIT_EDIT{1'b0}};
+ };
+
+
+ gmesh_rpm_usage_counter_sts #(
+  .RESOURCE_WIDTH_LIMIT_EDIT(RESOURCE_WIDTH)
+ ) sts_rpm_usage_counters_reserved[NUM_CTX];
+
+  sts_rpm_usage_counters_reserved->ispresent = STS_CSR_IS_PRESENT;
+ gmesh_rpm_usage_counter_sts #(
+  .RESOURCE_WIDTH_LIMIT_EDIT(RESOURCE_WIDTH)
+ ) sts_rpm_usage_counters_shared[NUM_CTX];
+
+  sts_rpm_usage_counters_shared->ispresent = STS_CSR_IS_PRESENT;
+
+ gmesh_rpm_usage_counter_sts #(
+  .RESOURCE_WIDTH_LIMIT_EDIT(RESOURCE_WIDTH)
+ ) sts_rpm_usage_counters_shared_total;
+
+  sts_rpm_usage_counters_shared_total->ispresent = STS_CSR_IS_PRESENT;
+
+};
+
+
+
+`endif

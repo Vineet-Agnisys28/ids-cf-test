@@ -1,0 +1,51 @@
+`include "gmesh_telemetry_agent_regfile.rdl"
+
+`ifndef _GMESH_TELEMETRY_LATENCY_REGFILE_
+`define _GMESH_TELEMETRY_LATENCY_REGFILE_
+
+regfile gmesh_telemetry_latency_regfile #(
+  longint unsigned NUM_LATENCY_PARTID         = 4,
+  longint unsigned INTERVAL_WINDOW_CNT_WIDTH  = 16,
+  longint unsigned NUM_TELEMETRY_COUNTERS     = 8,
+  longint unsigned ADDR_WIDTH                 = 48,
+  longint unsigned AGENT_ID_WIDTH             = 9,
+  longint unsigned NUM_HISTOGRAM_BINS         = 16,
+  longint unsigned HISTOGRAM_BIN_WIDTH        = 32
+)
+  {
+  name = "gmesh_telemetry_latency_regfile";
+  desc = "Telemetry Latency agent FW interface";
+  default sw = rw;
+  default hw = r;
+
+  gmesh_telemetry_agent_regfile #(
+    .INTERVAL_WINDOW_CNT_WIDTH (INTERVAL_WINDOW_CNT_WIDTH),
+    .NUM_TELEMETRY_COUNTERS    (NUM_TELEMETRY_COUNTERS   ),
+    .ADDR_WIDTH                (ADDR_WIDTH               ),
+    .AGENT_ID_WIDTH            (AGENT_ID_WIDTH           ),
+    .HAS_COUNTER_FILTER        (1'b1                     ),
+    .HAS_RATIO_CALCULATION     (1'b0                     ),
+    .HAS_APB_INTERFACE         (1'b0                     ),
+    .HAS_ATTRIBUTE_FILTERING   (1'b1                     ))
+  gmesh_telemetry_latency_agent;
+
+  reg {
+    desc = "FW configures histogram bin start values";
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "FW configures histogram bin start values";
+    } value[HISTOGRAM_BIN_WIDTH-1:0] = 0;
+  } bin_start_val [NUM_HISTOGRAM_BINS];
+
+  reg {
+    desc = "FW configures histogram bin end values";
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "FW configures histogram bin end values";
+    } value[HISTOGRAM_BIN_WIDTH-1:0] = 0;
+  } bin_end_val [NUM_HISTOGRAM_BINS];
+
+};
+`endif

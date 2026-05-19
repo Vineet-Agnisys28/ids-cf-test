@@ -1,0 +1,136 @@
+//--------------------------
+// JINJA2 GENERATED FILE: DO NOT MANUALLY EDIT
+// This file has been automatically generated from a jinja2 template.
+// Please refer to the BUILD file for details.
+//--------------------------
+
+`include "idsProperty2a.rdl"
+
+
+`include "mipa_ds_regfile.rdl"
+
+
+`include "mipa_us_top_regfile.rdl"
+
+
+
+
+
+`include "gmesh_telemetry_regfile.rdl"
+
+`include "gmesh_mi_sub_port_regfile.rdl"
+`include "gmesh_mipa_ras_logger_regfile.rdl"
+
+`ifndef _GMESH_CEDAR_COMPUTE_MIP_PCIE_PHBR_CSR_
+`define _GMESH_CEDAR_COMPUTE_MIP_PCIE_PHBR_CSR_
+
+addrmap gmesh_cedar_compute_mip_pcie_phbr_csr {
+  name = "gmesh_cedar_compute_mip_pcie_phbr_csr";
+  desc = "MIPA Top Level CSR Address Map";
+
+`ifdef AGNISYS
+  module_name = "gmesh_cedar_compute_mip_pcie_phbr_csr";
+  auto_hdl_path=true;
+`endif
+
+
+mipa_ds_regfile  #(
+      .HAS_AXI_M_0(1),
+      .HAS_AXI_M_1(1),
+      .HAS_AXIS_M(0),
+      .HAS_DEFAULT_RESPONDER(0),
+      .AXI_M_0_DST_IS_PCIE(1),
+      .AXI_M_1_DST_IS_PCIE(1),
+      .DS_IS_MIP(1),
+      .WRR_WEIGHT_WIDTH(8),
+      .NUM_DAM_REGIONS(16),
+      .NUM_DEFAULT_RESPONDER_UNSUPPORTED_REQ_REGIONS(4)
+  )  mipa_ds_regfile @0x0;
+
+
+mipa_us_top_regfile
+    #(
+    .RD_BANK_RPM_USAGE_COUNTER_WIDTH      (8),
+    .WR_BANK_RPM_USAGE_COUNTER_WIDTH      (8),
+    .ATOMIC_BANK_RPM_USAGE_COUNTER_WIDTH  ((3)),
+    .LOG2_NUM_WRITE_QUEUES                (5),
+    .LOG2_NUM_READ_QUEUES                 (5),
+    .NUM_OWO_QUEUES                       (4),
+    .HASH_RD_MASK_REDUCED_WIDTH           (8),
+    .HASH_WR_MASK_REDUCED_WIDTH           (8),
+    .ID_W_WIDTH                           (11),
+    .ID_R_WIDTH                           (11),
+    .RD_MAX_ENTRIES_PER_BANK              (500 / 2),
+    .WR_MAX_ENTRIES_PER_BANK              (500 / 2),
+    .ATOMIC_MAX_ENTRIES_PER_BANK          (12 / 2 ),
+    .HAS_ACELITEDVM                       (0),
+    .HAS_AXIS                             (0),
+    .HAS_SYSCO                            (0),
+    .HAS_EVENTOREQ                        (0),
+    .HAS_TELEMETRY                        (1),
+    .NUM_ACELITE                          (2),
+    .HAS_PCIE                             (1),
+    .CLOG2_NUM_PCIE_PORTS                 (1),
+    .NUM_PCIE_PORTS                       (2),
+    .NUM_PORTS                            (2),
+    .REQ_WRR_WEIGHT_WIDTH                 (8),
+    .RPM_READ_PORT_WEIGHT_WIDTH           (8),
+    .RPM_WRITE_PORT_WEIGHT_WIDTH          (8),
+    .WRITE_DB_WRR_WEIGHT_WIDTH            (8),
+    .NUM_SAM_REGIONS                      (128),
+    .AXIS_S_NUM_TDESTS                    (1),
+    .EID_WIDTH                            (10),
+    .IS_PCIE_BITMAP                       (3)
+    )
+  us @0x1000;
+
+
+
+
+gmesh_mi_sub_port_regfile gmesh_mi_sub_port_regfile @0x6000;
+// TODO(b/283180295): eranweil - turn into parameters in next integration CL
+
+gmesh_telemetry_regfile  #(
+    .HAS_CORE_AGENT             (1),
+    .HAS_BW_AGENT               (1),
+    .HAS_LATENCY_AGENT          (1),
+    .HAS_IO_AGENT               (1),
+    .NUM_BW_PARTID              (4),
+    .NUM_BW_PARTID_CLOG2        (2),
+    .NUM_LATENCY_PARTID         (4),
+    .NUM_LATENCY_PARTID_CLOG2   (2),
+    .MAX_DEBUG_PACKETS          (16),
+    .MAX_DEBUG_PACKETS_WIDTH    (5),
+    .NUM_TELEMETRY_COUNTERS     (8),
+    .INTERVAL_WINDOW_CNT_WIDTH  (16),
+    .ADDR_WIDTH                 (48),
+    .AGENT_ID_WIDTH             (9),
+    .NUM_PMU_COUNTERS           (8),
+    .APB_ADDR_WIDTH             (32),
+    .APB_DATA_WIDTH             (32),
+    .APB_USER_REQ_WIDTH         (1),
+    .NUM_HISTOGRAM_BINS         (16),
+    .HISTOGRAM_BIN_WIDTH        (32)
+  )  gmesh_telemetry_regfile @0x7000;
+
+
+reg {
+  desc = "TS sync configuration";
+  field {
+    sw      = rw;
+    hw      = r;
+    desc    = "time stamp sync compensation vlue";
+  } cfg_ts_compensation[15:0] = 0;
+  field {
+    sw      = rw;
+    hw      = r;
+    desc    = "time stamp sync enable";
+  } cfg_ts_sync_en[16:16] = 0;
+} ts_compensation;
+gmesh_mipa_ras_logger_regfile gmesh_ras_logger_regfile @0x8000;
+
+
+
+};
+
+`endif

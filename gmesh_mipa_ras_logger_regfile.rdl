@@ -1,0 +1,135 @@
+`include "idsProperty2a.rdl"
+`include "gmesh_ras_logger_regfile.rdl"
+
+
+`ifndef _GMESH_MIPA_RAS_LOGGER_REGFILE_
+`define _GMESH_MIPA_RAS_LOGGER_REGFILE_
+
+regfile gmesh_mipa_ras_logger_regfile #(
+  bit HAS_ADDR_REG = 0
+) {
+
+  name = "gmesh_ras_logger_regfile";
+  desc = "gMesh RAS logger regfile";
+  enum gmesh_mipa_block_id_enum {
+    // Start | Auto generated code - DO NOT EDIT/DELETE
+    kBlockMemDsInpStgBuffer {desc = "mipa block id of mem_ds_inp_stg_buffer memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM0NonP2pUnordDataSpram {desc = "mipa block id of mem_ds_axi_m_0_non_p2p_unord_data_spram memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM0NonP2pUnordDataDpram {desc = "mipa block id of mem_ds_axi_m_0_non_p2p_unord_data_dpram memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM0NonP2pUnordReq {desc = "mipa block id of mem_ds_axi_m_0_non_p2p_unord_req memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM0NonP2pOrdDataSpram {desc = "mipa block id of mem_ds_axi_m_0_non_p2p_ord_data_spram memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM0NonP2pOrdDataDpram {desc = "mipa block id of mem_ds_axi_m_0_non_p2p_ord_data_dpram memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM0NonP2pOrdReq {desc = "mipa block id of mem_ds_axi_m_0_non_p2p_ord_req memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM0NonP2pOrdReqLl {desc = "mipa block id of mem_ds_axi_m_0_non_p2p_ord_req_ll memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM0NonP2pOrdRespLl {desc = "mipa block id of mem_ds_axi_m_0_non_p2p_ord_resp_ll memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM0P2pPwDataSpram {desc = "mipa block id of mem_ds_axi_m_0_p2p_pw_data_spram memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM0P2pPwDataDpram {desc = "mipa block id of mem_ds_axi_m_0_p2p_pw_data_dpram memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM0P2pPwReq {desc = "mipa block id of mem_ds_axi_m_0_p2p_pw_req memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM0P2pPwReqLl {desc = "mipa block id of mem_ds_axi_m_0_p2p_pw_req_ll memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM0P2pPwRespLl {desc = "mipa block id of mem_ds_axi_m_0_p2p_pw_resp_ll memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM0P2pNpReq {desc = "mipa block id of mem_ds_axi_m_0_p2p_np_req memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM0P2pNpReqLl {desc = "mipa block id of mem_ds_axi_m_0_p2p_np_req_ll memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM0P2pNpRespLl {desc = "mipa block id of mem_ds_axi_m_0_p2p_np_resp_ll memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM1NonP2pUnordDataSpram {desc = "mipa block id of mem_ds_axi_m_1_non_p2p_unord_data_spram memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM1NonP2pUnordDataDpram {desc = "mipa block id of mem_ds_axi_m_1_non_p2p_unord_data_dpram memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM1NonP2pUnordReq {desc = "mipa block id of mem_ds_axi_m_1_non_p2p_unord_req memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM1NonP2pOrdDataSpram {desc = "mipa block id of mem_ds_axi_m_1_non_p2p_ord_data_spram memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM1NonP2pOrdDataDpram {desc = "mipa block id of mem_ds_axi_m_1_non_p2p_ord_data_dpram memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM1NonP2pOrdReq {desc = "mipa block id of mem_ds_axi_m_1_non_p2p_ord_req memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM1NonP2pOrdReqLl {desc = "mipa block id of mem_ds_axi_m_1_non_p2p_ord_req_ll memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM1NonP2pOrdRespLl {desc = "mipa block id of mem_ds_axi_m_1_non_p2p_ord_resp_ll memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM1P2pPwDataSpram {desc = "mipa block id of mem_ds_axi_m_1_p2p_pw_data_spram memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM1P2pPwDataDpram {desc = "mipa block id of mem_ds_axi_m_1_p2p_pw_data_dpram memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM1P2pPwReq {desc = "mipa block id of mem_ds_axi_m_1_p2p_pw_req memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM1P2pPwReqLl {desc = "mipa block id of mem_ds_axi_m_1_p2p_pw_req_ll memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM1P2pPwRespLl {desc = "mipa block id of mem_ds_axi_m_1_p2p_pw_resp_ll memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM1P2pNpReq {desc = "mipa block id of mem_ds_axi_m_1_p2p_np_req memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM1P2pNpReqLl {desc = "mipa block id of mem_ds_axi_m_1_p2p_np_req_ll memory - ECC Mode: Normal";};
+    kBlockMemDsAxiM1P2pNpRespLl {desc = "mipa block id of mem_ds_axi_m_1_p2p_np_resp_ll memory - ECC Mode: Normal";};
+    kBlockMemDsAxisRxDatQueue {desc = "mipa block id of mem_ds_axis_rx_dat_queue memory - ECC Mode: Normal";};
+    kBlockMemUsReadDbDp {desc = "mipa block id of mem_us_read_db_dp memory - ECC Mode: Normal";};
+    kBlockMemUsReadDbSpInst0 {desc = "mipa block id of mem_us_read_db_sp_inst_0 memory - ECC Mode: Normal";};
+    kBlockMemUsReadDbSpInst1 {desc = "mipa block id of mem_us_read_db_sp_inst_1 memory - ECC Mode: Normal";};
+    kBlockMemUsWriteDbDp {desc = "mipa block id of mem_us_write_db_dp memory - ECC Mode: Normal";};
+    kBlockMemUsWriteDbSpInst0 {desc = "mipa block id of mem_us_write_db_sp_inst_0 memory - ECC Mode: Normal";};
+    kBlockMemUsWriteDbSpInst1 {desc = "mipa block id of mem_us_write_db_sp_inst_1 memory - ECC Mode: Normal";};
+    kBlockMemUsRdLl {desc = "mipa block id of mem_us_rd_ll memory - ECC Mode: Normal";};
+    kBlockMemUsWrLl {desc = "mipa block id of mem_us_wr_ll memory - ECC Mode: Normal";};
+    kBlockMemUsOwoLl {desc = "mipa block id of mem_us_owo_ll memory - ECC Mode: Normal";};
+    kBlockMemUsOwoMetadata {desc = "mipa block id of mem_us_owo_metadata memory - ECC Mode: Normal";};
+    kBlockMemUsOwoReq {desc = "mipa block id of mem_us_owo_req memory - ECC Mode: Normal";};
+    kBlockMemDvmHReqFifo {desc = "mipa block id of mem_dvm_h_req_fifo memory - ECC Mode: Normal";};
+    kBlockMemDvmHReorderFifo {desc = "mipa block id of mem_dvm_h_reorder_fifo memory - ECC Mode: Normal";};
+    kBlockMemDvmHBroadcastBitmapInst0 {desc = "mipa block id of mem_dvm_h_broadcast_bitmap_inst_0 memory - ECC Mode: Normal";};
+    kBlockMemDvmHBroadcastBitmapInst1 {desc = "mipa block id of mem_dvm_h_broadcast_bitmap_inst_1 memory - ECC Mode: Normal";};
+    kBlockMemDvmHExtDvmH {desc = "mipa block id of mem_dvm_h_ext_dvm_h memory - ECC Mode: Normal";};
+    kBlockMemDvmHDbid {desc = "mipa block id of mem_dvm_h_dbid memory - ECC Mode: Normal";};
+    kBlockMemDvmBDvmdatFifo {desc = "mipa block id of mem_dvm_b_dvmdat_fifo memory - ECC Mode: Normal";};
+    kBlockMemTelemetryDstTxnidA {desc = "mipa block id of mem_telemetry_dst_txnid_A memory - ECC Mode: Normal";};
+    kBlockMemTelemetryDstTxnidB {desc = "mipa block id of mem_telemetry_dst_txnid_B memory - ECC Mode: Normal";};
+    kBlockMemTelemetryDstPartidDatA {desc = "mipa block id of mem_telemetry_dst_partid_dat_A memory - ECC Mode: Normal";};
+    kBlockMemTelemetryDstPartidDatB {desc = "mipa block id of mem_telemetry_dst_partid_dat_B memory - ECC Mode: Normal";};
+    kBlockMemTelemetryDstPartidRspA {desc = "mipa block id of mem_telemetry_dst_partid_rsp_A memory - ECC Mode: Normal";};
+    kBlockMemTelemetryDstPartidRspB {desc = "mipa block id of mem_telemetry_dst_partid_rsp_B memory - ECC Mode: Normal";};
+    // End   | Auto generated code - DO NOT EDIT/DELETE
+    // TODO(nirmahlab): Complete all upstream errors
+    kBlockUsAcelitedvmReadExclusiveTooWide {desc = "mipa block id of us acelitedvm channel issuing unsupported 128Bytes read  exclusive access";};
+    kBlockUsAcelite0ReadExclusiveTooWide   {desc = "mipa block id of us acelite 0  channel issuing unsupported 128Bytes read  exclusive access";};
+    kBlockUsAcelite1ReadExclusiveTooWide   {desc = "mipa block id of us acelite 1  channel issuing unsupported 128Bytes read  exclusive access";};
+    kBlockUsAcelitedvmWriteExclusiveTooWide{desc = "mipa block id of us acelitedvm channel issuing unsupported 128Bytes write exclusive access";};
+    kBlockUsAcelite0WriteExclusiveTooWide  {desc = "mipa block id of us acelite 0  channel issuing unsupported 128Bytes write exclusive access";};
+    kBlockUsAcelite1WriteExclusiveTooWide  {desc = "mipa block id of us acelite 1  channel issuing unsupported 128Bytes write exclusive access";};
+    kBlockUsAcelitedvmReadSnoopNotSupported    {desc = "mipa block id of us acelitedvm channel issuing unsupported snoop read . snoop value is stored in misc_1 lsbs.";};
+    kBlockUsAcelite0ReadSnoopNotSupported      {desc = "mipa block id of us acelite 0  channel issuing unsupported snoop read . snoop value is stored in misc_1 lsbs.";};
+    kBlockUsAcelite1ReadSnoopNotSupported      {desc = "mipa block id of us acelite 1  channel issuing unsupported snoop read . snoop value is stored in misc_1 lsbs.";};
+    kBlockUsAcelitedvmWriteSnoopNotSupported   {desc = "mipa block id of us acelitedvm channel issuing unsupported snoop write. snoop value is stored in misc_1 lsbs.";};
+    kBlockUsAcelite0WriteSnoopNotSupported     {desc = "mipa block id of us acelite 0  channel issuing unsupported snoop write. snoop value is stored in misc_1 lsbs.";};
+    kBlockUsAcelite1WriteSnoopNotSupported     {desc = "mipa block id of us acelite 1  channel issuing unsupported snoop write. snoop value is stored in misc_1 lsbs.";};
+    kBlockUsAcelite0ReadDataCheck    {desc = "mipa block id of us acelite 0  channel read received datacheck error from CHI. if cfg_acelite_support_rpoison[0] asserts DE, else asserts UE";};
+    kBlockUsAcelite1ReadDataCheck    {desc = "mipa block id of us acelite 1  channel read received datacheck error from CHI. if cfg_acelite_support_rpoison[1] asserts DE, else asserts UE";};
+    kBlockUsAcelitedvmReadDataCheck  {desc = "mipa block id of us acelitedvm channel read received datacheck error from CHI. if cfg_acelitedvm_support_rpoison asserts DE, else asserts UE";};
+    kBlockUsAcelite0ReadDataPoison   {desc = "mipa block id of us acelite 0  channel read received poison from CHI and not supporting poison (cfg_acelite_support_rpoison[0] is 0)";};
+    kBlockUsAcelite1ReadDataPoison   {desc = "mipa block id of us acelite 1  channel read received poison from CHI and not supporting poison (cfg_acelite_support_rpoison[1] is 0)";};
+    kBlockUsAcelitedvmReadDataPoison {desc = "mipa block id of us acelitedvm channel read received poison from CHI and not supporting poison (cfg_acelitedvm_support_rpoison is 0)";};
+    kBlockUsAcelite0WriteData   {desc = "mipa block id of us acelite 0  channel sends datacheck error (only applicable when datacheck is supported - cfg_acelite_support_wdata_check[0]).";};
+    kBlockUsAcelite1WriteData   {desc = "mipa block id of us acelite 1  channel sends datacheck error (only applicable when datacheck is supported - cfg_acelite_support_wdata_check[1]).";};
+    kBlockUsAcelitedvmWriteData {desc = "mipa block id of us acelitedvm channel sends datacheck error (only applicable when datacheck is supported - cfg_acelitedvm_support_wdata_check).";};
+
+    // TODO(ohadabr): Complete all DVM errors
+    kBlockDsDamMemTypeVsFlit {desc = "mipa block id of DS DAM seeing contradiction between configured mem type (ARM Device/ARM Normal/PCIe config/PCIe memory) and flit mem type (Device/Normal)";};
+    kBlockDsDamMemTypeVsAxiDst {desc = "mipa block id of DS DAM seeing configured mem type that is not possible for the configured AXI destination";};
+    kBlockDsDamEwaVsFlit {desc = "mipa block id of DS DAM seeing contradiction between configured EWA vs flit EWA";};
+    kBlockDsDamOrderVsFlit {desc = "mipa block id of DS DAM seeing contradiction between configured order vs flit order";};
+    kBlockDsDamTrafficToNonActiveAxi {desc = "mipa block id of DS DAM seeing traffic going to an AXI destination which is inactive in this variant";};
+    kBlockDsDamInpStgQueueVsAxiDst {desc = "mipa block id of DS DAM seeing contradiction between the input stage queue from which the traffic came from, and the AXI I/F it is destined to";};
+    kBlockDsDamUnexpectedRwContext {desc = "mipa block id of DS DAM seeing Read/Write traffic to an AXI destination that doesn't support this kind of traffic";};
+    kBlockDsDamMiss {desc = "mipa block id of DS DAM that received an address that did not match any of the DAM regions";};
+    kBlockDsDamMultipleHit {desc = "mipa block id of DS DAM that received an address that matched more than one of the DAM regions";};
+    kBlockDsChiDatPoisonDataCheck {desc = "mipa block id of DS that received CHI RXDAT which was either poisoned or failed data check, and need to generate DE/UE according to poison support of the AXI I/F. For further information, see RAS section in go/gmesh-mipa-downstream-mas. misc_1.as_chi.reserved contains txn_id";};
+    kBlockDsAxiM0EwaWrResp {desc = "mipa block id of DS that received CHI RXREQ Write with EWA=1, which eventually received AXI_M_0 BRESP != OK after CompDBIDResp was already sent. Notice that misc_1.opcode, misc_0_0.as_axi_resp.id & misc_0_0.as_axi_resp.rd_resp_data_check_lsb_err_idx fields are invalid";};
+    kBlockDsAxiM1EwaWrResp {desc = "mipa block id of DS that received CHI RXREQ Write with EWA=1, which eventually received AXI_M_1 BRESP != OK after CompDBIDResp was already sent. Notice that misc_1.opcode, misc_0_0.as_axi_resp.id & misc_0_0.as_axi_resp.rd_resp_data_check_lsb_err_idx fields are invalid";};
+    kBlockDsAxiM0RdDataCheck {desc = "mipa block id of DS that received CHI RXREQ read request, which eventually received AXI_M_0 RDATA that failed data check. Notice that misc_1.opcode, misc_0_0.as_axi_resp.id fields are invalid";};
+    kBlockDsAxiM1RdDataCheck {desc = "mipa block id of DS that received CHI RXREQ read request, which eventually received AXI_M_1 RDATA that failed data check. Notice that misc_1.opcode, misc_0_0.as_axi_resp.id fields are invalid";};
+    kBlockDsChiReqUnsupportedOpcode {desc = "mipa block id of DS which received unsupported rx_req opcode";};
+    kBlockDsChiDatUnsupportedOpcode {desc = "mipa block id of DS which received unsupported rx_dat opcode. misc_1.as_chi.reserved contains txn_id";};
+    kBlockDsDefaultResponderUnsupportedOpcode {desc = "mipa block id of ds default responder which received unsupported opcode (such as H2H coming from SLC) or not support by gMesh.";};
+    kBlockDsAxiM0CamWrIdMatchOverflow {desc = "mipa block id of DS that received CHI RXREQ towards AXI 0, with a {pcie_id, sqn} that was never before seen, while the max amount of unique {pcie_id, sqn} tuples was already reached. Overflow for P2P-NP CAM will come with read opcode, Overflow for P2P-PW CAM will come with write opcode. misc_1.as_chi.reserved contains the {pcie_id, sqn}";};
+    kBlockDsAxiM1CamWrIdMatchOverflow {desc = "mipa block id of DS that received CHI RXREQ towards AXI 1, with a {pcie_id, sqn} that was never before seen, while the max amount of unique {pcie_id, sqn} tuples was already reached. Overflow for P2P-NP CAM will come with read opcode, Overflow for P2P-PW CAM will come with write opcode. misc_1.as_chi.reserved contains the {pcie_id, sqn}";};
+
+    kBlockCoreBridgeChiDatDataCheck {desc = "mipa block id of CoreBridge that received CHI RXDAT that failed data check. We poisoned the data towards the core, need to generate DE. misc_1.as_chi.reserved LSBs contains txn_id";};
+
+
+    // TODO(eranweil): Complete all telemetry + AXIS errors
+  };
+
+
+  gmesh_ras_logger_regfile #(
+    // Start | Auto generated code - DO NOT EDIT/DELETE
+    .NUM_PRODUCERS(99)
+    // End   | Auto generated code - DO NOT EDIT/DELETE
+  ) logger;
+
+  logger.logger.sts_ras_logger_err_misc_0_1.block_id->encode = gmesh_mipa_block_id_enum;
+
+};
+`endif

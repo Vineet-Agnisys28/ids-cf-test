@@ -1,0 +1,92 @@
+`include "idsProperty2a.rdl"
+`include "gmesh_ras_logger_regfile.rdl"
+
+
+`ifndef _GMESH_SLC_RAS_LOGGER_REGFILE_
+`define _GMESH_SLC_RAS_LOGGER_REGFILE_
+
+regfile gmesh_slc_ras_logger_regfile #(
+  bit HAS_ADDR_REG = 0
+) {
+
+  name = "gmesh_ras_logger_regfile";
+  desc = "gMesh RAS logger regfile";
+  enum gmesh_slc_block_id_enum {
+    // Start | Auto generated code - DO NOT EDIT/DELETE
+    kBlockMemSlcDataCacheBankInst0 {desc = "slc block id of mem_slc_data_cache_bank_inst_0 memory - ECC Mode: External";};
+    kBlockMemSlcDataCacheBankInst1 {desc = "slc block id of mem_slc_data_cache_bank_inst_1 memory - ECC Mode: External";};
+    kBlockMemSlcTagInst0 {desc = "slc block id of mem_slc_tag_inst_0 memory - ECC Mode: External";};
+    kBlockMemSlcTagInst1 {desc = "slc block id of mem_slc_tag_inst_1 memory - ECC Mode: External";};
+    kBlockMemSlcTagInst2 {desc = "slc block id of mem_slc_tag_inst_2 memory - ECC Mode: External";};
+    kBlockMemSlcTagInst3 {desc = "slc block id of mem_slc_tag_inst_3 memory - ECC Mode: External";};
+    kBlockMemSlcTagInst4 {desc = "slc block id of mem_slc_tag_inst_4 memory - ECC Mode: External";};
+    kBlockMemSlcTagInst5 {desc = "slc block id of mem_slc_tag_inst_5 memory - ECC Mode: External";};
+    kBlockMemSlcTagInst6 {desc = "slc block id of mem_slc_tag_inst_6 memory - ECC Mode: External";};
+    kBlockMemSlcTagInst7 {desc = "slc block id of mem_slc_tag_inst_7 memory - ECC Mode: External";};
+    kBlockMemSlcTagInst8 {desc = "slc block id of mem_slc_tag_inst_8 memory - ECC Mode: External";};
+    kBlockMemSlcTagInst9 {desc = "slc block id of mem_slc_tag_inst_9 memory - ECC Mode: External";};
+    kBlockMemSlcTagInst10 {desc = "slc block id of mem_slc_tag_inst_10 memory - ECC Mode: External";};
+    kBlockMemSlcTagInst11 {desc = "slc block id of mem_slc_tag_inst_11 memory - ECC Mode: External";};
+    kBlockMemSlcTagInst12 {desc = "slc block id of mem_slc_tag_inst_12 memory - ECC Mode: External";};
+    kBlockMemSlcTagInst13 {desc = "slc block id of mem_slc_tag_inst_13 memory - ECC Mode: External";};
+    kBlockMemSlcTagInst14 {desc = "slc block id of mem_slc_tag_inst_14 memory - ECC Mode: External";};
+    kBlockMemSlcTagInst15 {desc = "slc block id of mem_slc_tag_inst_15 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst0 {desc = "slc block id of mem_slc_sf_inst_0 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst1 {desc = "slc block id of mem_slc_sf_inst_1 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst2 {desc = "slc block id of mem_slc_sf_inst_2 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst3 {desc = "slc block id of mem_slc_sf_inst_3 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst4 {desc = "slc block id of mem_slc_sf_inst_4 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst5 {desc = "slc block id of mem_slc_sf_inst_5 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst6 {desc = "slc block id of mem_slc_sf_inst_6 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst7 {desc = "slc block id of mem_slc_sf_inst_7 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst8 {desc = "slc block id of mem_slc_sf_inst_8 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst9 {desc = "slc block id of mem_slc_sf_inst_9 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst10 {desc = "slc block id of mem_slc_sf_inst_10 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst11 {desc = "slc block id of mem_slc_sf_inst_11 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst12 {desc = "slc block id of mem_slc_sf_inst_12 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst13 {desc = "slc block id of mem_slc_sf_inst_13 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst14 {desc = "slc block id of mem_slc_sf_inst_14 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst15 {desc = "slc block id of mem_slc_sf_inst_15 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst16 {desc = "slc block id of mem_slc_sf_inst_16 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst17 {desc = "slc block id of mem_slc_sf_inst_17 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst18 {desc = "slc block id of mem_slc_sf_inst_18 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst19 {desc = "slc block id of mem_slc_sf_inst_19 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst20 {desc = "slc block id of mem_slc_sf_inst_20 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst21 {desc = "slc block id of mem_slc_sf_inst_21 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst22 {desc = "slc block id of mem_slc_sf_inst_22 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst23 {desc = "slc block id of mem_slc_sf_inst_23 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst24 {desc = "slc block id of mem_slc_sf_inst_24 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst25 {desc = "slc block id of mem_slc_sf_inst_25 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst26 {desc = "slc block id of mem_slc_sf_inst_26 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst27 {desc = "slc block id of mem_slc_sf_inst_27 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst28 {desc = "slc block id of mem_slc_sf_inst_28 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst29 {desc = "slc block id of mem_slc_sf_inst_29 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst30 {desc = "slc block id of mem_slc_sf_inst_30 memory - ECC Mode: External";};
+    kBlockMemSlcSfInst31 {desc = "slc block id of mem_slc_sf_inst_31 memory - ECC Mode: External";};
+    kBlockMemSlcQglCnt {desc = "slc block id of mem_slc_qgl_cnt memory - ECC Mode: Normal";};
+    kBlockMemSlcSfLru {desc = "slc block id of mem_slc_sf_lru memory - ECC Mode: Parity";};
+    kBlockMemSlcDataLru {desc = "slc block id of mem_slc_data_lru memory - ECC Mode: Parity";};
+    kBlockMemSlcIsReqQueues {desc = "slc block id of mem_slc_is_req_queues memory - ECC Mode: Normal";};
+    kBlockMemSlcIsMpam {desc = "slc block id of mem_slc_is_mpam memory - ECC Mode: Normal";};
+    kBlockMemSlcIsPrq {desc = "slc block id of mem_slc_is_prq memory - ECC Mode: Normal";};
+    kBlockMemSlcWbnData {desc = "slc block id of mem_slc_wbn_data memory - ECC Mode: Normal";};
+    kBlockMemSlcWbnSf {desc = "slc block id of mem_slc_wbn_sf memory - ECC Mode: Normal";};
+    kBlockMemSlcWbnAttr {desc = "slc block id of mem_slc_wbn_attr memory - ECC Mode: Normal";};
+    kBlockMemSlcQglCfg {desc = "slc block id of mem_slc_qgl_cfg memory - ECC Mode: Normal";};
+    kBlockMemSlcCsuExtReqQueue {desc = "slc block id of mem_slc_csu_ext_req_queue memory - ECC Mode: Normal";};
+    kBlockMemDvmBDvmdatFifo {desc = "slc block id of mem_dvm_b_dvmdat_fifo memory - ECC Mode: Normal";};
+    // End   | Auto generated code - DO NOT EDIT/DELETE
+    // TODO(hadarkalo): complete all ids, must be ordered according to connectivity (starting with lsb).
+  };
+
+
+  gmesh_ras_logger_regfile #(
+    // Start | Auto generated code - DO NOT EDIT/DELETE
+    .NUM_PRODUCERS(62)
+    // End   | Auto generated code - DO NOT EDIT/DELETE
+  ) logger;
+
+  logger.logger.sts_ras_logger_err_misc_0_1.block_id->encode = gmesh_slc_block_id_enum;
+
+};
+`endif

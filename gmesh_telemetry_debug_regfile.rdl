@@ -1,0 +1,133 @@
+`ifndef _GMESH_TELEMETRY_DEBUG_REGFILE_
+`define _GMESH_TELEMETRY_DEBUG_REGFILE_
+
+regfile gmesh_telemetry_debug_regfile #(
+  bit              HAS_CORE_AGENT           = 1,
+  bit              HAS_BW_AGENT             = 1,
+  bit              HAS_LATENCY_AGENT        = 1,
+  bit              HAS_IO_AGENT             = 1,
+  longint unsigned ADDR_WIDTH               = 48,
+  longint unsigned NUM_BW_PARTID            = 4,
+  longint unsigned NUM_BW_PARTID_CLOG2      = 2,
+  longint unsigned NUM_LATENCY_PARTID       = 4,
+  longint unsigned NUM_LATENCY_PARTID_CLOG2 = 2,
+  longint unsigned MAX_DEBUG_PACKETS        = 16,
+  longint unsigned MAX_DEBUG_PACKETS_WIDTH  = 5,
+  longint unsigned NUM_TELEMETRY_COUNTERS   = 8
+)
+  {
+  name = "gmesh_telemetry_debug_regfile";
+  desc = "Telemetry debug FW interface";
+  default sw = rw;
+  default hw = r;
+
+  enum debug_mode_enum {
+    kNormalMode          = 2'd0 {desc = "normal mode";};
+    kReadOneShotMode     = 2'd1 {desc = "read one shot mode";};
+    kMultShotMode        = 2'd2 {desc = "multiple shot mode";};
+    kSwGenPacketMode     = 2'd3 {desc = "sw gen packet mode";};
+  };
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "clear telemetry agent running counter";
+    } clear_counters[0:0] = 0;
+    field {
+      desc = "Configure if core agent must poll pmu snapshot complete";
+      encode = debug_mode_enum;
+    } debug_mode[2:1] = debug_mode_enum::kNormalMode;
+    field {
+      desc = "FW defined apb prot field";
+    } target_core[4:4] = 0;
+    target_core->ispresent = (HAS_CORE_AGENT);
+    field {
+      desc = "FW defined telemetry agent id";
+    } target_bw[5:5] = 0;
+    target_bw->ispresent = (HAS_BW_AGENT);
+    field {
+      desc = "FW selects diff or div for each telemetry counter";
+    } target_latency[6:6] = 0;
+    field {
+      desc = "FW selects diff or div for each telemetry counter";
+    } target_io[7:7] = 0;
+    field {
+      desc = "FW which counters in bw agent to read";
+    } counters_sel_bw[NUM_BW_PARTID_CLOG2+7:8] = 0;
+    counters_sel_bw->ispresent = (HAS_BW_AGENT);
+    field {
+      desc = "FW which counters in latency agent to read";
+    } counters_sel_latency[NUM_LATENCY_PARTID_CLOG2] = 0;
+    counters_sel_latency->ispresent = (HAS_LATENCY_AGENT);
+    field {
+      desc = "FW defined apb auser field";
+    } push[12:12] = 0;
+    field {
+      desc = "FW defined apb nse field";
+    } pop[13:13] = 0;
+    field {
+      desc = "FW selects diff or div for each telemetry counter";
+    } counter_id_bmp[NUM_TELEMETRY_COUNTERS+15:16] = 0;
+    field {
+      desc = "FW selects number of packets to be sent in kMultShotMode";
+    } debug_num_shot_packets[MAX_DEBUG_PACKETS_WIDTH+NUM_TELEMETRY_COUNTERS+15:NUM_TELEMETRY_COUNTERS+16] = 0;
+  } cfg_fw_packet_control;
+
+  reg {
+    default sw = r;
+    default hw = w;
+    field {
+      desc = "buffer ready to receive FW packet";
+    } push_ready[0:0] = 0;
+    field {
+      desc = "core packet valid";
+    } pop_valid_core[4:4] = 0;
+    pop_valid_core->ispresent = (HAS_CORE_AGENT);
+    field {
+      desc = "bw packet valid";
+    } pop_valid_bw[NUM_BW_PARTID+7:8] = 0;
+    pop_valid_bw->ispresent = (HAS_BW_AGENT);
+    field {
+      desc = "latency packet valid";
+    } pop_valid_latency[NUM_LATENCY_PARTID+NUM_BW_PARTID+7:NUM_BW_PARTID+8] = 0;
+    pop_valid_latency->ispresent = (HAS_LATENCY_AGENT);
+    field {
+      desc = "io packet valid";
+    } pop_valid_io[16:16] = 0;
+    pop_valid_io->ispresent = (HAS_IO_AGENT);
+  } sts_fw_packet_control;
+
+  reg cfg_fw_packet_generated_data_reg{
+    desc = "FW writes data to telemetry agent";
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "FW writes data to telemetry agent";
+    } value[32-1:0] = 0;
+  };
+
+  reg sts_fw_packet_counters_reg{
+    desc = "FW reads telemetry from agent";
+    default sw = r;
+    default hw = w;
+    field {
+      desc = "FW reads telemetry from agent";
+    } value[32-1:0] = 0;
+  };
+
+  cfg_fw_packet_generated_data_reg  cfg_fw_packet_data[NUM_TELEMETRY_COUNTERS];
+  cfg_fw_packet_generated_data_reg  cfg_fw_packet_timestamp_lsb;
+  cfg_fw_packet_generated_data_reg  cfg_fw_packet_timestamp_msb;
+
+  sts_fw_packet_counters_reg sts_fw_packet_counters_core[NUM_TELEMETRY_COUNTERS];
+  sts_fw_packet_counters_core->ispresent = (HAS_CORE_AGENT);
+  sts_fw_packet_counters_reg sts_fw_packet_counters_bw[NUM_TELEMETRY_COUNTERS];
+  sts_fw_packet_counters_bw->ispresent = (HAS_BW_AGENT);
+  sts_fw_packet_counters_reg sts_fw_packet_counters_latency[NUM_TELEMETRY_COUNTERS];
+  sts_fw_packet_counters_latency->ispresent = (HAS_LATENCY_AGENT);
+  sts_fw_packet_counters_reg sts_fw_packet_counters_io[NUM_TELEMETRY_COUNTERS];
+  sts_fw_packet_counters_io->ispresent = (HAS_IO_AGENT);
+
+};
+`endif

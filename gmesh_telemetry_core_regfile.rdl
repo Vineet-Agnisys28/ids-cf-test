@@ -1,0 +1,91 @@
+`include "gmesh_telemetry_agent_regfile.rdl"
+
+`ifndef _GMESH_TELEMETRY_CORE_REGFILE_
+`define _GMESH_TELEMETRY_CORE_REGFILE_
+
+regfile gmesh_telemetry_core_regfile #(
+  longint unsigned INTERVAL_WINDOW_CNT_WIDTH  = 16,
+  longint unsigned NUM_TELEMETRY_COUNTERS     = 8,
+  longint unsigned ADDR_WIDTH                 = 48,
+  longint unsigned AGENT_ID_WIDTH             = 9,
+  longint unsigned APB_ADDR_WIDTH             = 32,
+  longint unsigned APB_DATA_WIDTH             = 32,
+  longint unsigned NUM_PMU_COUNTERS           = 8,
+  longint unsigned APB_USER_REQ_WIDTH         = 64
+)
+  {
+  name = "gmesh_telemetry_core_regfile";
+  desc = "Telemetry Core agent FW interface";
+  default sw = rw;
+  default hw = r;
+
+  gmesh_telemetry_agent_regfile #(
+    .INTERVAL_WINDOW_CNT_WIDTH (INTERVAL_WINDOW_CNT_WIDTH),
+    .NUM_TELEMETRY_COUNTERS    (NUM_TELEMETRY_COUNTERS   ),
+    .ADDR_WIDTH                (ADDR_WIDTH               ),
+    .AGENT_ID_WIDTH            (AGENT_ID_WIDTH           ),
+    .HAS_COUNTER_FILTER        (1'b0                     ),
+    .HAS_RATIO_CALCULATION     (1'b1                     ),
+    .HAS_APB_INTERFACE         (1'b1                     ),
+    .HAS_ATTRIBUTE_FILTERING   (1'b0                     ))
+  gmesh_telemetry_core_agent;
+
+  reg {
+    desc = "configure APB fields for access to PMU";
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "FW defines for telemetry which PMU counters to be collected";
+    } counter_enabled[NUM_PMU_COUNTERS-1:0] = 0;
+    field {
+      desc = "Configure if core agent must poll pmu snapshot complete";
+    } snapshot_polling_enable[NUM_PMU_COUNTERS:NUM_PMU_COUNTERS] = 0;
+    field {
+      desc = "FW defined apb nse field";
+    } nse[NUM_PMU_COUNTERS+1:NUM_PMU_COUNTERS+1] = 0;
+    field {
+      desc = "FW defined apb prot field";
+    } prot[NUM_PMU_COUNTERS+4:NUM_PMU_COUNTERS+2] = 0;
+    field {
+      desc = "FW defined apb auser field";
+    } auser[NUM_PMU_COUNTERS+4+APB_USER_REQ_WIDTH:NUM_PMU_COUNTERS+5] = 0;
+  } cfg_pmu_apb;
+
+  reg apb_addr_reg {
+    desc = "APB address for access to DSU";
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "APB address for access to DSU";
+    } value[APB_ADDR_WIDTH-1:0] = 0;
+  };
+
+  reg apb_data_reg {
+    desc = "APB data for access to DSU";
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "APB data for access to DSU";
+    } value[APB_DATA_WIDTH-1:0] = 0;
+  };
+
+  apb_addr_reg    cfg_pmu_apb_counter_lower_address [NUM_PMU_COUNTERS];
+  cfg_pmu_apb_counter_lower_address->desc = "address to lsb of PMU counter";
+
+  apb_addr_reg    cfg_pmu_apb_snapshot_address;
+  cfg_pmu_apb_snapshot_address->desc = "address to which core agent writes for snapshot";
+
+  apb_addr_reg    cfg_pmu_apb_snapshot_polling_address;
+  cfg_pmu_apb_snapshot_polling_address->desc = "address to which core agent polls (rd) for snapshot status";
+
+  apb_data_reg    cfg_pmu_apb_snapshot_data;
+  cfg_pmu_apb_snapshot_data->desc = "data to write to DSU for creating a snapshot";
+
+  apb_data_reg    cfg_pmu_apb_snapshot_polling_data;
+  cfg_pmu_apb_snapshot_polling_data->desc = "data expected from DSU when snapshot complete";
+
+  apb_data_reg    cfg_pmu_apb_snapshot_polling_mask;
+  cfg_pmu_apb_snapshot_polling_mask->desc = "masking data from DSU when polling snapshot to view specific bits";
+
+};
+`endif

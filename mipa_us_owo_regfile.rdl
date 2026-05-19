@@ -1,0 +1,49 @@
+`ifndef _MIPA_US_OWO_REGFILE_
+`define _MIPA_US_OWO_REGFILE_
+
+
+regfile mipa_us_owo_regfile #(
+  bit HAS_PCIE                   = 1,
+  longint unsigned NUM_QUEUES    = 8
+)
+{
+  name = "mipa_us_owo_regfile";
+  desc = "MI-A/P OWO Logic Handling regfile. ";
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "Enables OWO logic";
+    } enable = HAS_PCIE;
+  } cfg_logic;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "timeout_counter[31:0]";
+    } limit[31:0] = 30000; // expected worst case for transaction ~300 cycles.
+  } cfg_timeout_0;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+    field {
+      desc = "timeout_counter[63:32]";
+    } limit[31:0] = 0;
+  } cfg_timeout_1;
+
+  reg {
+    default sw = r;
+    default hw = w;
+    field {
+      desc = "Indicates whetere we currently handling a deadlock.";
+    } detected[0:0];
+    field {
+      desc = "Indicates what queue the current deadlock occured in.";
+    } detected_bitmap[8+NUM_QUEUES-1:8];
+  } sts_dl;
+
+};
+`endif

@@ -1,0 +1,85 @@
+`include "idsProperty2a.rdl"
+
+`ifndef _GMESH_MIXL_TELEMETRY_PAD_REGFILE_
+`define _GMESH_MIXL_TELEMETRY_PAD_REGFILE_
+
+regfile gmesh_mixl_telemetry_pad_regfile #(
+  longint unsigned PAD_NUM_SETS = 32,
+  longint unsigned PAD_NUM_WAYS = 32
+){
+  name = "gmesh_mixl_telemetry_pad_regfile";
+  desc = "MI-XL Telemetry PAD (Page Access Directory) CSR Registers";
+
+  default sw = rw;
+  default hw = r;
+
+  //////////////////////////////////////////////////////////////////////////
+  // -+- CXL Protocol Bridge (PB)
+  //////////////////////////////////////////////////////////////////////////
+
+   //========================
+   // PAD General
+   //========================
+  // Resolution
+  enum enum_pad_res_mode {
+    k4Kib  = 2'd0 {desc = "PAD is in k4Kib  resolution"; };
+    k64Kib = 2'd1 {desc = "PAD is in k64Kib resolution"; };
+    k1Mib  = 2'd2 {desc = "PAD is in k1Mib  resolution"; };
+    kRsvd3 = 2'd3 {desc = "Reserved"; };
+  } ;
+
+  reg {
+    default sw = rw;
+    default hw = r;
+
+    field { encode = enum_pad_res_mode;                 } res_mode [5:4] = enum_pad_res_mode::k4Kib ;
+    field { singlepulse; desc = "AutoClear, Clear PAD"; } clear    [1:1] = 0;
+    field {              desc = "Enable";               } enable   [0:0] = 0;
+  } cfg_pad_general ;
+
+  //========================
+  // Start Address
+  //========================
+  reg {
+    default sw = rw;
+    default hw = r;
+
+    field { desc = "PAD tracking StartAddress in 1M resolution (Region[47:20]>=StartAddress)"; } value   [27:0] = 0;
+  } cfg_pad_start_address ;
+
+  //========================
+  // End Address
+  //========================
+  reg {
+    default sw = rw;
+    default hw = r;
+
+    field { desc = "PAD tracking EndAddress in 1M resolution (Region[47:20]<=EndAddress)"; } value   [27:0] = 0;
+  } cfg_pad_end_address ;
+
+  //========================
+  // Over Threshold BMP
+  //========================
+  reg sts_over_th {
+    default sw = r;
+    default hw = w;
+
+    field { desc = "Over Threshold BitMap in SET"; } value [PAD_NUM_WAYS-1:0];
+  } ;
+
+  // PAD_NUM_WAYS x PAD_NUM_SETS OverTh indications
+  sts_over_th sts_over_th [PAD_NUM_SETS];
+
+  //========================
+  // Memory LINE (SET) BMP
+  //========================
+  reg  {
+    default sw = r;
+    default hw = w;
+
+    field { desc = "Valid SET Memroy Lines"; } valid_bmp [PAD_NUM_SETS-1:0];
+  } sts_mem_line;
+
+};
+
+`endif
