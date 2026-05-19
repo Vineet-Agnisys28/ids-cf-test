@@ -1,5 +1,5 @@
 //`include "idsProperty2a.rdl"
-`include "gmesh_resource_pool_manager_regfile.rdl"
+//`include "gmesh_resource_pool_manager_regfile.rdl"
 
 `ifndef _SLC_INPUT_STAGE_REGFILE_
 `define _SLC_INPUT_STAGE_REGFILE_
