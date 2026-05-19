@@ -1,0 +1,5 @@
+addrmap block1 {
+    reg reg1{
+    field { hw = rw; sw=rw;} f1[31:0]=0;
+    };reg1 reg1;
+};
