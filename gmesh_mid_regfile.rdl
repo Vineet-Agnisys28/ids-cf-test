@@ -13,7 +13,7 @@ regfile gmesh_mid_regfile #(
   default sw = rw;
   default hw = r;
 
-  //////////////////////////
+  /////////////////////////
   // TrustZone Configuration
   //////////////////////////
 
